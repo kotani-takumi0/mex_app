@@ -1,10 +1,9 @@
 """
 データベースモデル定義
-個人開発アイデア壁打ちアプリ向けスキーマ
+MEX App（AI開発ポートフォリオ）向けスキーマ
 """
 import uuid
 from datetime import datetime, timezone
-from typing import Any
 
 from sqlalchemy import (
     Column,
@@ -17,9 +16,7 @@ from sqlalchemy import (
     Integer,
     Float,
     Boolean,
-    Date,
 )
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import DeclarativeBase, relationship
 
 
@@ -45,6 +42,7 @@ class User(Base):
     """
     __tablename__ = "users"
 
+    # --- 既存カラム（変更なし） ---
     id = Column(String(36), primary_key=True, default=generate_uuid)
     email = Column(String(255), nullable=False, unique=True)
     display_name = Column(String(100), nullable=False)
@@ -54,116 +52,161 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), default=utc_now)
     updated_at = Column(DateTime(timezone=True), default=utc_now, onupdate=utc_now)
 
+    # --- 新規カラム ---
+    username = Column(String(50), nullable=True, unique=True)
+    bio = Column(Text, nullable=True)
+    github_url = Column(String(500), nullable=True)
+
     # Relationships
-    cases = relationship("DecisionCase", back_populates="user", cascade="all, delete-orphan")
-    idea_memos = relationship("IdeaMemo", back_populates="user", cascade="all, delete-orphan")
+    projects = relationship("Project", back_populates="user", cascade="all, delete-orphan")
 
     __table_args__ = (
         Index("idx_users_email", "email"),
-        Index("idx_users_plan", "plan"),
+        Index("idx_users_username", "username"),
     )
 
 
-class DecisionCase(Base):
+class Project(Base):
     """
-    意思決定ケーステーブル
-    過去の採用案・没案を保存（ユーザー別にデータ分離）
+    プロジェクトテーブル
+    ユーザーが開発したプロジェクトを管理する
     """
-    __tablename__ = "decision_cases"
+    __tablename__ = "projects"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
     user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     title = Column(String(255), nullable=False)
-    purpose = Column(Text, nullable=False)
-    target_market = Column(String(255), nullable=True)
-    business_model = Column(Text, nullable=True)
-    outcome = Column(String(50), nullable=False)  # adopted, rejected, withdrawn, cancelled
-    decision_type = Column(String(10), nullable=False)  # go, no_go
-    decision_reason = Column(Text, nullable=False)
-    failed_hypotheses = Column(JSON, default=list)
-    discussions = Column(JSON, default=list)
+    description = Column(Text, nullable=True)
+    technologies = Column(JSON, default=list)
+    repository_url = Column(String(500), nullable=True)
+    demo_url = Column(String(500), nullable=True)
+    status = Column(String(20), nullable=False, default="in_progress")
+    is_public = Column(Boolean, nullable=False, default=False)
     created_at = Column(DateTime(timezone=True), default=utc_now)
     updated_at = Column(DateTime(timezone=True), default=utc_now, onupdate=utc_now)
 
     # Relationships
-    user = relationship("User", back_populates="cases")
-    failure_patterns = relationship(
-        "CaseFailurePattern",
-        back_populates="case",
-        cascade="all, delete-orphan",
-    )
+    user = relationship("User", back_populates="projects")
+    devlog_entries = relationship("DevLogEntry", back_populates="project", cascade="all, delete-orphan")
+    quiz_questions = relationship("QuizQuestion", back_populates="project", cascade="all, delete-orphan")
 
     __table_args__ = (
-        Index("idx_decision_cases_title", "title"),
-        Index("idx_decision_cases_outcome", "outcome"),
-        Index("idx_decision_cases_user_id", "user_id"),
+        Index("idx_projects_user_id", "user_id"),
+        Index("idx_projects_status", "status"),
+        Index("idx_projects_is_public", "is_public"),
     )
 
 
-class FailurePatternTag(Base):
+class DevLogEntry(Base):
     """
-    失敗パターンタグマスターテーブル
-    カテゴリ: financial, operational, market, technical, organizational
+    開発ログエントリ
+    MCPサーバーまたは手動入力から記録される開発過程の1ステップ
     """
-    __tablename__ = "failure_pattern_tags"
+    __tablename__ = "devlog_entries"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
-    name = Column(String(100), nullable=False, unique=True)
-    description = Column(Text, nullable=True)
-    category = Column(String(50), nullable=False)
-
-    # Relationships
-    cases = relationship(
-        "CaseFailurePattern",
-        back_populates="tag",
-        cascade="all, delete-orphan",
-    )
-
-    __table_args__ = (
-        Index("idx_failure_pattern_tags_category", "category"),
-    )
-
-
-class CaseFailurePattern(Base):
-    """
-    ケースと失敗パターンの関連テーブル（多対多）
-    """
-    __tablename__ = "case_failure_patterns"
-
-    case_id = Column(
-        String(36),
-        ForeignKey("decision_cases.id", ondelete="CASCADE"),
-        primary_key=True,
-    )
-    tag_id = Column(
-        String(36),
-        ForeignKey("failure_pattern_tags.id", ondelete="CASCADE"),
-        primary_key=True,
-    )
-
-    # Relationships
-    case = relationship("DecisionCase", back_populates="failure_patterns")
-    tag = relationship("FailurePatternTag", back_populates="cases")
-
-
-class IdeaMemo(Base):
-    """
-    アイデアメモテーブル
-    Go/NoGo判断がないレコード用（ユーザー別にデータ分離）
-    """
-    __tablename__ = "idea_memos"
-
-    id = Column(String(36), primary_key=True, default=generate_uuid)
+    project_id = Column(String(36), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
     user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    project_id = Column(String(255), nullable=True)
-    content = Column(JSON, nullable=False)
+
+    source = Column(String(20), nullable=False, default="manual")
+    entry_type = Column(String(30), nullable=False)
+
+    summary = Column(String(500), nullable=False)
+    detail = Column(Text, nullable=True)
+    technologies = Column(JSON, default=list)
+    ai_tool = Column(String(50), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=utc_now)
+    # SQLAlchemyの予約語と衝突を避けるため属性名はmetadata_にする
+    metadata_ = Column("metadata", JSON, default=dict)
+
+    # Relationships
+    project = relationship("Project", back_populates="devlog_entries")
+    quiz_questions = relationship("QuizQuestion", back_populates="devlog_entry")
+
+    __table_args__ = (
+        Index("idx_devlog_entries_project_id", "project_id"),
+        Index("idx_devlog_entries_user_id", "user_id"),
+        Index("idx_devlog_entries_created_at", "created_at"),
+        Index("idx_devlog_entries_entry_type", "entry_type"),
+    )
+
+
+class QuizQuestion(Base):
+    """
+    理解度チェック問題
+    開発ログからLLMが自動生成する4択クイズ
+    """
+    __tablename__ = "quiz_questions"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    project_id = Column(String(36), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    devlog_entry_id = Column(String(36), ForeignKey("devlog_entries.id", ondelete="SET NULL"), nullable=True)
+
+    technology = Column(String(100), nullable=False)
+    question = Column(Text, nullable=False)
+    options = Column(JSON, nullable=False)
+    correct_answer = Column(Integer, nullable=False)
+    explanation = Column(Text, nullable=False)
+    difficulty = Column(String(10), nullable=False, default="medium")
     created_at = Column(DateTime(timezone=True), default=utc_now)
 
     # Relationships
-    user = relationship("User", back_populates="idea_memos")
+    project = relationship("Project", back_populates="quiz_questions")
+    devlog_entry = relationship("DevLogEntry", back_populates="quiz_questions")
+    attempts = relationship("QuizAttempt", back_populates="question", cascade="all, delete-orphan")
 
     __table_args__ = (
-        Index("idx_idea_memos_user_id", "user_id"),
+        Index("idx_quiz_questions_project_id", "project_id"),
+        Index("idx_quiz_questions_user_id", "user_id"),
+        Index("idx_quiz_questions_technology", "technology"),
+    )
+
+
+class QuizAttempt(Base):
+    """
+    クイズ回答記録
+    ユーザーの各回答を記録し、スコア計算に使用
+    """
+    __tablename__ = "quiz_attempts"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    quiz_question_id = Column(String(36), ForeignKey("quiz_questions.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    selected_answer = Column(Integer, nullable=False)
+    is_correct = Column(Boolean, nullable=False)
+    time_spent_seconds = Column(Integer, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=utc_now)
+
+    # Relationships
+    question = relationship("QuizQuestion", back_populates="attempts")
+
+    __table_args__ = (
+        Index("idx_quiz_attempts_user_id", "user_id"),
+        Index("idx_quiz_attempts_question_id", "quiz_question_id"),
+    )
+
+
+class SkillScore(Base):
+    """
+    技術別理解度スコア
+    クイズ結果から集計される技術別のスコア
+    """
+    __tablename__ = "skill_scores"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    technology = Column(String(100), nullable=False)
+    score = Column(Float, nullable=False, default=0.0)
+    total_questions = Column(Integer, nullable=False, default=0)
+    correct_answers = Column(Integer, nullable=False, default=0)
+    last_assessed_at = Column(DateTime(timezone=True), nullable=True)
+    updated_at = Column(DateTime(timezone=True), default=utc_now, onupdate=utc_now)
+
+    __table_args__ = (
+        Index("idx_skill_scores_user_id", "user_id"),
+        Index("idx_skill_scores_technology", "technology"),
+        Index("uq_skill_scores_user_tech", "user_id", "technology", unique=True),
     )
 
 
@@ -198,7 +241,7 @@ class Subscription(Base):
     stripe_customer_id = Column(String(255), nullable=True)
     stripe_subscription_id = Column(String(255), nullable=True)
     plan = Column(String(20), nullable=False, default="free")
-    status = Column(String(20), nullable=False, default="active")  # active, canceled, past_due
+    status = Column(String(20), nullable=False, default="active")
     current_period_end = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), default=utc_now)
     updated_at = Column(DateTime(timezone=True), default=utc_now, onupdate=utc_now)

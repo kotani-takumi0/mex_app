@@ -1,115 +1,119 @@
-"""
-ダッシュボードAPIエンドポイント
-アイデア一覧・利用量・履歴の表示
-"""
-from datetime import datetime, timezone, timedelta
-
+"""ダッシュボードAPIエンドポイント"""
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 
 from app.auth.dependencies import CurrentUser, get_current_user_dependency
-from app.infrastructure.database.session import SessionLocal
-from app.infrastructure.database.models import DecisionCase, IdeaMemo, UsageLog
+from app.application.usage_service import DashboardService, DashboardData
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
 
+_service: DashboardService | None = None
 
-class CaseSummary(BaseModel):
-    """ケースサマリー"""
+
+def get_service() -> DashboardService:
+    global _service
+    if _service is None:
+        _service = DashboardService()
+    return _service
+
+
+class DashboardUserResponse(BaseModel):
+    display_name: str
+    username: str | None
+    bio: str | None
+    github_url: str | None
+
+
+class DashboardStatsResponse(BaseModel):
+    total_projects: int
+    total_devlog_entries: int
+    total_quiz_answered: int
+    overall_score: float
+
+
+class DashboardProjectResponse(BaseModel):
     id: str
     title: str
-    outcome: str
+    description: str | None
+    technologies: list[str]
+    repository_url: str | None
+    demo_url: str | None
+    status: str
+    is_public: bool
+    devlog_count: int
+    quiz_score: float | None
     created_at: str
+    updated_at: str
 
 
-class UsageSummary(BaseModel):
-    """利用量サマリー"""
-    sparring_count_today: int
-    retrospective_count_month: int
-    total_cases: int
+class DashboardSkillResponse(BaseModel):
+    technology: str
+    score: float
+    total_questions: int
+    correct_answers: int
+    last_assessed_at: str | None
 
 
 class DashboardResponse(BaseModel):
-    """ダッシュボードレスポンス"""
-    recent_cases: list[CaseSummary]
-    usage: UsageSummary
+    user: DashboardUserResponse
+    stats: DashboardStatsResponse
+    recent_projects: list[DashboardProjectResponse]
+    top_skills: list[DashboardSkillResponse]
 
 
 @router.get("", response_model=DashboardResponse)
 async def get_dashboard(
     current_user: CurrentUser = Depends(get_current_user_dependency),
 ):
-    """
-    ダッシュボード情報を取得
-
-    ユーザーのアイデア一覧・利用量・履歴を返却する。
-    認証必須。
-    """
-    db = SessionLocal()
     try:
-        # 最近のケース一覧（最新20件）
-        recent_cases = (
-            db.query(DecisionCase)
-            .filter(DecisionCase.user_id == current_user.user_id)
-            .order_by(DecisionCase.created_at.desc())
-            .limit(20)
-            .all()
-        )
-
-        case_summaries = [
-            CaseSummary(
-                id=c.id,
-                title=c.title,
-                outcome=c.outcome,
-                created_at=c.created_at.isoformat() if c.created_at else "",
-            )
-            for c in recent_cases
-        ]
-
-        # 利用量集計
-        now = datetime.now(timezone.utc)
-        today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-
-        sparring_count_today = (
-            db.query(UsageLog)
-            .filter(
-                UsageLog.user_id == current_user.user_id,
-                UsageLog.action == "idea_sparring",
-                UsageLog.created_at >= today_start,
-            )
-            .count()
-        )
-
-        retrospective_count_month = (
-            db.query(UsageLog)
-            .filter(
-                UsageLog.user_id == current_user.user_id,
-                UsageLog.action == "retrospective",
-                UsageLog.created_at >= month_start,
-            )
-            .count()
-        )
-
-        total_cases = (
-            db.query(DecisionCase)
-            .filter(DecisionCase.user_id == current_user.user_id)
-            .count()
-        )
-
-        return DashboardResponse(
-            recent_cases=case_summaries,
-            usage=UsageSummary(
-                sparring_count_today=sparring_count_today,
-                retrospective_count_month=retrospective_count_month,
-                total_cases=total_cases,
-            ),
-        )
-
+        service = get_service()
+        data = service.get_dashboard(current_user.user_id)
+        return _to_response(data)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e),
-        )
-    finally:
-        db.close()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+def _to_response(data: DashboardData) -> DashboardResponse:
+    return DashboardResponse(
+        user=DashboardUserResponse(
+            display_name=data.user.display_name,
+            username=data.user.username,
+            bio=data.user.bio,
+            github_url=data.user.github_url,
+        ),
+        stats=DashboardStatsResponse(
+            total_projects=data.stats.total_projects,
+            total_devlog_entries=data.stats.total_devlog_entries,
+            total_quiz_answered=data.stats.total_quiz_answered,
+            overall_score=data.stats.overall_score,
+        ),
+        recent_projects=[
+            DashboardProjectResponse(
+                id=p.id,
+                title=p.title,
+                description=p.description,
+                technologies=p.technologies,
+                repository_url=p.repository_url,
+                demo_url=p.demo_url,
+                status=p.status,
+                is_public=p.is_public,
+                devlog_count=p.devlog_count,
+                quiz_score=p.quiz_score,
+                created_at=p.created_at,
+                updated_at=p.updated_at,
+            )
+            for p in data.recent_projects
+        ],
+        top_skills=[
+            DashboardSkillResponse(
+                technology=s.technology,
+                score=s.score,
+                total_questions=s.total_questions,
+                correct_answers=s.correct_answers,
+                last_assessed_at=s.last_assessed_at,
+            )
+            for s in data.top_skills
+        ],
+    )

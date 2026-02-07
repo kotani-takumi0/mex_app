@@ -47,6 +47,9 @@ class UserResponse(BaseModel):
     email: str
     display_name: str
     plan: str
+    username: str | None
+    bio: str | None
+    github_url: str | None
 
 
 @router.post("/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
@@ -91,6 +94,9 @@ async def register(request: RegisterRequest):
                 email=user.email,
                 display_name=user.display_name,
                 plan=user.plan,
+                username=user.username,
+                bio=user.bio,
+                github_url=user.github_url,
             ),
         )
 
@@ -141,6 +147,9 @@ async def login(request: LoginRequest):
                 email=user.email,
                 display_name=user.display_name,
                 plan=user.plan,
+                username=user.username,
+                bio=user.bio,
+                github_url=user.github_url,
             ),
         )
 
@@ -175,6 +184,9 @@ async def get_me(current_user: CurrentUser = Depends(get_current_user_dependency
             email=user.email,
             display_name=user.display_name,
             plan=user.plan,
+            username=user.username,
+            bio=user.bio,
+            github_url=user.github_url,
         )
     finally:
         db.close()

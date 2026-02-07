@@ -1,0 +1,7 @@
+{
+  "mex": {
+    "command": "node",
+    "args": ["/home/takumi/mex_app/mcp-server/dist/index.js"],
+    "env": {}
+  }
+}

@@ -1,9 +1,11 @@
-"""API Layer - RESTful APIエンドポイント（個人開発版）"""
+"""API Layer - RESTful APIエンドポイント（MEX App）"""
 from fastapi import APIRouter
 
 from .auth import router as auth_router
-from .idea_sparring import router as idea_sparring_router
-from .retrospectives import router as retrospectives_router
+from .projects import router as projects_router
+from .devlogs import router as devlogs_router
+from .quiz import router as quiz_router
+from .portfolio import router as portfolio_router
 from .dashboard import router as dashboard_router
 from .billing import router as billing_router
 
@@ -11,8 +13,10 @@ router = APIRouter(prefix="/api")
 
 # サブルーターを登録
 router.include_router(auth_router)
-router.include_router(idea_sparring_router)
-router.include_router(retrospectives_router)
+router.include_router(projects_router)
+router.include_router(devlogs_router)
+router.include_router(quiz_router)
+router.include_router(portfolio_router)
 router.include_router(dashboard_router)
 router.include_router(billing_router)
 

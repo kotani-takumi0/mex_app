@@ -1,6 +1,6 @@
 """
 FastAPIアプリケーションのエントリーポイント
-個人開発アイデア壁打ちアプリ
+AI開発ポートフォリオプラットフォーム
 """
 from contextlib import asynccontextmanager
 
@@ -28,9 +28,9 @@ async def lifespan(app: FastAPI):
 settings = get_settings()
 
 app = FastAPI(
-    title="MEX App - アイデア壁打ちアプリ",
-    description="過去のプロジェクト知識を活用した個人開発アイデア壁打ちアプリ",
-    version="0.2.0",
+    title="MEX App - AI開発ポートフォリオ",
+    description="開発過程と理解度を可視化するポートフォリオプラットフォーム",
+    version="0.3.0",
     lifespan=lifespan,
 )
 
@@ -50,4 +50,4 @@ app.include_router(api_router)
 @app.get("/")
 async def root():
     """ルートエンドポイント"""
-    return {"message": "MEX App API - アイデア壁打ちアプリ", "version": "0.2.0"}
+    return {"message": "MEX App API - AI開発ポートフォリオ", "version": "0.3.0"}
