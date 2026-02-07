@@ -27,20 +27,27 @@ class Settings(BaseSettings):
     # Database
     database_url: str = "postgresql://postgres:postgres@localhost:5432/mex_app"
 
-    # Qdrant
+    # Qdrant - ローカル（host/port）またはCloud（url/api_key）のいずれかを使用
     qdrant_host: str = "localhost"
     qdrant_port: int = 6333
+    qdrant_url: str | None = None  # Qdrant Cloud URL (例: https://xxx.qdrant.io:6333)
+    qdrant_api_key: str | None = None  # Qdrant Cloud APIキー
 
     # OpenAI
     openai_api_key: str = ""
 
-    # CORS
+    # CORS - 環境変数CORS_ORIGINSでカンマ区切り指定可能
     cors_origins: list[str] = ["http://localhost:3000"]
 
     # JWT
     jwt_secret_key: str = "dev-secret-key-change-in-production"
     jwt_algorithm: str = "HS256"
     jwt_access_token_expire_minutes: int = 60
+
+    # Stripe
+    stripe_secret_key: str = ""
+    stripe_webhook_secret: str = ""
+    stripe_pro_price_id: str = ""
 
 
 @lru_cache

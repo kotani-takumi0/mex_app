@@ -1,5 +1,6 @@
 """
 FastAPIアプリケーションのエントリーポイント
+個人開発アイデア壁打ちアプリ
 """
 from contextlib import asynccontextmanager
 
@@ -7,6 +8,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import router as api_router
+from app.config import get_settings
 from app.infrastructure.vectordb.qdrant_client import get_qdrant_client
 
 
@@ -23,17 +25,19 @@ async def lifespan(app: FastAPI):
     yield
 
 
+settings = get_settings()
+
 app = FastAPI(
-    title="MEX App - 企画立案OS",
-    description="過去の意思決定ログを活用した企画支援システム",
-    version="0.1.0",
+    title="MEX App - アイデア壁打ちアプリ",
+    description="過去のプロジェクト知識を活用した個人開発アイデア壁打ちアプリ",
+    version="0.2.0",
     lifespan=lifespan,
 )
 
-# CORS設定
+# CORS設定 - 環境変数から取得
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # フロントエンド開発サーバー
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -46,4 +50,4 @@ app.include_router(api_router)
 @app.get("/")
 async def root():
     """ルートエンドポイント"""
-    return {"message": "MEX App API", "version": "0.1.0"}
+    return {"message": "MEX App API - アイデア壁打ちアプリ", "version": "0.2.0"}

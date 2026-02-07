@@ -49,6 +49,7 @@ class HybridSearchInput:
     vector_weight: float = 0.7
     text_weight: float = 0.3
     filters: CaseFilter | None = None
+    user_id: str = ""  # ユーザーデータ分離用
 
 
 @dataclass
@@ -86,18 +87,14 @@ class SimilarityEngine:
         self._qdrant = qdrant_client or QdrantClientWrapper()
         self._embedding = embedding_service or EmbeddingService()
 
-    async def vector_search(self, input_data: VectorSearchInput) -> list[SimilarityResult]:
+    async def vector_search(
+        self, input_data: VectorSearchInput, user_id: str = ""
+    ) -> list[SimilarityResult]:
         """
-        ベクトル類似検索
-
-        Args:
-            input_data: ベクトル検索入力
-
-        Returns:
-            list[SimilarityResult]: 類似検索結果
+        ベクトル類似検索（user_idでデータ分離）
         """
-        # フィルター条件の構築
-        query_filter = self._build_qdrant_filter(input_data.filters)
+        # フィルター条件の構築（user_idフィルター含む）
+        query_filter = self._build_qdrant_filter(input_data.filters, user_id=user_id)
 
         # Qdrantで検索
         response = self._qdrant.client.query_points(
@@ -136,13 +133,13 @@ class SimilarityEngine:
         # テキストの埋め込みを生成
         embedding_result = await self._embedding.embed_text(input_data.query_text)
 
-        # ベクトル検索
+        # ベクトル検索（user_idでフィルター）
         vector_input = VectorSearchInput(
             query_embedding=embedding_result.embedding,
             limit=input_data.limit * 2,  # オーバーフェッチ
             filters=input_data.filters,
         )
-        vector_results = await self.vector_search(vector_input)
+        vector_results = await self.vector_search(vector_input, user_id=input_data.user_id)
 
         # テキスト検索（PostgreSQL全文検索）
         text_results = await self._text_search(
@@ -227,28 +224,37 @@ class SimilarityEngine:
 
         return results
 
-    def _build_qdrant_filter(self, filters: CaseFilter | None) -> qdrant_models.Filter | None:
-        """Qdrantフィルター条件を構築"""
-        if not filters:
-            return None
-
+    def _build_qdrant_filter(
+        self, filters: CaseFilter | None, user_id: str = ""
+    ) -> qdrant_models.Filter | None:
+        """Qdrantフィルター条件を構築（user_idによるデータ分離含む）"""
         conditions = []
 
-        if filters.outcomes:
+        # user_idフィルター（データ分離の要）
+        if user_id:
             conditions.append(
                 qdrant_models.FieldCondition(
-                    key="outcome",
-                    match=qdrant_models.MatchAny(any=filters.outcomes),
+                    key="user_id",
+                    match=qdrant_models.MatchValue(value=user_id),
                 )
             )
 
-        if filters.failure_patterns:
-            conditions.append(
-                qdrant_models.FieldCondition(
-                    key="failure_patterns",
-                    match=qdrant_models.MatchAny(any=filters.failure_patterns),
+        if filters:
+            if filters.outcomes:
+                conditions.append(
+                    qdrant_models.FieldCondition(
+                        key="outcome",
+                        match=qdrant_models.MatchAny(any=filters.outcomes),
+                    )
                 )
-            )
+
+            if filters.failure_patterns:
+                conditions.append(
+                    qdrant_models.FieldCondition(
+                        key="failure_patterns",
+                        match=qdrant_models.MatchAny(any=filters.failure_patterns),
+                    )
+                )
 
         if not conditions:
             return None

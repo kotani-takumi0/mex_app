@@ -1,6 +1,6 @@
 """
 JWT認証サービス
-タスク6.1: フロントエンド・バックエンド統合
+個人開発版: tenant_idを削除し、planを追加
 """
 import os
 from datetime import datetime, timedelta, timezone
@@ -12,29 +12,25 @@ from pydantic import BaseModel
 
 class TokenExpiredError(Exception):
     """トークン有効期限切れエラー"""
-
     pass
 
 
 class InvalidTokenError(Exception):
     """無効なトークンエラー"""
-
     pass
 
 
 class JWTConfig(BaseModel):
     """JWT設定"""
-
     secret_key: str = os.getenv("JWT_SECRET_KEY", "dev-secret-key-change-in-production")
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 60
 
 
 class TokenPayload(BaseModel):
-    """トークンペイロード"""
-
+    """トークンペイロード - tenant_id削除、plan追加"""
     sub: str  # ユーザーID
-    tenant_id: str  # テナントID
+    plan: str = "free"  # ユーザープラン（free/pro）
     exp: datetime | None = None
 
 
@@ -53,8 +49,8 @@ class JWTService:
         アクセストークンを生成
 
         Args:
-            data: ペイロードデータ
-            expires_delta: 有効期限（指定なしの場合はデフォルト値）
+            data: ペイロードデータ（sub, plan等）
+            expires_delta: 有効期限
 
         Returns:
             JWTトークン文字列
@@ -81,9 +77,6 @@ class JWTService:
     def decode_token(self, token: str) -> dict[str, Any]:
         """
         トークンをデコード
-
-        Args:
-            token: JWTトークン
 
         Returns:
             デコードされたペイロード

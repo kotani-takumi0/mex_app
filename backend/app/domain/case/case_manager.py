@@ -62,6 +62,7 @@ class CaseCreateInput:
     business_model: str | None = None
     failed_hypotheses: list[dict[str, Any]] = field(default_factory=list)
     discussions: list[dict[str, Any]] = field(default_factory=list)
+    user_id: str = ""
 
 
 @dataclass
@@ -122,22 +123,15 @@ class CaseManager:
         ケースを作成
 
         PostgreSQLにメタデータを保存し、Qdrantにベクトルを保存
-
-        Args:
-            input_data: ケース作成入力
-
-        Returns:
-            DecisionCase: 作成されたケース
         """
         db = SessionLocal()
 
         try:
-            # IDを生成
             case_id = str(uuid.uuid4())
 
-            # PostgreSQLに保存
             db_case = DBDecisionCase(
                 id=case_id,
+                user_id=input_data.user_id,
                 title=input_data.title,
                 purpose=input_data.purpose,
                 target_market=input_data.target_market,
@@ -161,7 +155,7 @@ class CaseManager:
 
             embedding_result = await self._embedding.embed_text(text_for_embedding)
 
-            # Qdrantに保存
+            # Qdrantに保存（user_idをペイロードに含める）
             self._qdrant.client.upsert(
                 collection_name=COLLECTION_NAME,
                 points=[
@@ -170,6 +164,7 @@ class CaseManager:
                         vector=embedding_result.embedding,
                         payload={
                             "case_id": case_id,
+                            "user_id": input_data.user_id,
                             "outcome": input_data.outcome.value,
                             "failure_patterns": [],
                         },
@@ -210,23 +205,23 @@ class CaseManager:
         query_text: str,
         limit: int = 10,
         filters: CaseFilter | None = None,
+        user_id: str = "",
     ) -> list[SimilarCase]:
         """
-        類似ケースを検索
+        類似ケースを検索（user_idでデータ分離）
 
         Args:
             query_text: 検索クエリ
             limit: 取得件数
             filters: フィルター条件
-
-        Returns:
-            list[SimilarCase]: 類似ケースのリスト
+            user_id: ユーザーID（データ分離用）
         """
         # ハイブリッド検索を実行
         input_data = HybridSearchInput(
             query_text=query_text,
             limit=limit,
             filters=filters,
+            user_id=user_id,
         )
         search_results = await self._similarity.hybrid_search(input_data)
 

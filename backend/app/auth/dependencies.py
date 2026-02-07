@@ -1,6 +1,6 @@
 """
 認証依存関係
-タスク6.1: フロントエンド・バックエンド統合
+個人開発版: tenant_idを削除し、planを追加
 """
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -11,15 +11,13 @@ from .jwt import JWTService, TokenExpiredError, InvalidTokenError
 
 class AuthenticationError(Exception):
     """認証エラー"""
-
     pass
 
 
 class CurrentUser(BaseModel):
-    """現在のユーザー情報"""
-
+    """現在のユーザー情報 - tenant_id削除、plan追加"""
     user_id: str
-    tenant_id: str
+    plan: str = "free"
 
 
 # JWTサービスのシングルトン
@@ -51,7 +49,7 @@ def get_current_user(authorization: str) -> CurrentUser:
         payload = _jwt_service.decode_token(token)
         return CurrentUser(
             user_id=payload.get("sub", ""),
-            tenant_id=payload.get("tenant_id", ""),
+            plan=payload.get("plan", "free"),
         )
     except (TokenExpiredError, InvalidTokenError) as e:
         raise AuthenticationError(str(e))
@@ -62,9 +60,6 @@ async def get_current_user_dependency(
 ) -> CurrentUser:
     """
     FastAPI依存関係としてのユーザー取得
-
-    Args:
-        credentials: HTTP Bearer認証情報
 
     Returns:
         CurrentUser: ユーザー情報

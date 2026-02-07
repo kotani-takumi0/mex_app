@@ -1,11 +1,10 @@
 """
 Qdrantベクトルデータベースクライアント
-タスク1.3: Qdrantベクトルデータベースのセットアップ
 
-Design.mdに基づく実装:
-- 3072次元のCosine距離でdecision_casesコレクションを作成
-- case_id, outcome, failure_patternsのペイロードスキーマを定義
-- HNSWインデックスの初期パラメータを設定
+ピボット後:
+- 1536次元のCosine距離でdecision_casesコレクションを作成（text-embedding-3-small）
+- case_id, outcome, failure_patterns, user_idのペイロードスキーマを定義
+- ローカル（host/port）とQdrant Cloud（url/api_key）の両方に対応
 """
 from dataclasses import dataclass
 from functools import lru_cache
@@ -18,16 +17,17 @@ from qdrant_client.http.models import Distance, VectorParams, PayloadSchemaType
 from app.config import get_settings
 
 
-# 定数: Design.mdの仕様に基づく
+# 定数: ピボット後はtext-embedding-3-small (1536次元) を使用
 COLLECTION_NAME = "decision_cases"
-VECTOR_SIZE = 3072  # OpenAI text-embedding-3-large
+VECTOR_SIZE = 1536  # OpenAI text-embedding-3-small
 DISTANCE_METRIC = "Cosine"
 
-# ペイロードスキーマ: Design.mdの仕様に基づく
+# ペイロードスキーマ
 PAYLOAD_SCHEMA: dict[str, str] = {
     "case_id": "keyword",
     "outcome": "keyword",
     "failure_patterns": "keyword[]",
+    "user_id": "keyword",
 }
 
 
@@ -36,6 +36,8 @@ class QdrantConfig:
     """Qdrant接続設定"""
     host: str = "localhost"
     port: int = 6333
+    url: str | None = None  # Qdrant Cloud URL
+    api_key: str | None = None  # Qdrant Cloud APIキー
     collection_name: str = COLLECTION_NAME
     vector_size: int = VECTOR_SIZE
     distance: str = DISTANCE_METRIC
@@ -47,6 +49,8 @@ class QdrantConfig:
         return cls(
             host=settings.qdrant_host,
             port=settings.qdrant_port,
+            url=settings.qdrant_url,
+            api_key=settings.qdrant_api_key,
         )
 
 
@@ -54,10 +58,8 @@ class QdrantClientWrapper:
     """
     Qdrantクライアントのラッパー
 
-    Design.mdに基づく機能:
-    - コレクション作成（3072次元、Cosine距離）
-    - HNSWインデックス設定
-    - ペイロードスキーマ定義
+    ローカル（host/port）とQdrant Cloud（url/api_key）の両方に対応。
+    url が設定されている場合はCloud接続を優先する。
     """
 
     def __init__(self, config: QdrantConfig | None = None):
@@ -68,10 +70,17 @@ class QdrantClientWrapper:
             config: Qdrant設定。Noneの場合はデフォルト設定を使用
         """
         self.config = config or QdrantConfig()
-        self._client = QdrantClient(
-            host=self.config.host,
-            port=self.config.port,
-        )
+        # Qdrant Cloud（URL+APIキー）が設定されている場合はそちらを使用
+        if self.config.url:
+            self._client = QdrantClient(
+                url=self.config.url,
+                api_key=self.config.api_key,
+            )
+        else:
+            self._client = QdrantClient(
+                host=self.config.host,
+                port=self.config.port,
+            )
 
     @property
     def client(self) -> QdrantClient:

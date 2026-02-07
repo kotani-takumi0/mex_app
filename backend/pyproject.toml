@@ -16,6 +16,8 @@ dependencies = [
     "alembic>=1.13.0",
     "qdrant-client>=1.7.0",
     "openai>=1.10.0",
+    "passlib[bcrypt]>=1.7.4",
+    "stripe>=8.0.0",
 ]
 
 [project.optional-dependencies]

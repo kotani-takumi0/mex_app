@@ -1,10 +1,9 @@
 """
 埋め込み生成サービス
-タスク2.1: 埋め込み生成サービスの実装
 
-Design.mdに基づく仕様:
-- OpenAI text-embedding-3-large APIを呼び出し
-- 3072次元のベクトルを生成
+ピボット後:
+- OpenAI text-embedding-3-small APIを使用（コスト最適化）
+- 1536次元のベクトルを生成
 - APIキー管理とレート制限対応
 - リトライロジックとフォールバック処理
 """
@@ -30,8 +29,8 @@ class RateLimitError(EmbeddingError):
 @dataclass
 class EmbeddingConfig:
     """埋め込み生成設定"""
-    model: str = "text-embedding-3-large"
-    dimensions: int = 3072
+    model: str = "text-embedding-3-small"
+    dimensions: int = 1536
     max_retries: int = 3
     retry_delay: float = 1.0  # 秒
 

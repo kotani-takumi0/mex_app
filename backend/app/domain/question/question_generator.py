@@ -135,15 +135,15 @@ class QuestionGenerator:
         patterns_text = ", ".join(input_data.failure_patterns) if input_data.failure_patterns else "なし"
 
         prompt = f"""
-あなたは企画立案の専門家です。以下の企画ドラフトに対して、
-過去の類似ケースと失敗パターンを踏まえた「問い」を生成してください。
+あなたは個人開発アドバイザーです。以下の開発アイデアに対して、
+過去の類似プロジェクトと失敗パターンを踏まえた「問い」を生成してください。
 
-## 企画ドラフト
-- 目的: {input_data.draft_context.purpose}
-- ターゲット市場: {input_data.draft_context.target_market}
-- ビジネスモデル: {input_data.draft_context.business_model}
+## 開発アイデア
+- 概要・目的: {input_data.draft_context.purpose}
+- ターゲットユーザー: {input_data.draft_context.target_market}
+- マネタイズ方法: {input_data.draft_context.business_model}
 
-## 過去の類似ケース
+## 過去の類似プロジェクト
 {similar_cases_text}
 
 ## 関連する失敗パターン
@@ -152,18 +152,18 @@ class QuestionGenerator:
 ## 要求
 {input_data.question_count}個の「問い」を生成してください。
 各問いには以下の情報を含めてください：
-- question: 企画者が検討すべき問い（質問文）
+- question: 開発者が検討すべき問い（質問文）
 - rationale: なぜこの問いが重要か（過去の事例を参照）
 - category: カテゴリ（financial, operational, market, technical, organizational）
-- related_cases: 関連するケースID（上記の類似ケースから）
+- related_cases: 関連するケースID（上記の類似プロジェクトから）
 - related_patterns: 関連する失敗パターン
 
 以下のJSON形式で回答してください：
 {{
     "questions": [
         {{
-            "question": "収益性をどのように確保しますか？",
-            "rationale": "過去の類似案件で収益性が課題になった",
+            "question": "この機能にユーザーが月額課金する理由は明確ですか？",
+            "rationale": "過去の類似プロジェクトでマネタイズが課題になった",
             "category": "financial",
             "related_cases": ["case-001"],
             "related_patterns": ["financial"]
