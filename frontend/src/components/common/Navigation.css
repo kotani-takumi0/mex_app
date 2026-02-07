@@ -1,0 +1,204 @@
+/**
+ * ナビゲーションスタイル
+ *
+ * 変更理由: sticky nav、アイコン付きNavLink、
+ * ハンバーガーメニュー(モバイル対応)、plan-badge色分け
+ */
+.main-navigation {
+  background-color: var(--color-primary-900);
+  color: var(--text-inverse);
+  padding: 0 var(--space-6);
+  display: flex;
+  align-items: center;
+  height: var(--nav-height);
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+}
+
+/* ブランド */
+.nav-brand-link {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-inverse);
+  text-decoration: none;
+  margin-right: var(--space-10);
+  white-space: nowrap;
+}
+
+.nav-brand-link:hover {
+  color: var(--text-inverse);
+  opacity: 0.9;
+}
+
+/* ハンバーガー */
+.nav-hamburger {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--text-inverse);
+  padding: var(--space-2);
+  cursor: pointer;
+  margin-left: auto;
+}
+
+/* メニュー */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.nav-links {
+  display: flex;
+  gap: var(--space-1);
+  flex: 1;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: rgba(255, 255, 255, 0.7);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  position: relative;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-inverse);
+}
+
+.nav-link.active {
+  color: var(--text-inverse);
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: var(--space-4);
+  right: var(--space-4);
+  height: 2px;
+  background-color: var(--text-inverse);
+  border-radius: var(--radius-full);
+}
+
+.nav-link-icon {
+  flex-shrink: 0;
+}
+
+/* ユーザーセクション */
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-left: auto;
+}
+
+.user-name {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+}
+
+.plan-badge {
+  font-size: var(--font-size-xs);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+.plan-badge.free {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-inverse);
+}
+
+.plan-badge.pro {
+  background: linear-gradient(135deg, #ffd700, #ffab00);
+  color: var(--color-gray-900);
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.logout-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: var(--text-inverse);
+}
+
+/* レスポンシブ: 768px以下 */
+@media (max-width: 768px) {
+  .main-navigation {
+    flex-wrap: wrap;
+    height: auto;
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .nav-hamburger {
+    display: block;
+  }
+
+  .nav-menu {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    padding-top: var(--space-3);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    margin-top: var(--space-3);
+  }
+
+  .nav-menu.open {
+    display: flex;
+    animation: slideDown 0.2s ease;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .nav-link {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+  }
+
+  .nav-link.active::after {
+    display: none;
+  }
+
+  .nav-user {
+    width: 100%;
+    margin-left: 0;
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    justify-content: space-between;
+  }
+
+  .logout-text {
+    display: none;
+  }
+}
