@@ -1,97 +1,105 @@
-# MEX App - 個人開発アイデア壁打ちアプリ
+# MEX App - AI開発ポートフォリオ
 
-過去のプロジェクト知識を活用して、新しい開発アイデアの質を上げるAI壁打ちアプリ。
+AI支援開発の過程と理解度を記録・可視化するポートフォリオプラットフォームです。
+MCPサーバーで開発ログを自動収集し、ログから4択クイズを生成して理解度を測定します。
 
-## 必要環境
+**Overview**
+MEX App は「完成物だけでは伝わらない開発の過程」と「技術理解度」を一緒に提示するためのアプリです。
+プロジェクト単位で開発ログを蓄積し、クイズ結果からスキルスコアを算出して公開ポートフォリオとして共有できます。
 
-- Python 3.10+
-- Node.js 20+
-- Docker & Docker Compose
-- OpenAI API キー
+**Key Features**
+- プロジェクト管理（ステータス、技術タグ、リポジトリ/デモURL、公開設定）
+- 開発ログ（手動入力 + MCPサーバーによる自動記録）
+- 4択クイズ生成（開発ログから問題生成、回答でスキルスコア更新）
+- ダッシュボード（進捗サマリ、最近のプロジェクト、トップスキル）
+- 公開ポートフォリオ（ユーザー別の公開ページとプロジェクト詳細）
 
-## セットアップ
+**Routes**
+| 画面 | パス | 説明 |
+| --- | --- | --- |
+| ランディング | `/` | 未認証ユーザー向けの紹介ページ |
+| 認証 | `/auth` | ログイン/登録 |
+| ダッシュボード | `/dashboard` | 進捗サマリとスキルスコア |
+| 新規プロジェクト | `/projects/new` | プロジェクト作成 |
+| プロジェクト詳細 | `/projects/:id` | 開発ログ一覧・手動追加 |
+| 理解度チェック | `/projects/:id/quiz` | クイズ生成と回答 |
+| 公開ポートフォリオ | `/p/:username` | 公開プロフィールとプロジェクト一覧 |
+| 公開プロジェクト詳細 | `/p/:username/:projectId` | 開発ログとクイズ結果の公開表示 |
 
-### 1. 環境変数
+**Tech Stack**
+- フロントエンド: React 19, TypeScript, React Router 7
+- バックエンド: FastAPI, SQLAlchemy 2, Alembic
+- データベース: PostgreSQL
+- ベクトルDB: Qdrant
+- AI: OpenAI API
+- MCPサーバー: Node.js + Model Context Protocol SDK
+- 決済: Stripe（バックエンドのみ）
 
+**Setup**
+Step 1: `.env` を用意します。
 ```bash
 cp .env.example .env
-# .env を編集して OPENAI_API_KEY を設定
 ```
+`OPENAI_API_KEY` を設定してください。Qdrant を Cloud で使う場合は `QDRANT_URL` と `QDRANT_API_KEY` も指定します。
 
-### 2. インフラ起動（PostgreSQL）
-
+Step 2: PostgreSQL を起動します。
 ```bash
 docker compose up -d
 ```
 
-PostgreSQL が `localhost:5432` で起動します。
+Step 3: Qdrant を起動します。
+```bash
+docker run -d --name mex-qdrant -p 6333:6333 -p 6334:6334 qdrant/qdrant
+```
 
-### 3. バックエンド
-
+Step 4: バックエンドをセットアップします。
 ```bash
 cd backend
 pip install -e ".[dev]"
-alembic upgrade head    # DBマイグレーション
+alembic upgrade head
 ```
 
-### 4. フロントエンド
-
+Step 5: フロントエンドをセットアップします。
 ```bash
 cd frontend
 npm install
 ```
 
-## 起動
-
-ターミナルを2つ開いて、それぞれ実行します。
-
-**バックエンド** (port 8000):
-
+**Run**
+バックエンド（port 8000）:
 ```bash
 cd backend
 uvicorn app.main:app --reload
 ```
 
-**フロントエンド** (port 3000):
-
+フロントエンド（port 3000）:
 ```bash
 cd frontend
 npm start
 ```
 
-ブラウザで http://localhost:3000 を開きます。
-
-## 主な機能
-
-| 機能 | パス | 説明 |
-|------|------|------|
-| ダッシュボード | `/dashboard` | 利用量・最近のプロジェクト一覧 |
-| アイデア壁打ち | `/sparring` | AIが類似ケース・懸念点・問いを提示 |
-| 振り返り | `/retrospective` | プロジェクトの学びをナレッジとして蓄積 |
-
-## 技術スタック
-
-| レイヤー | 技術 |
-|---------|------|
-| フロントエンド | React 19, TypeScript, React Router 7 |
-| バックエンド | FastAPI, SQLAlchemy 2, Alembic |
-| データベース | PostgreSQL 16 |
-| ベクトルDB | Qdrant |
-| AI | OpenAI API |
-| 決済 | Stripe |
-
-## 開発コマンド
+**MCP Server (Optional)**
+AIツールから開発ログを自動記録する場合は `mcp-server` を起動します。
+詳しい手順は `MCP_SERVER.md` を参照してください。
 
 ```bash
-# バックエンド
-cd backend
-pytest                          # テスト実行
-ruff check app/                 # Lint
-ruff check app/ --fix           # Lint自動修正
+cd mcp-server
+npm install
+npm run build
+npm run start
+```
 
-# フロントエンド
+**Dev Commands**
+```bash
+# Backend
+cd backend
+pytest
+ruff check app/
+ruff check app/ --fix
+
+# Frontend
 cd frontend
-npm run build                   # 本番ビルド
-npm test                        # テスト実行
-npm run lint                    # Lint
+npm run build
+npm test
+npm run lint
 ```
