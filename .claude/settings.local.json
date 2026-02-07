@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__notion__notion-create-pages",
+      "mcp__playwright__browser_resize",
+      "mcp__playwright__browser_install",
+      "Bash(python3:*)",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_fill_form",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_console_messages",
+      "mcp__playwright__browser_navigate",
+      "Bash(pip show:*)",
+      "mcp__playwright__browser_close",
+      "Bash(psql:*)",
+      "Bash(sudo apt-get update:*)",
+      "Bash(sudo apt-get install:*)",
+      "Bash(python:*)",
+      "Bash(curl:*)",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_type",
+      "mcp__playwright__browser_run_code",
+      "Bash(ls:*)"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "playwright"
+  ]
+}
