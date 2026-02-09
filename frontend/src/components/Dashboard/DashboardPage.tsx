@@ -6,10 +6,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {
-  LuLayoutDashboard,
   LuListChecks,
   LuBookOpen,
-  LuSparkles,
   LuPlus,
   LuFolderKanban,
 } from 'react-icons/lu';
@@ -42,22 +40,22 @@ export const DashboardPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="page-container">
-        <PageHeader title="ダッシュボード" description="読み込み中..." />
+      <div className="page-container dashboard-page">
+        <PageHeader title="進捗概要" description="読み込み中..." />
         <DashboardSkeleton />
       </div>
     );
   }
 
   return (
-    <div className="page-container">
+    <div className="page-container dashboard-page">
       <PageHeader
-        title="ダッシュボード"
-        description="開発の進捗と理解度をひと目で確認できます。"
+        title="進捗概要"
+        description="開発の進捗と最近の活動を一覧できます。"
         action={
           <button className="dashboard-cta" onClick={() => navigate('/projects/new')}>
             <LuPlus size={16} />
-            新規プロジェクト
+            新規案件
           </button>
         }
       />
@@ -69,46 +67,43 @@ export const DashboardPage: React.FC = () => {
               <div className="stat-icon">
                 <LuFolderKanban size={20} />
               </div>
-              <div className="stat-label">プロジェクト数</div>
+              <div className="stat-label">案件数</div>
               <div className="stat-value">{data.stats.total_projects}</div>
             </div>
             <div className="stat-card">
               <div className="stat-icon">
                 <LuBookOpen size={20} />
               </div>
-              <div className="stat-label">開発ログ</div>
+              <div className="stat-label">開発記録</div>
               <div className="stat-value">{data.stats.total_devlog_entries}</div>
             </div>
             <div className="stat-card">
               <div className="stat-icon">
                 <LuListChecks size={20} />
               </div>
-              <div className="stat-label">クイズ回答数</div>
+              <div className="stat-label">回答数</div>
               <div className="stat-value">{data.stats.total_quiz_answered}</div>
             </div>
-            <div className="stat-card highlight">
+            <div className="stat-card">
               <div className="stat-icon">
-                <LuSparkles size={20} />
+                <LuListChecks size={20} />
               </div>
-              <div className="stat-label">総合スコア</div>
+              <div className="stat-label">総合得点</div>
               <div className="stat-value">{data.stats.overall_score.toFixed(1)}</div>
             </div>
           </section>
 
           <section className="dashboard-section">
             <div className="section-header">
-              <h2>
-                <LuLayoutDashboard size={18} />
-                最近のプロジェクト
-              </h2>
+              <h2>最近の案件</h2>
             </div>
             {data.recent_projects.length === 0 ? (
               <EmptyState
                 icon={LuFolderKanban}
-                title="まだプロジェクトがありません"
-                description="最初のプロジェクトを作成して開発ログを記録しましょう。"
+                title="まだ案件がありません"
+                description="最初の案件を作成して開発記録を残しましょう。"
                 action={{
-                  label: '新規プロジェクトを作成',
+                  label: '新規案件を作成',
                   onClick: () => navigate('/projects/new'),
                 }}
               />
@@ -131,9 +126,9 @@ export const DashboardPage: React.FC = () => {
                       </span>
                     </div>
                     <div className="project-meta">
-                      <span>ログ {project.devlog_count}件</span>
+                      <span>記録 {project.devlog_count}件</span>
                       <span>
-                        クイズ {project.quiz_score === null ? '未実施' : `${project.quiz_score}%`}
+                        理解度 {project.quiz_score === null ? '未実施' : `${project.quiz_score}%`}
                       </span>
                     </div>
                     <div className="project-tech">
@@ -154,13 +149,10 @@ export const DashboardPage: React.FC = () => {
 
           <section className="dashboard-section">
             <div className="section-header">
-              <h2>
-                <LuSparkles size={18} />
-                トップスキル
-              </h2>
+              <h2>技能上位</h2>
             </div>
             {data.top_skills.length === 0 ? (
-              <div className="skill-empty">クイズに回答するとスキルスコアが表示されます。</div>
+              <div className="skill-empty">設問に回答すると技能得点が表示されます。</div>
             ) : (
               <div className="skill-list">
                 {data.top_skills.map((skill) => (

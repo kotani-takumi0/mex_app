@@ -1,8 +1,8 @@
 /**
  * 認証API
  */
-import { apiPost, apiGet, setAuthToken } from './client';
-import { AuthResponse, User } from '../types';
+import { apiPost, apiGet, apiPut, setAuthToken } from './client';
+import { AuthResponse, User, ProfileUpdateRequest, ApiTokenResponse } from '../types';
 
 interface RegisterRequest {
   email: string;
@@ -46,4 +46,20 @@ export async function login(
  */
 export async function getMe(): Promise<{ data: User | null; error: string | null }> {
   return apiGet<User>('/auth/me');
+}
+
+/**
+ * プロフィール更新
+ */
+export async function updateProfile(
+  request: ProfileUpdateRequest
+): Promise<{ data: User | null; error: string | null }> {
+  return apiPut<User, ProfileUpdateRequest>('/auth/profile', request);
+}
+
+/**
+ * MCP用長寿命APIトークンを発行
+ */
+export async function createApiToken(): Promise<{ data: ApiTokenResponse | null; error: string | null }> {
+  return apiPost<ApiTokenResponse, Record<string, never>>('/auth/api-token', {});
 }

@@ -106,6 +106,20 @@ export interface SkillScore {
   last_assessed_at: string | null;
 }
 
+// プロフィール更新
+export interface ProfileUpdateRequest {
+  username?: string;
+  display_name?: string;
+  bio?: string;
+  github_url?: string;
+}
+
+// APIトークンレスポンス
+export interface ApiTokenResponse {
+  api_token: string;
+  expires_in_days: number;
+}
+
 // ダッシュボード
 export interface DashboardData {
   user: {

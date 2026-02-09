@@ -16,6 +16,7 @@ import { ProjectDetailPage } from './components/Projects/ProjectDetailPage';
 import { QuizPage } from './components/Quiz/QuizPage';
 import { PublicPortfolioPage } from './components/Portfolio/PublicPortfolioPage';
 import { PublicProjectDetailPage } from './components/Portfolio/PublicProjectDetailPage';
+import { UsernameSetupModal } from './components/common/UsernameSetupModal';
 import './App.css';
 
 /**
@@ -52,6 +53,7 @@ const AuthenticatedLayout: React.FC<{ children: React.ReactNode }> = ({ children
     <div className="app">
       <Navigation />
       <main className="main-content">{children}</main>
+      <UsernameSetupModal />
     </div>
   );
 };

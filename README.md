@@ -38,7 +38,7 @@ MEX App は「完成物だけでは伝わらない開発の過程」と「技術
 **Setup**
 Step 1: `.env` を用意します。
 ```bash
-cp .env.example .env
+cp .env.example .env　
 ```
 `OPENAI_API_KEY` を設定してください。Qdrant を Cloud で使う場合は `QDRANT_URL` と `QDRANT_API_KEY` も指定します。
 

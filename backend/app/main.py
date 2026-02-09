@@ -3,6 +3,7 @@ FastAPIアプリケーションのエントリーポイント
 AI開発ポートフォリオプラットフォーム
 """
 from contextlib import asynccontextmanager
+import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,17 +12,32 @@ from app.api import router as api_router
 from app.config import get_settings
 from app.infrastructure.vectordb.qdrant_client import get_qdrant_client
 
+logger = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """アプリケーションの起動・終了時の処理"""
     # 起動時: Qdrantコレクションの自動初期化
-    qdrant = get_qdrant_client()
-    created = qdrant.ensure_collection()
-    if created:
-        print(f"Qdrantコレクション '{qdrant.config.collection_name}' を作成しました")
-    else:
-        print(f"Qdrantコレクション '{qdrant.config.collection_name}' は既に存在します")
+    try:
+        qdrant = get_qdrant_client()
+        created = qdrant.ensure_collection()
+        if created:
+            logger.info(
+                "Qdrantコレクション '%s' を作成しました",
+                qdrant.config.collection_name,
+            )
+        else:
+            logger.info(
+                "Qdrantコレクション '%s' は既に存在します",
+                qdrant.config.collection_name,
+            )
+    except Exception as exc:
+        logger.warning(
+            "Qdrant初期化をスキップしました: %s. "
+            "Qdrant依存のAPIは失敗する可能性があります。",
+            exc,
+        )
     yield
 
 

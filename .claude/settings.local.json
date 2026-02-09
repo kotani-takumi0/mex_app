@@ -26,10 +26,13 @@
       "Bash(pip install:*)",
       "Bash(npm run build:*)",
       "Bash(node -e:*)",
-      "Bash(npm info:*)"
+      "Bash(npm info:*)",
+      "Bash(npx tsc:*)"
     ]
   },
   "enabledMcpjsonServers": [
-    "playwright"
-  ]
+    "playwright",
+    "mex"
+  ],
+  "enableAllProjectMcpServers": true
 }
