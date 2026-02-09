@@ -1,20 +1,16 @@
 """
-類似検索ドメイン
+類似検索ドメイン（pgvector版）
 """
 from .similarity_engine import (
     SimilarityEngine,
     SimilarityConfig,
     SimilarityResult,
-    HybridSearchInput,
-    VectorSearchInput,
-    CaseFilter,
+    DevLogFilter,
 )
 
 __all__ = [
     "SimilarityEngine",
     "SimilarityConfig",
     "SimilarityResult",
-    "HybridSearchInput",
-    "VectorSearchInput",
-    "CaseFilter",
+    "DevLogFilter",
 ]

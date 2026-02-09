@@ -6,7 +6,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {
-  LuListChecks,
   LuBookOpen,
   LuPlus,
   LuFolderKanban,
@@ -76,20 +75,6 @@ export const DashboardPage: React.FC = () => {
               </div>
               <div className="stat-label">開発記録</div>
               <div className="stat-value">{data.stats.total_devlog_entries}</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-icon">
-                <LuListChecks size={20} />
-              </div>
-              <div className="stat-label">回答数</div>
-              <div className="stat-value">{data.stats.total_quiz_answered}</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-icon">
-                <LuListChecks size={20} />
-              </div>
-              <div className="stat-label">総合得点</div>
-              <div className="stat-value">{data.stats.overall_score.toFixed(1)}</div>
             </div>
           </section>
 

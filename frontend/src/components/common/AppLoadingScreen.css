@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--color-primary-900) 0%, #4a148c 100%);
+  background: var(--gradient-hero);
 }
 
 .app-loading-content {
@@ -16,7 +16,7 @@
 .app-loading-brand {
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-bold);
-  color: var(--text-inverse);
+  color: var(--color-primary-700);
   margin-bottom: var(--space-6);
   animation: pulse 2s ease-in-out infinite;
 }
@@ -30,7 +30,7 @@
 .app-loading-dot {
   width: 10px;
   height: 10px;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: var(--color-primary-500);
   border-radius: var(--radius-full);
   animation: dotBounce 1.4s ease-in-out infinite both;
 }

@@ -1,22 +1,6 @@
 """
-ベクトルデータベース（Qdrant）インフラストラクチャ
-"""
-from .qdrant_client import (
-    QdrantClientWrapper,
-    QdrantConfig,
-    COLLECTION_NAME,
-    VECTOR_SIZE,
-    DISTANCE_METRIC,
-    PAYLOAD_SCHEMA,
-    get_qdrant_client,
-)
+ベクトルデータベースインフラストラクチャ（pgvector）
 
-__all__ = [
-    "QdrantClientWrapper",
-    "QdrantConfig",
-    "COLLECTION_NAME",
-    "VECTOR_SIZE",
-    "DISTANCE_METRIC",
-    "PAYLOAD_SCHEMA",
-    "get_qdrant_client",
-]
+Qdrantは廃止され、PostgreSQL + pgvector に移行済み。
+ベクトル検索は similarity_engine.py で SQLAlchemy 経由で実行される。
+"""

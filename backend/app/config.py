@@ -29,12 +29,6 @@ class Settings(BaseSettings):
     # Database
     database_url: str = "postgresql://postgres:postgres@localhost:5432/mex_app"
 
-    # Qdrant - ローカル（host/port）またはCloud（url/api_key）のいずれかを使用
-    qdrant_host: str = "localhost"
-    qdrant_port: int = 6333
-    qdrant_url: str | None = None  # Qdrant Cloud URL (例: https://xxx.qdrant.io:6333)
-    qdrant_api_key: str | None = None  # Qdrant Cloud APIキー
-
     # OpenAI
     openai_api_key: str = ""
 

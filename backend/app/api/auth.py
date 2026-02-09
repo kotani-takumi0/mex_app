@@ -1,7 +1,8 @@
 """
 認証APIエンドポイント
-メール/パスワードによるユーザー登録・ログイン・プロフィール編集・APIトークン発行
+メール/パスワードによるユーザー登録・ログイン・プロフィール編集・APIトークン発行・MCPトークン管理
 """
+import hashlib
 import logging
 import re
 from datetime import timedelta
@@ -14,7 +15,7 @@ from sqlalchemy.exc import OperationalError
 from app.auth.jwt import JWTService
 from app.auth.dependencies import CurrentUser, get_current_user_dependency
 from app.infrastructure.database.session import SessionLocal
-from app.infrastructure.database.models import User
+from app.infrastructure.database.models import User, MCPToken
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 logger = logging.getLogger(__name__)
@@ -218,26 +219,163 @@ async def get_me(current_user: CurrentUser = Depends(get_current_user_dependency
 _USERNAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9\-]{1,28}[a-z0-9]$")
 
 
+class ApiTokenRequest(BaseModel):
+    """APIトークン発行リクエスト"""
+    name: str | None = Field(None, max_length=100, description="トークンの識別名（例: MacBook Pro）")
+
+
 class ApiTokenResponse(BaseModel):
     """APIトークンレスポンス"""
     api_token: str
+    token_id: str
     expires_in_days: int
+
+
+class MCPTokenInfo(BaseModel):
+    """MCPトークン情報"""
+    id: str
+    name: str | None
+    scope: str
+    created_at: str
+    revoked_at: str | None
+
+
+class MCPTokenListResponse(BaseModel):
+    """MCPトークン一覧レスポンス"""
+    tokens: list[MCPTokenInfo]
+
+
+class RevokeTokenRequest(BaseModel):
+    """トークン無効化リクエスト"""
+    token_id: str = Field(..., description="無効化するトークンのID")
+
+
+def _hash_token(token: str) -> str:
+    """トークンのSHA-256ハッシュを生成（DB保存用）"""
+    return hashlib.sha256(token.encode()).hexdigest()
 
 
 @router.post("/api-token", response_model=ApiTokenResponse)
 async def create_api_token(
+    request: ApiTokenRequest | None = None,
     current_user: CurrentUser = Depends(get_current_user_dependency),
 ):
     """
     MCP Server 等の外部ツール向けに長寿命APIトークン（30日間有効）を発行する。
     通常のJWTは60分で切れるため、開発中にMCPからの呼び出しが途切れる問題を解消する。
+    トークンのハッシュをDBに保存し、後から無効化できるようにする。
     """
     expires_days = 30
     token = _jwt_service.create_access_token(
         data={"sub": current_user.user_id, "plan": current_user.plan},
         expires_delta=timedelta(days=expires_days),
     )
-    return ApiTokenResponse(api_token=token, expires_in_days=expires_days)
+
+    # トークンハッシュをDBに記録（無効化管理用）
+    db = SessionLocal()
+    try:
+        mcp_token = MCPToken(
+            user_id=current_user.user_id,
+            token_hash=_hash_token(token),
+            name=request.name if request else None,
+        )
+        db.add(mcp_token)
+        db.commit()
+        db.refresh(mcp_token)
+        token_id = mcp_token.id
+    except Exception as e:
+        logger.exception("Failed to store MCP token record")
+        db.rollback()
+        # トークン自体は発行済みなので、DB記録失敗でもトークンは返す
+        token_id = ""
+    finally:
+        db.close()
+
+    return ApiTokenResponse(api_token=token, token_id=token_id, expires_in_days=expires_days)
+
+
+@router.get("/mcp-tokens", response_model=MCPTokenListResponse)
+async def list_mcp_tokens(
+    current_user: CurrentUser = Depends(get_current_user_dependency),
+):
+    """
+    現在のユーザーが発行したMCPトークンの一覧を返す。
+    トークン本体は返さず、メタ情報のみ返却する。
+    """
+    db = SessionLocal()
+    try:
+        tokens = (
+            db.query(MCPToken)
+            .filter(MCPToken.user_id == current_user.user_id)
+            .order_by(MCPToken.created_at.desc())
+            .all()
+        )
+
+        return MCPTokenListResponse(
+            tokens=[
+                MCPTokenInfo(
+                    id=t.id,
+                    name=t.name,
+                    scope=t.scope,
+                    created_at=t.created_at.isoformat() if t.created_at else "",
+                    revoked_at=t.revoked_at.isoformat() if t.revoked_at else None,
+                )
+                for t in tokens
+            ]
+        )
+    finally:
+        db.close()
+
+
+@router.post("/mcp-token/revoke", status_code=status.HTTP_200_OK)
+async def revoke_mcp_token(
+    request: RevokeTokenRequest,
+    current_user: CurrentUser = Depends(get_current_user_dependency),
+):
+    """
+    MCPトークンを無効化する。
+    無効化されたトークンは以降のAPI呼び出しで拒否される。
+    """
+    db = SessionLocal()
+    try:
+        token_record = (
+            db.query(MCPToken)
+            .filter(
+                MCPToken.id == request.token_id,
+                MCPToken.user_id == current_user.user_id,
+            )
+            .first()
+        )
+
+        if token_record is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="トークンが見つかりません",
+            )
+
+        if token_record.revoked_at is not None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="このトークンは既に無効化されています",
+            )
+
+        from app.infrastructure.database.models import utc_now
+        token_record.revoked_at = utc_now()
+        db.commit()
+
+        return {"message": "トークンを無効化しました", "token_id": request.token_id}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("Failed to revoke MCP token")
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="トークンの無効化に失敗しました",
+        )
+    finally:
+        db.close()
 
 
 # --- プロフィール編集 ---

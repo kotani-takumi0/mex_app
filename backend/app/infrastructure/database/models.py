@@ -19,6 +19,8 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import DeclarativeBase, relationship
 
+from pgvector.sqlalchemy import Vector
+
 
 class Base(DeclarativeBase):
     """SQLAlchemy Base class"""
@@ -118,6 +120,9 @@ class DevLogEntry(Base):
     created_at = Column(DateTime(timezone=True), default=utc_now)
     # SQLAlchemyの予約語と衝突を避けるため属性名はmetadata_にする
     metadata_ = Column("metadata", JSON, default=dict)
+
+    # pgvector: 類似検索用のembeddingベクトル（1536次元, text-embedding-3-small）
+    embedding = Column(Vector(1536), nullable=True)
 
     # Relationships
     project = relationship("Project", back_populates="devlog_entries")
@@ -249,4 +254,25 @@ class Subscription(Base):
     __table_args__ = (
         Index("idx_subscriptions_user_id", "user_id"),
         Index("idx_subscriptions_stripe_customer_id", "stripe_customer_id"),
+    )
+
+
+class MCPToken(Base):
+    """
+    MCPトークン管理テーブル
+    MCP Server用の長寿命トークンを管理し、無効化（revoke）をサポートする
+    """
+    __tablename__ = "mcp_tokens"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    token_hash = Column(String(255), nullable=False)
+    name = Column(String(100), nullable=True)  # トークンの識別名（例: "MacBook Pro"）
+    scope = Column(String(100), nullable=False, default="devlog:write")
+    created_at = Column(DateTime(timezone=True), default=utc_now)
+    revoked_at = Column(DateTime(timezone=True), nullable=True)
+
+    __table_args__ = (
+        Index("idx_mcp_tokens_user_id", "user_id"),
+        Index("idx_mcp_tokens_token_hash", "token_hash"),
     )

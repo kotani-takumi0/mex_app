@@ -1,18 +1,6 @@
 """
-失敗パターン分析ドメイン
-"""
-from .pattern_analyzer import (
-    PatternAnalyzer,
-    PatternSummary,
-    ConcernPoint,
-    ProjectPhase,
-    BottleneckAnalysis,
-)
+失敗パターン分析ドメイン（非推奨）
 
-__all__ = [
-    "PatternAnalyzer",
-    "PatternSummary",
-    "ConcernPoint",
-    "ProjectPhase",
-    "BottleneckAnalysis",
-]
+ピボット前のCaseManagerに依存していた機能。
+ポートフォリオ向けの分析は別途実装予定。
+"""

@@ -1,10 +1,9 @@
 """
 TDD: 埋め込み生成サービスのテスト
-タスク2.1: 埋め込み生成サービスの実装
 
-Design.mdに基づく仕様:
-- OpenAI text-embedding-3-large APIを呼び出し
-- 3072次元のベクトルを生成
+ピボット後:
+- OpenAI text-embedding-3-small APIを使用（コスト最適化）
+- 1536次元のベクトルを生成
 - APIキー管理とレート制限対応
 - リトライロジックとフォールバック処理
 """
@@ -27,8 +26,8 @@ class TestEmbeddingConfig:
     def test_default_config_values(self):
         """デフォルト設定が正しい"""
         config = EmbeddingConfig()
-        assert config.model == "text-embedding-3-large"
-        assert config.dimensions == 3072
+        assert config.model == "text-embedding-3-small"
+        assert config.dimensions == 1536
         assert config.max_retries == 3
         assert config.retry_delay == 1.0
 

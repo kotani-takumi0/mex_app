@@ -89,15 +89,15 @@ class TestTokenPayload:
         """ペイロードにユーザーIDが含まれる"""
         from app.auth.jwt import TokenPayload
 
-        payload = TokenPayload(sub="user123", tenant_id="tenant001")
+        payload = TokenPayload(sub="user123", plan="pro")
         assert payload.sub == "user123"
 
-    def test_token_payload_has_tenant_id(self):
-        """ペイロードにテナントIDが含まれる"""
+    def test_token_payload_has_plan(self):
+        """ペイロードにプランが含まれる"""
         from app.auth.jwt import TokenPayload
 
-        payload = TokenPayload(sub="user123", tenant_id="tenant001")
-        assert payload.tenant_id == "tenant001"
+        payload = TokenPayload(sub="user123", plan="pro")
+        assert payload.plan == "pro"
 
 
 class TestAuthDependency:
@@ -110,12 +110,12 @@ class TestAuthDependency:
 
         service = JWTService()
         token = service.create_access_token(
-            data={"sub": "user123", "tenant_id": "tenant001"}
+            data={"sub": "user123", "plan": "free"}
         )
         # Authorization headerのフォーマットでテスト
         user = get_current_user(f"Bearer {token}")
         assert user.user_id == "user123"
-        assert user.tenant_id == "tenant001"
+        assert user.plan == "free"
 
     def test_get_current_user_without_bearer_raises_error(self):
         """Bearerプレフィックスがない場合エラー"""

@@ -6,42 +6,42 @@
  * SaaSらしい信頼感のあるデザインを実現。
  */
 .landing-page {
-  --landing-ink: #1f1b16;
-  --landing-ink-soft: #4b433a;
-  --landing-muted: #6f665c;
-  --landing-paper: #f7f2e8;
-  --landing-paper-2: #efe5d7;
-  --landing-paper-3: #e7dbc9;
-  --landing-accent: #2f5d50;
-  --landing-accent-strong: #24493f;
-  --landing-warm: #c8673e;
-  --landing-warm-dark: #a95533;
-  --landing-border: #e2d6c6;
+  --landing-ink: #3b2f24;
+  --landing-ink-soft: #5a4a3d;
+  --landing-muted: #7a6859;
+  --landing-paper: #fff9f1;
+  --landing-paper-2: #f4e8d8;
+  --landing-paper-3: #ead8c5;
+  --landing-accent: #8a5f3f;
+  --landing-accent-strong: #6f4630;
+  --landing-warm: #c48a5e;
+  --landing-warm-dark: #ad744b;
+  --landing-border: #e3d3c1;
 
   --bg-primary: var(--landing-paper);
-  --bg-secondary: #f1e7d8;
+  --bg-secondary: #f6ecdf;
   --text-primary: var(--landing-ink);
   --text-secondary: var(--landing-ink-soft);
   --text-tertiary: var(--landing-muted);
   --text-inverse: #fffaf2;
-  --border-color: #d6c9b8;
+  --border-color: #d9c8b6;
   --border-color-light: var(--landing-border);
 
-  --color-primary-50: #edf3ef;
-  --color-primary-100: #d8e5dd;
-  --color-primary-200: #c2d6cb;
-  --color-primary-300: #a7c1b3;
-  --color-primary-400: #8eac9c;
-  --color-primary-500: #739282;
-  --color-primary-600: #5a7566;
-  --color-primary-700: #3f5b4d;
-  --color-primary-800: #2f463b;
-  --color-primary-900: #25372f;
+  --color-primary-50: #fbf6ee;
+  --color-primary-100: #f5eadb;
+  --color-primary-200: #ead7c0;
+  --color-primary-300: #ddc2a2;
+  --color-primary-400: #cfab86;
+  --color-primary-500: #bf936b;
+  --color-primary-600: #a87a53;
+  --color-primary-700: #8a5f3f;
+  --color-primary-800: #6d4830;
+  --color-primary-900: #553626;
 
-  --gradient-primary: linear-gradient(140deg, #2f5d50 0%, #24493f 100%);
-  --gradient-hero: linear-gradient(180deg, #f7f2e8 0%, #f1e6d6 45%, #ffffff 100%);
-  --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(247, 242, 232, 1) 100%);
-  --shadow-colored: 0 10px 24px rgba(47, 93, 80, 0.18);
+  --gradient-primary: linear-gradient(140deg, var(--landing-accent) 0%, var(--landing-accent-strong) 100%);
+  --gradient-hero: linear-gradient(180deg, #fff9f1 0%, #f4e8d8 45%, #ffffff 100%);
+  --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 249, 241, 1) 100%);
+  --shadow-colored: 0 10px 24px rgba(138, 95, 63, 0.18);
 
   --landing-font-body: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
   --landing-font-display: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", "Times New Roman", serif;
@@ -116,8 +116,8 @@
   left: -25%;
   width: 150%;
   height: 150%;
-  background: radial-gradient(ellipse at 20% 30%, rgba(200, 103, 62, 0.18) 0%, transparent 60%),
-              radial-gradient(ellipse at 80% 20%, rgba(47, 93, 80, 0.14) 0%, transparent 55%);
+  background: radial-gradient(ellipse at 20% 30%, rgba(196, 138, 94, 0.18) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 20%, rgba(138, 95, 63, 0.14) 0%, transparent 55%);
   pointer-events: none;
 }
 
@@ -175,14 +175,14 @@
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
   transition: all var(--transition-base);
-  box-shadow: 0 12px 26px rgba(200, 103, 62, 0.25);
+  box-shadow: 0 12px 26px rgba(196, 138, 94, 0.25);
   animation: fadeInUp 0.7s ease 0.2s both;
 }
 
 .cta-button:hover {
   transform: translateY(-2px);
   background-color: var(--landing-warm-dark);
-  box-shadow: 0 16px 32px rgba(200, 103, 62, 0.3);
+  box-shadow: 0 16px 32px rgba(196, 138, 94, 0.3);
 }
 
 .cta-button:active {
@@ -333,7 +333,7 @@
 }
 
 .pricing-card.featured:hover {
-  box-shadow: 0 8px 30px rgba(47, 93, 80, 0.28);
+  box-shadow: 0 8px 30px rgba(138, 95, 63, 0.28);
 }
 
 .pricing-badge {

@@ -20,8 +20,6 @@ class TestSettings:
         settings = Settings()
         assert settings.app_env == "development"
         assert settings.debug is True
-        assert settings.qdrant_host == "localhost"
-        assert settings.qdrant_port == 6333
 
     def test_get_settings_returns_singleton(self):
         """get_settingsがシングルトンを返す"""

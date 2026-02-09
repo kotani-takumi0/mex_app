@@ -5,8 +5,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {
-  LuArrowRight,
   LuCheck,
+  LuHardHat,
   LuLoader,
   LuPlus,
   LuSparkles,
@@ -146,10 +146,10 @@ export const ProjectDetailPage: React.FC = () => {
         title={project.title}
         description={project.description || 'プロジェクト概要を追加してください。'}
         action={
-          <button className="quiz-link" onClick={() => navigate(`/projects/${project.id}/quiz`)}>
-            クイズに挑戦
-            <LuArrowRight size={16} />
-          </button>
+          <span className="quiz-link quiz-link--disabled">
+            <LuHardHat size={16} />
+            クイズ機能（作成中）
+          </span>
         }
       />
 

@@ -1,6 +1,6 @@
 """
-TDD: フロントエンド・バックエンド統合テスト
-タスク6.1: フロントエンド・バックエンド統合
+フロントエンド・バックエンド統合テスト
+ピボット後のポートフォリオアプリ向けに更新
 """
 import pytest
 from fastapi.testclient import TestClient
@@ -53,7 +53,7 @@ class TestAPIEndpointsIntegration:
         """認証ヘッダー"""
         service = JWTService()
         token = service.create_access_token(
-            data={"sub": "test-user", "tenant_id": "test-tenant"}
+            data={"sub": "test-user", "plan": "free"}
         )
         return {"Authorization": f"Bearer {token}"}
 
@@ -63,36 +63,18 @@ class TestAPIEndpointsIntegration:
         assert response.status_code == 200
         assert response.json()["status"] == "healthy"
 
-    def test_draft_reviews_endpoint_accessible(self, client):
-        """ドラフトレビューエンドポイントにアクセス可能"""
+    def test_auth_register_endpoint_accessible(self, client):
+        """認証登録エンドポイントにアクセス可能"""
         response = client.post(
-            "/api/draft-reviews",
+            "/api/auth/register",
             json={
-                "draft_id": "test-001",
-                "purpose": "テスト目的",
-                "target_market": "テスト市場",
-                "business_model": "テストモデル",
+                "email": "test@example.com",
+                "password": "testpassword123",
+                "display_name": "Test User",
             },
         )
-        # 500は内部エラー（モック未設定）、200は成功
-        assert response.status_code in [200, 500]
-
-    def test_gate_reviews_agenda_endpoint_accessible(self, client):
-        """ゲートレビューアジェンダエンドポイントにアクセス可能"""
-        response = client.post(
-            "/api/gate-reviews/agenda",
-            json={
-                "project_id": "proj-001",
-                "current_phase": "validation",
-                "hypothesis_status": [],
-            },
-        )
-        assert response.status_code in [200, 500]
-
-    def test_postmortems_template_endpoint_accessible(self, client):
-        """ポストモーテムテンプレートエンドポイントにアクセス可能"""
-        response = client.get("/api/postmortems/template/proj-001")
-        assert response.status_code in [200, 404, 500]
+        # 201（成功）、409（重複）、503（DB未起動）のいずれか
+        assert response.status_code in [201, 409, 503]
 
 
 class TestErrorHandling:
@@ -113,10 +95,10 @@ class TestErrorHandling:
     def test_422_validation_error_returns_json(self, client):
         """422バリデーションエラーはJSONを返す"""
         response = client.post(
-            "/api/draft-reviews",
+            "/api/auth/register",
             json={
-                # required fieldsが不足
-                "draft_id": "test-001",
+                # required fieldsが不足（emailのみ）
+                "email": "test@example.com",
             },
         )
         assert response.status_code == 422
@@ -131,30 +113,25 @@ class TestErrorHandling:
         assert "detail" in data
 
 
-class TestTenantIsolation:
-    """テナント分離のテスト"""
+class TestTokenIntegrity:
+    """トークン整合性のテスト"""
 
-    @pytest.fixture
-    def client(self):
-        """テストクライアント"""
-        return TestClient(app)
-
-    def test_token_contains_tenant_id(self):
-        """トークンにテナントIDが含まれる"""
+    def test_token_contains_plan(self):
+        """トークンにプランが含まれる"""
         service = JWTService()
         token = service.create_access_token(
-            data={"sub": "user123", "tenant_id": "tenant-abc"}
+            data={"sub": "user123", "plan": "pro"}
         )
         payload = service.decode_token(token)
-        assert payload["tenant_id"] == "tenant-abc"
+        assert payload["plan"] == "pro"
 
-    def test_different_tenants_get_different_tokens(self):
-        """異なるテナントは異なるトークンを取得"""
+    def test_different_plans_get_different_tokens(self):
+        """異なるプランは異なるトークンを取得"""
         service = JWTService()
         token1 = service.create_access_token(
-            data={"sub": "user1", "tenant_id": "tenant-a"}
+            data={"sub": "user1", "plan": "free"}
         )
         token2 = service.create_access_token(
-            data={"sub": "user1", "tenant_id": "tenant-b"}
+            data={"sub": "user1", "plan": "pro"}
         )
         assert token1 != token2

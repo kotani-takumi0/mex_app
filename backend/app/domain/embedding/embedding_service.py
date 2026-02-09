@@ -48,8 +48,8 @@ class EmbeddingService:
     """
     埋め込み生成サービス
 
-    OpenAI text-embedding-3-large APIを使用してテキストから
-    3072次元のベクトルを生成する。
+    OpenAI text-embedding-3-small APIを使用してテキストから
+    1536次元のベクトルを生成する。コスト最適化のためsmallモデルを使用。
     """
 
     def __init__(

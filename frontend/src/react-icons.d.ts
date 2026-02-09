@@ -38,6 +38,7 @@ declare module 'react-icons/lu' {
   export const LuClipboardList: IconType;
   export const LuArrowRight: IconType;
   export const LuTag: IconType;
+  export const LuHardHat: IconType;
 }
 
 declare module 'react-icons' {

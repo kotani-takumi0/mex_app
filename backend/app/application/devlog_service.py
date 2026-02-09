@@ -1,8 +1,12 @@
 """開発ログ管理サービス"""
+import logging
 from dataclasses import dataclass, field
 
 from app.infrastructure.database.session import SessionLocal
 from app.infrastructure.database.models import DevLogEntry, Project
+from app.domain.security.secret_detector import get_secret_detector
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -71,13 +75,24 @@ class DevLogService:
         try:
             self._ensure_project(db, user_id, project_id)
 
+            # シークレット検出・マスキング
+            detector = get_secret_detector()
+            masked_summary = detector.mask(data.summary)
+            masked_detail = detector.mask(data.detail) if data.detail else data.detail
+
+            if masked_summary != data.summary or masked_detail != data.detail:
+                logger.warning(
+                    "シークレットを検出しマスキングしました (user_id=%s, project_id=%s)",
+                    user_id, project_id,
+                )
+
             entry = DevLogEntry(
                 project_id=project_id,
                 user_id=user_id,
                 source=data.source or "manual",
                 entry_type=data.entry_type,
-                summary=data.summary,
-                detail=data.detail,
+                summary=masked_summary,
+                detail=masked_detail,
                 technologies=data.technologies,
                 ai_tool=data.ai_tool,
                 metadata_=(data.metadata or {}),

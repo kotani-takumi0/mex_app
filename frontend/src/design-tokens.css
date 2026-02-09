@@ -6,29 +6,29 @@
  * SaaS品質のUIを実現するための基盤を強化
  */
 :root {
-  /* ===== カラーパレット: Primary (Indigo系) ===== */
-  --color-primary-50: #e8eaf6;
-  --color-primary-100: #c5cae9;
-  --color-primary-200: #9fa8da;
-  --color-primary-300: #7986cb;
-  --color-primary-400: #5c6bc0;
-  --color-primary-500: #3f51b5;
-  --color-primary-600: #3949ab;
-  --color-primary-700: #303f9f;
-  --color-primary-800: #283593;
-  --color-primary-900: #1a237e;
+  /* ===== カラーパレット: Primary (Bright Beige) ===== */
+  --color-primary-50: #fbf6ee;
+  --color-primary-100: #f5eadb;
+  --color-primary-200: #ead7c0;
+  --color-primary-300: #ddc2a2;
+  --color-primary-400: #cfab86;
+  --color-primary-500: #bf936b;
+  --color-primary-600: #a87a53;
+  --color-primary-700: #8a5f3f;
+  --color-primary-800: #6d4830;
+  --color-primary-900: #553626;
 
-  /* ===== カラーパレット: Gray ===== */
-  --color-gray-50: #fafafa;
-  --color-gray-100: #f5f5f5;
-  --color-gray-200: #eeeeee;
-  --color-gray-300: #e0e0e0;
-  --color-gray-400: #bdbdbd;
-  --color-gray-500: #9e9e9e;
-  --color-gray-600: #757575;
-  --color-gray-700: #616161;
-  --color-gray-800: #424242;
-  --color-gray-900: #212121;
+  /* ===== カラーパレット: Gray (Warm) ===== */
+  --color-gray-50: #faf6f0;
+  --color-gray-100: #f2ebe2;
+  --color-gray-200: #e5d9cd;
+  --color-gray-300: #d2c2b2;
+  --color-gray-400: #b8a594;
+  --color-gray-500: #9c8776;
+  --color-gray-600: #7e695b;
+  --color-gray-700: #624f43;
+  --color-gray-800: #4a3a31;
+  --color-gray-900: #332820;
 
   /* ===== Semantic Colors ===== */
   --color-success-light: #e8f5e9;
@@ -48,20 +48,20 @@
   --color-info-dark: #1565c0;
 
   /* ===== 背景・テキスト・ボーダー ===== */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8f9fc;
+  --bg-primary: #fffaf2;
+  --bg-secondary: #f7f1e7;
   --bg-tertiary: var(--color-gray-100);
   --text-primary: var(--color-gray-900);
-  --text-secondary: var(--color-gray-600);
-  --text-tertiary: var(--color-gray-500);
+  --text-secondary: var(--color-gray-700);
+  --text-tertiary: var(--color-gray-600);
   --text-inverse: #ffffff;
   --border-color: var(--color-gray-300);
   --border-color-light: var(--color-gray-200);
 
   /* ===== グラデーション ===== */
-  --gradient-primary: linear-gradient(135deg, var(--color-primary-700) 0%, var(--color-primary-900) 100%);
-  --gradient-hero: linear-gradient(135deg, var(--color-primary-900) 0%, #311b92 50%, #4a148c 100%);
-  --gradient-card: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(248,249,252,1) 100%);
+  --gradient-primary: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-800) 100%);
+  --gradient-hero: linear-gradient(135deg, #fffaf2 0%, #f3e6d5 55%, #e7d2bd 100%);
+  --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(247, 241, 231, 1) 100%);
   --gradient-gold: linear-gradient(135deg, #ffd700, #ffab00);
   --gradient-success: linear-gradient(135deg, #43a047, #2e7d32);
 
@@ -123,7 +123,7 @@
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08), 0 4px 6px rgba(0, 0, 0, 0.04);
   --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.08), 0 10px 10px rgba(0, 0, 0, 0.03);
   --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.12);
-  --shadow-colored: 0 4px 14px rgba(26, 35, 126, 0.25);
+  --shadow-colored: 0 4px 14px rgba(168, 122, 83, 0.25);
   --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.05);
 
   /* ===== トランジション ===== */

@@ -1,12 +1,18 @@
 """
 認証依存関係
 個人開発版: tenant_idを削除し、planを追加
+MCPトークン無効化チェック対応
 """
+import hashlib
+import logging
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 
 from .jwt import JWTService, TokenExpiredError, InvalidTokenError
+
+logger = logging.getLogger(__name__)
 
 
 class AuthenticationError(Exception):
@@ -25,6 +31,37 @@ _jwt_service = JWTService()
 
 # HTTPBearerスキーム
 security = HTTPBearer(auto_error=False)
+
+
+def _is_token_revoked(token: str) -> bool:
+    """
+    トークンが無効化されていないか確認する。
+    MCPトークン（30日有効）のみDBに記録されるため、
+    DB記録がないトークン（通常のセッションJWT）はそのままパスする。
+    """
+    try:
+        from app.infrastructure.database.session import SessionLocal
+        from app.infrastructure.database.models import MCPToken
+
+        token_hash = hashlib.sha256(token.encode()).hexdigest()
+        db = SessionLocal()
+        try:
+            record = (
+                db.query(MCPToken)
+                .filter(MCPToken.token_hash == token_hash)
+                .first()
+            )
+            # DB記録なし → 通常JWT → revoke対象外
+            if record is None:
+                return False
+            # revoked_atが設定されていれば無効化済み
+            return record.revoked_at is not None
+        finally:
+            db.close()
+    except Exception:
+        # DB接続エラー等はフェイルオープン（トークンを許可）
+        logger.warning("Failed to check token revocation status", exc_info=True)
+        return False
 
 
 def get_current_user(authorization: str) -> CurrentUser:
@@ -47,12 +84,17 @@ def get_current_user(authorization: str) -> CurrentUser:
 
     try:
         payload = _jwt_service.decode_token(token)
-        return CurrentUser(
-            user_id=payload.get("sub", ""),
-            plan=payload.get("plan", "free"),
-        )
     except (TokenExpiredError, InvalidTokenError) as e:
         raise AuthenticationError(str(e))
+
+    # MCPトークン無効化チェック
+    if _is_token_revoked(token):
+        raise AuthenticationError("Token has been revoked")
+
+    return CurrentUser(
+        user_id=payload.get("sub", ""),
+        plan=payload.get("plan", "free"),
+    )
 
 
 async def get_current_user_dependency(

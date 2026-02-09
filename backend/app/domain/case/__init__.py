@@ -1,22 +1,5 @@
 """
-意思決定ケースドメイン
-"""
-from .case_manager import (
-    CaseManager,
-    CaseCreateInput,
-    DecisionCase,
-    SimilarCase,
-    FailurePatternTag,
-    CaseOutcome,
-    GoNoGoDecision,
-)
+意思決定ケースドメイン（非推奨）
 
-__all__ = [
-    "CaseManager",
-    "CaseCreateInput",
-    "DecisionCase",
-    "SimilarCase",
-    "FailurePatternTag",
-    "CaseOutcome",
-    "GoNoGoDecision",
-]
+ピボット前のDecisionCase機能。テーブルは003マイグレーションで削除済み。
+"""

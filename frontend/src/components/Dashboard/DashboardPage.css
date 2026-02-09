@@ -4,16 +4,16 @@
  */
 
 .dashboard-page {
-  --dashboard-bg: #f6f8fa;
-  --dashboard-card-bg: #ffffff;
-  --dashboard-border: #d0d7de;
-  --dashboard-border-subtle: #eaeef2;
-  --dashboard-text: #24292f;
-  --dashboard-muted: #57606a;
-  --dashboard-accent: #2da44e;
-  --dashboard-accent-hover: #2c974b;
-  --dashboard-accent-border: #1f883d;
-  --dashboard-shadow: 0 1px 0 rgba(27, 31, 36, 0.04);
+  --dashboard-bg: #f7f1e7;
+  --dashboard-card-bg: #fffaf2;
+  --dashboard-border: #d8c9ba;
+  --dashboard-border-subtle: #e8ddcf;
+  --dashboard-text: #332820;
+  --dashboard-muted: #6f5c4d;
+  --dashboard-accent: #b07b52;
+  --dashboard-accent-hover: #9b6a45;
+  --dashboard-accent-border: #8a5f3f;
+  --dashboard-shadow: 0 1px 0 rgba(51, 40, 32, 0.08);
 
   font-family: 'Noto Sans JP', var(--font-family-base);
   color: var(--dashboard-text);
@@ -143,8 +143,8 @@
 }
 
 .project-card:hover {
-  border-color: #afb8c1;
-  background: #f8fafc;
+  border-color: #c9b8a6;
+  background: #f9f2e8;
 }
 
 .project-card-header {
@@ -172,15 +172,15 @@
 }
 
 .status-badge.in_progress {
-  background: #fff8c5;
-  border-color: #d4a72c;
-  color: #9a6700;
+  background: #f3e5c4;
+  border-color: #c8a062;
+  color: #8a6a2b;
 }
 
 .status-badge.completed {
-  background: #dafbe1;
-  border-color: #1f883d;
-  color: #1a7f37;
+  background: #e6f1e6;
+  border-color: #8fb28b;
+  color: #3f6b45;
 }
 
 .status-badge.archived {
@@ -248,7 +248,7 @@
 
 .skill-bar-fill {
   height: 100%;
-  background: #0969da;
+  background: var(--dashboard-accent);
 }
 
 .skill-empty {
