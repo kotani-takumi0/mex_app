@@ -16,6 +16,7 @@ import { ProjectDetailPage } from './components/Projects/ProjectDetailPage';
 import { QuizPage } from './components/Quiz/QuizPage';
 import { PublicPortfolioPage } from './components/Portfolio/PublicPortfolioPage';
 import { PublicProjectDetailPage } from './components/Portfolio/PublicProjectDetailPage';
+import { SettingsPage } from './components/Settings/SettingsPage';
 import { UsernameSetupModal } from './components/common/UsernameSetupModal';
 import './App.css';
 
@@ -120,6 +121,16 @@ function AppRoutes() {
           <ProtectedRoute>
             <AuthenticatedLayout>
               <QuizPage />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <SettingsPage />
             </AuthenticatedLayout>
           </ProtectedRoute>
         }

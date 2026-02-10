@@ -29,6 +29,7 @@ declare module 'react-icons/lu' {
   export const LuDatabase: IconType;
   export const LuCheck: IconType;
   export const LuLoader: IconType;
+  export const LuCopy: IconType;
   export const LuCircleCheck: IconType;
   export const LuFolder: IconType;
   export const LuFolderKanban: IconType;
@@ -39,6 +40,9 @@ declare module 'react-icons/lu' {
   export const LuArrowRight: IconType;
   export const LuTag: IconType;
   export const LuHardHat: IconType;
+  export const LuUser: IconType;
+  export const LuKey: IconType;
+  export const LuSettings: IconType;
 }
 
 declare module 'react-icons' {

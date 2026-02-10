@@ -65,7 +65,7 @@ export const AuthPage: React.FC = () => {
         <Link to="/" className="auth-brand-link">
           <h1 className="auth-title">MEX App</h1>
         </Link>
-        <p className="auth-subtitle">個人開発アイデア壁打ちアプリ</p>
+        <p className="auth-subtitle">AI開発ポートフォリオプラットフォーム</p>
 
         <div className="auth-tabs">
           <button

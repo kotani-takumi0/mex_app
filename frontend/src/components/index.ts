@@ -8,3 +8,4 @@ export * from './Landing';
 export * from './Projects';
 export * from './Quiz';
 export * from './Portfolio';
+export * from './Settings';

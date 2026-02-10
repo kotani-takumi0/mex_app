@@ -2,7 +2,7 @@
  * 認証API
  */
 import { apiPost, apiGet, apiPut, setAuthToken } from './client';
-import { AuthResponse, User, ProfileUpdateRequest, ApiTokenResponse } from '../types';
+import { AuthResponse, User, ProfileUpdateRequest, ApiTokenResponse, MCPTokenListResponse } from '../types';
 
 interface RegisterRequest {
   email: string;
@@ -60,6 +60,28 @@ export async function updateProfile(
 /**
  * MCP用長寿命APIトークンを発行
  */
-export async function createApiToken(): Promise<{ data: ApiTokenResponse | null; error: string | null }> {
-  return apiPost<ApiTokenResponse, Record<string, never>>('/auth/api-token', {});
+export async function createApiToken(
+  name?: string
+): Promise<{ data: ApiTokenResponse | null; error: string | null }> {
+  const payload = name ? { name } : {};
+  return apiPost<ApiTokenResponse, typeof payload>('/auth/api-token', payload);
+}
+
+/**
+ * MCPトークン一覧を取得
+ */
+export async function listMcpTokens(): Promise<{ data: MCPTokenListResponse | null; error: string | null }> {
+  return apiGet<MCPTokenListResponse>('/auth/mcp-tokens');
+}
+
+/**
+ * MCPトークンを無効化
+ */
+export async function revokeMcpToken(
+  tokenId: string
+): Promise<{ data: { message: string; token_id: string } | null; error: string | null }> {
+  return apiPost<{ message: string; token_id: string }, { token_id: string }>(
+    '/auth/mcp-token/revoke',
+    { token_id: tokenId }
+  );
 }

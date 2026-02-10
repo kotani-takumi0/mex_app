@@ -54,7 +54,7 @@ export const DashboardPage: React.FC = () => {
         action={
           <button className="dashboard-cta" onClick={() => navigate('/projects/new')}>
             <LuPlus size={16} />
-            新規案件
+            新規プロジェクト
           </button>
         }
       />
@@ -66,7 +66,7 @@ export const DashboardPage: React.FC = () => {
               <div className="stat-icon">
                 <LuFolderKanban size={20} />
               </div>
-              <div className="stat-label">案件数</div>
+              <div className="stat-label">プロジェクト数</div>
               <div className="stat-value">{data.stats.total_projects}</div>
             </div>
             <div className="stat-card">
@@ -80,15 +80,15 @@ export const DashboardPage: React.FC = () => {
 
           <section className="dashboard-section">
             <div className="section-header">
-              <h2>最近の案件</h2>
+              <h2>最近のプロジェクト</h2>
             </div>
             {data.recent_projects.length === 0 ? (
               <EmptyState
                 icon={LuFolderKanban}
-                title="まだ案件がありません"
-                description="最初の案件を作成して開発記録を残しましょう。"
+                title="まだプロジェクトがありません"
+                description="最初のプロジェクトを作成して開発記録を残しましょう。"
                 action={{
-                  label: '新規案件を作成',
+                  label: '新規プロジェクトを作成',
                   onClick: () => navigate('/projects/new'),
                 }}
               />

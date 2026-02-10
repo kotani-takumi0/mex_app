@@ -117,7 +117,20 @@ export interface ProfileUpdateRequest {
 // APIトークンレスポンス
 export interface ApiTokenResponse {
   api_token: string;
+  token_id: string;
   expires_in_days: number;
+}
+
+export interface MCPTokenInfo {
+  id: string;
+  name: string | null;
+  scope: string;
+  created_at: string;
+  revoked_at: string | null;
+}
+
+export interface MCPTokenListResponse {
+  tokens: MCPTokenInfo[];
 }
 
 // ダッシュボード

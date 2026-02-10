@@ -6,13 +6,14 @@
  */
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LuLayoutDashboard, LuPlus, LuLogOut, LuMenu, LuX } from 'react-icons/lu';
+import { LuLayoutDashboard, LuPlus, LuLogOut, LuMenu, LuX, LuSettings } from 'react-icons/lu';
 import { useAuth } from '../../contexts/AuthContext';
 import './Navigation.css';
 
 const pages = [
   { path: '/dashboard', label: 'ダッシュボード', icon: LuLayoutDashboard },
   { path: '/projects/new', label: '新規プロジェクト', icon: LuPlus },
+  { path: '/settings', label: '設定', icon: LuSettings },
 ];
 
 export const Navigation: React.FC = () => {
