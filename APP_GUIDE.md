@@ -47,15 +47,22 @@ MCPサーバーは `~/.mex/config.json` の `api_key` にトークンを設定�
 }
 ```
 
-MCPサーバー起動:
+MCPサーバーのセットアップ:
 ```bash
-cd mcp-server
-npm install
-npm run build
-npm run start
+npx mex-setup
 ```
 
-MCPクライアント（例: Claude Code）への登録方法は `MCP_SERVER.md` を参照してください。
+Claude Code の MCP 設定（`~/.claude/mcp_servers.json`）に登録:
+```json
+{
+  "mex": {
+    "command": "npx",
+    "args": ["mex-mcp-server"]
+  }
+}
+```
+
+詳しい手順は `MCP_SERVER.md` を参照してください。
 
 ### 無効化・再発行
 - `/settings` からトークンを無効化できます。

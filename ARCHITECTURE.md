@@ -821,9 +821,8 @@ AI開発過程の1ステップを記録する。AIコーディングツールが
 ```json
 {
   "mex": {
-    "command": "node",
-    "args": ["/path/to/mex_app/mcp-server/dist/index.js"],
-    "env": {}
+    "command": "npx",
+    "args": ["mex-mcp-server"]
   }
 }
 ```

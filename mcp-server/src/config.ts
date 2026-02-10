@@ -28,3 +28,28 @@ export function loadConfig(): MexConfig {
     ai_tool: parsed.ai_tool || 'claude_code',
   };
 }
+
+export interface LocalProjectConfig {
+  project_id: string;
+}
+
+export function loadLocalConfig(): LocalProjectConfig | null {
+  let dir = process.cwd();
+  while (true) {
+    const candidate = path.join(dir, '.mex.json');
+    if (fs.existsSync(candidate)) {
+      try {
+        const raw = fs.readFileSync(candidate, 'utf-8');
+        const parsed = JSON.parse(raw);
+        if (parsed.project_id) return { project_id: parsed.project_id };
+      } catch {
+        // ignore parse errors
+      }
+      return null;
+    }
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return null;
+}

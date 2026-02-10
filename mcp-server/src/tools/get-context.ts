@@ -1,4 +1,5 @@
 import { MexApiClient, DevLogEntryResponse } from '../api-client.js';
+import { LocalProjectConfig } from '../config.js';
 
 export const getProjectContextTool = {
   name: 'get_project_context',
@@ -11,7 +12,7 @@ export const getProjectContextTool = {
         description: 'プロジェクトID',
       },
     },
-    required: ['project_id'],
+    required: [],
   },
 };
 
@@ -20,10 +21,18 @@ export interface ProjectContextResult {
   devlogs: DevLogEntryResponse[];
 }
 
-export async function handleGetProjectContext(client: MexApiClient, projectId: string): Promise<ProjectContextResult> {
+export async function handleGetProjectContext(
+  client: MexApiClient,
+  projectId: string | undefined,
+  localConfig: LocalProjectConfig | null,
+): Promise<ProjectContextResult> {
+  const resolvedId = projectId ?? localConfig?.project_id;
+  if (!resolvedId) {
+    throw new Error('project_id が指定されておらず、.mex.json も見つかりません。project_id を指定するか、プロジェクトルートに .mex.json を配置してください。');
+  }
   const [project, devlogs] = await Promise.all([
-    client.getProject(projectId),
-    client.getDevLogs(projectId, 10),
+    client.getProject(resolvedId),
+    client.getDevLogs(resolvedId, 10),
   ]);
 
   return {

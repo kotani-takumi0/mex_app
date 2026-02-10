@@ -1,8 +1,9 @@
+#!/usr/bin/env node
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 
-import { loadConfig } from './config.js';
+import { loadConfig, loadLocalConfig } from './config.js';
 import { MexApiClient } from './api-client.js';
 import { recordDevActivityTool, handleRecordDevActivity } from './tools/record-activity.js';
 import { listProjectsTool, handleListProjects } from './tools/list-projects.js';
@@ -10,6 +11,7 @@ import { getProjectContextTool, handleGetProjectContext } from './tools/get-cont
 
 async function main() {
   const config = loadConfig();
+  const localConfig = loadLocalConfig();
   const client = new MexApiClient(config);
 
   const server = new Server(
@@ -36,7 +38,7 @@ async function main() {
     try {
       switch (name) {
         case 'record_dev_activity': {
-          const result = await handleRecordDevActivity(client, config, args as any);
+          const result = await handleRecordDevActivity(client, config, args as any, localConfig);
           return {
             content: [
               {
@@ -58,8 +60,8 @@ async function main() {
           };
         }
         case 'get_project_context': {
-          const projectId = (args as { project_id: string }).project_id;
-          const result = await handleGetProjectContext(client, projectId);
+          const projectId = (args as { project_id?: string }).project_id;
+          const result = await handleGetProjectContext(client, projectId, localConfig);
           return {
             content: [
               {

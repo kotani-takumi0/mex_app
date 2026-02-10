@@ -17,40 +17,30 @@ MCP サーバーは MEX App の API と通信し、以下の操作を AI ツー�
 
 ## セットアップ
 
-1. 依存関係をインストール
+### 1. セットアップ CLI を実行
+
+対話形式でログイン → トークン取得 → `~/.mex/config.json` 作成をすべて自動で行います。
 
 ```bash
-cd mcp-server
-npm install
+npx mex-setup
 ```
 
-2. ビルド
+> 手動で設定する場合は `~/.mex/config.json` を以下の内容で作成してください：
+>
+> ```json
+> {
+>   "api_url": "http://localhost:8000/api",
+>   "api_key": "<your_api_key>",
+>   "ai_tool": "claude_code"
+> }
+> ```
+>
+> - `api_url` と `api_key` は必須です。
+> - `ai_tool` は省略可能で、未指定時は `claude_code` が使われます。
 
-```bash
-npm run build
-```
+### 2. MCP サーバーを登録
 
-3. 設定ファイルを作成
-
-`~/.mex/config.json` を作成してください。
-
-```json
-{
-  "api_url": "http://localhost:8000/api",
-  "api_key": "<your_api_key>",
-  "ai_tool": "claude_code"
-}
-```
-
-- `api_url` と `api_key` は必須です。
-- `ai_tool` は省略可能で、未指定時は `claude_code` が使われます。
-
-## 起動方法
-
-```bash
-cd mcp-server
-npm run start
-```
+Claude Code の MCP 設定に登録すれば、自動で起動されます（下記「Claude Code 連携例」参照）。
 
 ## 使い方の流れ（ざっくり）
 
@@ -63,14 +53,13 @@ MCP は「AI が使えるツールを提供する仕組み」です。
 
 ## Claude Code 連携例
 
-`.claude/mcp_servers.json` に以下を追加します。
+`~/.claude/mcp_servers.json` に以下を追加します。
 
 ```json
 {
   "mex": {
-    "command": "node",
-    "args": ["/path/to/mex_app/mcp-server/dist/index.js"],
-    "env": {}
+    "command": "npx",
+    "args": ["mex-mcp-server"]
   }
 }
 ```

@@ -5,8 +5,8 @@
       "args": ["@playwright/mcp@latest"]
     },
     "mex": {
-      "command": "node",
-      "args": ["mcp-server/dist/index.js"]
+      "command": "npx",
+      "args": ["mex-mcp-server"]
     }
   }
 }

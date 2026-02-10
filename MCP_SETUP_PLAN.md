@@ -68,33 +68,20 @@ cd backend
 uvicorn app.main:app --reload
 ```
 
-### タスク2: `.claude/mcp_servers.json` のパスを修正する
+### タスク2: `.claude/mcp_servers.json` を設定する
 
-#### 現在の内容（`.claude/mcp_servers.json`）
-
-```json
-{
-  "mex": {
-    "command": "node",
-    "args": ["/path/to/mex_app/mcp-server/dist/index.js"],
-    "env": {}
-  }
-}
-```
-
-#### 修正後
+#### 設定内容（`.claude/mcp_servers.json`）
 
 ```json
 {
   "mex": {
-    "command": "node",
-    "args": ["/home/takumi/mex_app/mcp-server/dist/index.js"],
-    "env": {}
+    "command": "npx",
+    "args": ["mex-mcp-server"]
   }
 }
 ```
 
-`/path/to/` → `/home/takumi/` に変更するだけ。
+npm に公開済みのため、`npx` で直接実行できる。パス指定は不要。
 
 ---
 

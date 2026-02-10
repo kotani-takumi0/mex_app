@@ -90,15 +90,16 @@ npm start
 ```
 
 **MCP Server (Optional)**
-AIツールから開発ログを自動記録する場合は `mcp-server` を起動します。
+AIツールから開発ログを自動記録する場合は MCP サーバーを設定します。
 詳しい手順は `MCP_SERVER.md` を参照してください。
 トークンはログイン後、`/settings` から発行できます。
 
 ```bash
-cd mcp-server
-npm install
-npm run build
-npm run start
+# セットアップ（対話形式でトークン取得 + 設定ファイル作成）
+npx mex-setup
+
+# Claude Code の MCP 設定に登録（~/.claude/mcp_servers.json）
+# { "mex": { "command": "npx", "args": ["mex-mcp-server"] } }
 ```
 
 **Dev Commands**

@@ -1,5 +1,5 @@
 import { MexApiClient, DevLogEntryResponse } from '../api-client.js';
-import { MexConfig } from '../config.js';
+import { MexConfig, LocalProjectConfig } from '../config.js';
 
 export const recordDevActivityTool = {
   name: 'record_dev_activity',
@@ -30,12 +30,12 @@ export const recordDevActivityTool = {
         description: 'この作業で使用した技術名',
       },
     },
-    required: ['project_id', 'entry_type', 'summary', 'technologies'],
+    required: ['entry_type', 'summary', 'technologies'],
   },
 };
 
 export interface RecordDevActivityArgs {
-  project_id: string;
+  project_id?: string;
   entry_type: string;
   summary: string;
   detail?: string;
@@ -46,8 +46,13 @@ export async function handleRecordDevActivity(
   client: MexApiClient,
   config: MexConfig,
   args: RecordDevActivityArgs,
+  localConfig: LocalProjectConfig | null,
 ): Promise<DevLogEntryResponse> {
-  return client.recordDevLog(args.project_id, {
+  const projectId = args.project_id ?? localConfig?.project_id;
+  if (!projectId) {
+    throw new Error('project_id が指定されておらず、.mex.json も見つかりません。project_id を指定するか、プロジェクトルートに .mex.json を配置してください。');
+  }
+  return client.recordDevLog(projectId, {
     source: 'mcp',
     entry_type: args.entry_type,
     summary: args.summary,
