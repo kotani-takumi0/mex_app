@@ -10,6 +10,25 @@ import { PublicProjectDetail } from '../../types';
 import { EmptyState } from '../common/EmptyState';
 import './PublicProjectDetailPage.css';
 
+const getCategoryLabel = (
+  category: PublicProjectDetail['devlog'][number]['category']
+): string => {
+  switch (category) {
+    case 'tutorial':
+      return 'チュートリアル';
+    case 'design':
+      return '設計';
+    case 'debug_guide':
+      return 'デバッグガイド';
+    case 'learning':
+      return '学習ノート';
+    case 'reference':
+      return 'リファレンス';
+    default:
+      return 'リファレンス';
+  }
+};
+
 export const PublicProjectDetailPage: React.FC = () => {
   const { username, projectId } = useParams();
   const [detail, setDetail] = useState<PublicProjectDetail | null>(null);
@@ -58,18 +77,18 @@ export const PublicProjectDetailPage: React.FC = () => {
       </header>
 
       <section className="public-detail-section">
-        <h2>開発ログ</h2>
+        <h2>ドキュメント</h2>
         {devlog.length === 0 ? (
-          <div className="public-detail-empty">開発ログがまだありません。</div>
+          <div className="public-detail-empty">ドキュメントがまだありません。</div>
         ) : (
           <div className="public-devlog-list">
             {devlog.map((entry, index) => (
-              <div key={`${entry.summary}-${index}`} className="public-devlog-card">
+              <div key={`${entry.title}-${index}`} className="public-devlog-card">
                 <div className="public-devlog-header">
-                  <span>{entry.entry_type}</span>
+                  <span>{getCategoryLabel(entry.category)}</span>
                   <span>{new Date(entry.created_at).toLocaleDateString('ja-JP')}</span>
                 </div>
-                <p>{entry.summary}</p>
+                <p>{entry.title}</p>
                 <div className="public-devlog-tech">
                   {entry.technologies.map((tech) => (
                     <span key={tech} className="tech-pill">

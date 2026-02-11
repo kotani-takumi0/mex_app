@@ -106,6 +106,16 @@ function AppRoutes() {
         }
       />
       <Route
+        path="/projects/:id/edit"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <ProjectFormPage />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/projects/:id"
         element={
           <ProtectedRoute>

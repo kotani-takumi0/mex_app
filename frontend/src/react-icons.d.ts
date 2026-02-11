@@ -43,6 +43,8 @@ declare module 'react-icons/lu' {
   export const LuUser: IconType;
   export const LuKey: IconType;
   export const LuSettings: IconType;
+  export const LuSquarePen: IconType;
+  export const LuExternalLink: IconType;
 }
 
 declare module 'react-icons' {

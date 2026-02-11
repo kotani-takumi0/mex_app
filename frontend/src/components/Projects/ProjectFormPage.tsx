@@ -1,11 +1,13 @@
 /**
- * プロジェクト新規作成ページ
+ * プロジェクト作成/編集ページ
+ * - id パラメータなし → 新規作成モード
+ * - id パラメータあり → 編集モード（既存データをプリフィル）
  */
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { LuLoader } from 'react-icons/lu';
-import { createProject } from '../../api/projects';
+import { createProject, getProject, updateProject } from '../../api/projects';
 import { PageHeader } from '../common/PageHeader';
 import './ProjectFormPage.css';
 
@@ -16,7 +18,11 @@ const statusOptions = [
 ];
 
 export const ProjectFormPage: React.FC = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
+  const isEditMode = Boolean(id);
+
+  const [isLoadingProject, setIsLoadingProject] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -25,6 +31,33 @@ export const ProjectFormPage: React.FC = () => {
   const [demoUrl, setDemoUrl] = useState('');
   const [status, setStatus] = useState('in_progress');
   const [isPublic, setIsPublic] = useState(false);
+
+  // 編集モード: 既存プロジェクトを取得してフォームにプリフィル
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchProject = async () => {
+      setIsLoadingProject(true);
+      const { data, error } = await getProject(id);
+      if (error) {
+        toast.error(error);
+        navigate('/dashboard');
+        return;
+      }
+      if (data) {
+        setTitle(data.title);
+        setDescription(data.description || '');
+        setTechnologies(data.technologies.join(', '));
+        setRepositoryUrl(data.repository_url || '');
+        setDemoUrl(data.demo_url || '');
+        setStatus(data.status);
+        setIsPublic(data.is_public);
+      }
+      setIsLoadingProject(false);
+    };
+
+    fetchProject();
+  }, [id, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +68,7 @@ export const ProjectFormPage: React.FC = () => {
       .map((tech) => tech.trim())
       .filter((tech) => tech.length > 0);
 
-    const { data, error } = await createProject({
+    const payload = {
       title,
       description: description || undefined,
       technologies: techList.length ? techList : undefined,
@@ -43,23 +76,49 @@ export const ProjectFormPage: React.FC = () => {
       demo_url: demoUrl || undefined,
       status,
       is_public: isPublic,
-    });
+    };
 
-    if (error) {
-      toast.error(error);
-    } else if (data) {
-      toast.success('プロジェクトを作成しました');
-      navigate(`/projects/${data.id}`);
+    if (isEditMode && id) {
+      const { data, error } = await updateProject(id, payload);
+      if (error) {
+        toast.error(error);
+      } else if (data) {
+        toast.success('プロジェクトを更新しました');
+        navigate(`/projects/${data.id}`);
+      }
+    } else {
+      const { data, error } = await createProject(payload);
+      if (error) {
+        toast.error(error);
+      } else if (data) {
+        toast.success('プロジェクトを作成しました');
+        navigate(`/projects/${data.id}`);
+      }
     }
 
     setIsSubmitting(false);
   };
 
+  if (isLoadingProject) {
+    return (
+      <div className="page-container">
+        <PageHeader title="プロジェクト" description="読み込み中..." />
+      </div>
+    );
+  }
+
+  const submitLabel = isEditMode ? 'プロジェクトを更新' : 'プロジェクトを作成';
+  const submittingLabel = isEditMode ? '更新中...' : '作成中...';
+
   return (
     <div className="page-container">
       <PageHeader
-        title="新規プロジェクト"
-        description="ポートフォリオに追加するプロジェクトを登録します。"
+        title={isEditMode ? 'プロジェクト編集' : '新規プロジェクト'}
+        description={
+          isEditMode
+            ? 'プロジェクトの情報を編集します。'
+            : 'ポートフォリオに追加するプロジェクトを登録します。'
+        }
       />
 
       <form className="project-form" onSubmit={handleSubmit}>
@@ -144,10 +203,10 @@ export const ProjectFormPage: React.FC = () => {
           {isSubmitting ? (
             <>
               <LuLoader className="submit-btn-icon" size={18} />
-              作成中...
+              {submittingLabel}
             </>
           ) : (
-            'プロジェクトを作成'
+            submitLabel
           )}
         </button>
       </form>

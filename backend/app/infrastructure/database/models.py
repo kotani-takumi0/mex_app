@@ -101,8 +101,8 @@ class Project(Base):
 
 class DevLogEntry(Base):
     """
-    開発ログエントリ
-    MCPサーバーまたは手動入力から記録される開発過程の1ステップ
+    技術ドキュメント
+    MCPサーバーまたは手動入力から保存される技術ドキュメント
     """
     __tablename__ = "devlog_entries"
 

@@ -73,7 +73,7 @@ export const DashboardPage: React.FC = () => {
               <div className="stat-icon">
                 <LuBookOpen size={20} />
               </div>
-              <div className="stat-label">開発記録</div>
+              <div className="stat-label">ドキュメント</div>
               <div className="stat-value">{data.stats.total_devlog_entries}</div>
             </div>
           </section>
@@ -86,7 +86,7 @@ export const DashboardPage: React.FC = () => {
               <EmptyState
                 icon={LuFolderKanban}
                 title="まだプロジェクトがありません"
-                description="最初のプロジェクトを作成して開発記録を残しましょう。"
+                description="最初のプロジェクトを作成してドキュメントを残しましょう。"
                 action={{
                   label: '新規プロジェクトを作成',
                   onClick: () => navigate('/projects/new'),

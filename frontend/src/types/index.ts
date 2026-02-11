@@ -46,27 +46,29 @@ export interface ProjectCreateRequest {
   is_public?: boolean;
 }
 
-// 開発ログ
-export interface DevLogEntry {
+// ドキュメント
+export interface TechDocument {
   id: string;
   project_id: string;
-  source: 'mcp' | 'manual';
-  entry_type: 'code_generation' | 'debug' | 'design_decision' | 'learning' | 'error_resolution';
-  summary: string;
-  detail: string | null;
+  source: 'notion' | 'manual';
+  category: 'tutorial' | 'design' | 'debug_guide' | 'learning' | 'reference';
+  title: string;
+  content: string | null;
   technologies: string[];
   ai_tool: string | null;
   created_at: string;
+  source_url: string | null;
   metadata: Record<string, unknown>;
 }
 
-export interface DevLogCreateRequest {
-  source?: 'manual' | 'mcp';
-  entry_type: string;
-  summary: string;
-  detail?: string;
+export interface DocumentCreateRequest {
+  source?: 'manual' | 'notion';
+  category: 'tutorial' | 'design' | 'debug_guide' | 'learning' | 'reference';
+  title: string;
+  content?: string;
   technologies: string[];
   ai_tool?: string | null;
+  source_url?: string;
   metadata?: Record<string, unknown>;
 }
 
@@ -164,7 +166,7 @@ export interface PublicPortfolio {
 
 export interface PublicProjectDetail {
   project: Project;
-  devlog: Pick<DevLogEntry, 'entry_type' | 'summary' | 'technologies' | 'created_at'>[];
+  devlog: Pick<TechDocument, 'category' | 'title' | 'technologies' | 'created_at'>[];
   quiz_summary: {
     total_questions: number;
     correct_answers: number;

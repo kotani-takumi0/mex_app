@@ -1,6 +1,6 @@
 {
   "mex": {
-    "command": "npx",
-    "args": ["mex-mcp-server"]
+    "command": "node",
+    "args": ["/home/takumi/mex_app/mcp-server/dist/index.js"]
   }
 }

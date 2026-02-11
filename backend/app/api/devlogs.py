@@ -19,9 +19,9 @@ def get_service() -> DevLogService:
 
 class DevLogCreateRequest(BaseModel):
     source: str | None = Field(None, description="mcp | manual")
-    entry_type: str = Field(..., description="作業種別")
-    summary: str = Field(..., description="要約")
-    detail: str | None = Field(None, description="詳細")
+    entry_type: str = Field(..., description="カテゴリ")
+    summary: str = Field(..., description="タイトル")
+    detail: str | None = Field(None, description="本文（Markdown）")
     technologies: list[str] = Field(default_factory=list)
     ai_tool: str | None = None
     metadata: dict | None = None

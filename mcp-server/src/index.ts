@@ -5,7 +5,7 @@ import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprot
 
 import { loadConfig, loadLocalConfig } from './config.js';
 import { MexApiClient } from './api-client.js';
-import { recordDevActivityTool, handleRecordDevActivity } from './tools/record-activity.js';
+import { saveDocumentTool, handleSaveDocument } from './tools/record-activity.js';
 import { listProjectsTool, handleListProjects } from './tools/list-projects.js';
 import { getProjectContextTool, handleGetProjectContext } from './tools/get-context.js';
 
@@ -17,7 +17,7 @@ async function main() {
   const server = new Server(
     {
       name: 'mex-mcp-server',
-      version: '0.1.0',
+      version: '0.2.0',
     },
     {
       capabilities: {
@@ -28,7 +28,7 @@ async function main() {
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-      tools: [recordDevActivityTool, listProjectsTool, getProjectContextTool],
+      tools: [saveDocumentTool, listProjectsTool, getProjectContextTool],
     };
   });
 
@@ -37,8 +37,8 @@ async function main() {
 
     try {
       switch (name) {
-        case 'record_dev_activity': {
-          const result = await handleRecordDevActivity(client, config, args as any, localConfig);
+        case 'save_document': {
+          const result = await handleSaveDocument(client, config, args as any, localConfig);
           return {
             content: [
               {

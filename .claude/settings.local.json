@@ -27,12 +27,20 @@
       "Bash(npm run build:*)",
       "Bash(node -e:*)",
       "Bash(npm info:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "mcp__codex__codex",
+      "Bash(ss:*)",
+      "Bash(netstat:*)",
+      "mcp__playwright__browser_wait_for",
+      "Bash(npm run dev:*)",
+      "Bash(npm view:*)",
+      "Bash(npm publish:*)",
+      "Bash(npm link:*)"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "playwright",
     "mex"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

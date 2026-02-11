@@ -75,6 +75,33 @@
   color: var(--text-secondary);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.edit-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 10px 16px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color-light);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.edit-link:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
 .quiz-link {
   display: inline-flex;
   align-items: center;
@@ -135,18 +162,69 @@
   box-shadow: var(--shadow-xs);
 }
 
+.devlog-card--clickable {
+  cursor: pointer;
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+}
+
+.devlog-card--clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary-200);
+}
+
+.devlog-card--clickable:focus-visible {
+  outline: 2px solid var(--color-primary-400);
+  outline-offset: 2px;
+}
+
 .devlog-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--space-2);
+  gap: var(--space-2);
+}
+
+.devlog-header-main {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .devlog-type {
+  display: inline-flex;
+  align-items: center;
   font-size: var(--font-size-xs);
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.02em;
+}
+
+.doc-category-tutorial {
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
+}
+
+.doc-category-design {
+  background: #e6f4ea;
+  color: #166534;
+}
+
+.doc-category-debug {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.doc-category-learning {
+  background: #fce7f3;
+  color: #9d174d;
+}
+
+.doc-category-reference {
+  background: var(--color-gray-200);
+  color: var(--text-secondary);
 }
 
 .devlog-date {
@@ -163,12 +241,40 @@
 .devlog-detail {
   color: var(--text-secondary);
   margin-bottom: var(--space-3);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: pre-wrap;
 }
 
 .devlog-tech {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
+}
+
+.document-source-link-wrap {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px dashed var(--border-color-light);
+}
+
+.document-source-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  color: var(--color-primary-700);
+  text-decoration: none;
+  width: fit-content;
+  font-size: var(--font-size-sm);
+  word-break: break-all;
+}
+
+.document-source-link:hover {
+  text-decoration: underline;
 }
 
 .devlog-form {
@@ -208,4 +314,98 @@
 
 .devlog-form .submit-btn-icon {
   animation: spin 1s linear infinite;
+}
+
+.devlog-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  z-index: var(--z-modal, 1000);
+}
+
+.devlog-modal {
+  width: min(860px, 100%);
+  max-height: calc(100vh - var(--space-8));
+  overflow-y: auto;
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-color-light);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-6);
+}
+
+.devlog-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.devlog-modal-header h3 {
+  margin: 0;
+  font-size: var(--font-size-xl);
+}
+
+.modal-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color-light);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-icon-btn:hover:not(:disabled) {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.devlog-edit-form {
+  margin-top: var(--space-5);
+}
+
+.devlog-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 12px 18px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-error-dark);
+  background: #fff;
+  color: var(--color-error-dark);
+  font-weight: var(--font-weight-semibold);
+}
+
+.delete-btn:hover:not(:disabled) {
+  background: var(--color-error-light);
+}
+
+@media (max-width: 768px) {
+  .devlog-modal {
+    padding: var(--space-5);
+  }
+
+  .devlog-modal-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .devlog-modal-actions .submit-btn,
+  .devlog-modal-actions .delete-btn {
+    justify-content: center;
+  }
 }

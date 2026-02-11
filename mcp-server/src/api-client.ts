@@ -43,7 +43,7 @@ export class MexApiClient {
     return result.entries;
   }
 
-  async recordDevLog(projectId: string, payload: Record<string, unknown>): Promise<DevLogEntryResponse> {
+  async saveDocument(projectId: string, payload: Record<string, unknown>): Promise<DevLogEntryResponse> {
     return this.request(`/devlogs/${projectId}/entries`, 'POST', payload);
   }
 
