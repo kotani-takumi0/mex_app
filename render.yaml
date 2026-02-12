@@ -24,10 +24,10 @@ services:
         value: "3.11"
       - key: SENTRY_DSN
         sync: false
-    plan: starter
+    plan: free
 
 databases:
   - name: mex-app-db
-    plan: starter
+    plan: free
     databaseName: mex_app
     postgresMajorVersion: "16"
