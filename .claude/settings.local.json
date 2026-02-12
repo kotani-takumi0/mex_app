@@ -40,7 +40,18 @@
       "Bash(grep:*)",
       "Bash(git -C /home/takumi/mex_app ls-files)",
       "Bash(git -C /home/takumi/mex_app show HEAD:.env)",
-      "Skill(document)"
+      "Skill(document)",
+      "Bash(claude mcp:*)",
+      "Skill(kiro:spec-init)",
+      "WebSearch",
+      "WebFetch(domain:snyk.io)",
+      "WebFetch(domain:thenewstack.io)",
+      "Bash(npx skills add https://github.com/anthropics/skills --skill frontend-design)",
+      "Bash(npx skills:*)",
+      "Bash(xargs:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npx react-scripts build:*)",
+      "WebFetch(domain:skills.sh)"
     ]
   },
   "enableAllProjectMcpServers": true,

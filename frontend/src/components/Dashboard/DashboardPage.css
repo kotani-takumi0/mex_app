@@ -15,7 +15,7 @@
   --dashboard-accent-border: #8a5f3f;
   --dashboard-shadow: 0 1px 0 rgba(51, 40, 32, 0.08);
 
-  font-family: 'Noto Sans JP', var(--font-family-base);
+  font-family: var(--font-family-base);
   color: var(--dashboard-text);
   background: var(--dashboard-bg);
   border: 1px solid var(--dashboard-border-subtle);

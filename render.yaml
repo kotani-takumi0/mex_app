@@ -2,10 +2,11 @@ services:
   - type: web
     name: mex-app-backend
     runtime: python
-    repo: https://github.com/your-username/mex-app
+    repo: https://github.com/kotani-takumi0/mex_app
     rootDir: backend
     buildCommand: pip install .
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -19,9 +20,9 @@ services:
         sync: false
       - key: APP_ENV
         value: production
-      - key: STRIPE_SECRET_KEY
-        sync: false
-      - key: STRIPE_WEBHOOK_SECRET
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: SENTRY_DSN
         sync: false
     plan: starter
 

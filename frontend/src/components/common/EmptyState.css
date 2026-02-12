@@ -37,7 +37,7 @@
 }
 
 .empty-state-action {
-  background: linear-gradient(135deg, var(--color-primary-700), var(--color-primary-900));
+  background: var(--gradient-primary);
   color: var(--text-inverse);
   border: none;
   padding: var(--space-3) var(--space-6);
@@ -45,10 +45,10 @@
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: box-shadow var(--transition-fast), filter var(--transition-fast);
 }
 
 .empty-state-action:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-colored);
+  filter: brightness(1.08);
 }

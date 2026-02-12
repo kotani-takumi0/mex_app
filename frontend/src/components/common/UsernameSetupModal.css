@@ -6,7 +6,7 @@
   align-items: center;
   justify-content: center;
   z-index: var(--z-modal, 1000);
-  animation: fadeIn 0.2s ease;
+  animation: fadeIn 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
   padding: var(--space-8);
 }
 
@@ -17,7 +17,7 @@
   max-width: 460px;
   width: 100%;
   padding: var(--space-12, 48px) var(--space-10, 40px);
-  animation: fadeInUp 0.3s ease;
+  animation: revealUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .username-modal h2 {

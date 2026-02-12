@@ -5,6 +5,7 @@ AI開発ポートフォリオプラットフォーム
 from contextlib import asynccontextmanager
 import logging
 
+import sentry_sdk
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
@@ -18,14 +19,22 @@ from app.rate_limit import limiter
 logger = logging.getLogger(__name__)
 
 
+settings = get_settings()
+
+# Sentry: DSN が設定されている場合のみ有効化（本番環境向け）
+if settings.sentry_dsn:
+    sentry_sdk.init(
+        dsn=settings.sentry_dsn,
+        traces_sample_rate=0.1,
+        environment=settings.app_env,
+    )
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """アプリケーションの起動・終了時の処理"""
     logger.info("MEX App starting up")
     yield
-
-
-settings = get_settings()
 
 app = FastAPI(
     title="MEX App - AI開発ポートフォリオ",

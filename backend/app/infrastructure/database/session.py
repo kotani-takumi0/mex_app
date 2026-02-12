@@ -10,14 +10,16 @@ from app.config import get_settings
 
 settings = get_settings()
 
-# エンジン作成（PostgreSQL用、本番向けプール設定込み）
+# Render Starter プランは接続数が限られるため、本番では控えめなプール設定を使用
+_is_production = settings.app_env == "production"
+
 engine = create_engine(
     settings.database_url,
     pool_pre_ping=True,
-    pool_size=20,
-    max_overflow=10,
+    pool_size=5 if _is_production else 20,
+    max_overflow=3 if _is_production else 10,
     pool_timeout=30,
-    pool_recycle=3600,
+    pool_recycle=600 if _is_production else 3600,
     echo=settings.debug,
 )
 

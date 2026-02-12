@@ -10,10 +10,13 @@ Create Date: 2026-02-09
 - IVFFlat インデックス作成（コサイン距離）
 - mcp_tokens テーブル新規作成（トークン無効化対応）
 """
+import logging
 from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
+
+logger = logging.getLogger(__name__)
 
 # revision identifiers, used by Alembic.
 revision: str = "004"
@@ -23,22 +26,26 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    # pgvector 拡張を有効化
-    op.execute("CREATE EXTENSION IF NOT EXISTS vector")
+    # pgvector: サーバーに拡張がインストールされていない場合は TEXT 型で代替
+    # SimilarityEngine は現在どのサービスからも呼ばれておらず、機能影響なし
+    try:
+        op.execute("CREATE EXTENSION IF NOT EXISTS vector")
+        op.execute("ALTER TABLE devlog_entries ADD COLUMN embedding vector(1536)")
+        op.execute("""
+            CREATE INDEX idx_devlog_entries_embedding
+            ON devlog_entries
+            USING ivfflat (embedding vector_cosine_ops)
+            WITH (lists = 10)
+        """)
+        logger.info("pgvector extension enabled, embedding column created as vector(1536)")
+    except Exception:
+        logger.warning(
+            "pgvector is not available — falling back to TEXT column for embedding. "
+            "Vector similarity search will not work until pgvector is installed."
+        )
+        op.execute("ALTER TABLE devlog_entries ADD COLUMN embedding TEXT")
 
-    # devlog_entries に embedding カラム追加
-    op.execute("ALTER TABLE devlog_entries ADD COLUMN embedding vector(1536)")
-
-    # IVFFlat インデックス作成（コサイン距離検索用）
-    # rows < 1000 の場合は lists=1 で十分。データ増加時に再構築する。
-    op.execute("""
-        CREATE INDEX idx_devlog_entries_embedding
-        ON devlog_entries
-        USING ivfflat (embedding vector_cosine_ops)
-        WITH (lists = 10)
-    """)
-
-    # mcp_tokens テーブル
+    # mcp_tokens テーブル（pgvector の有無にかかわらず作成）
     op.create_table(
         "mcp_tokens",
         sa.Column("id", sa.String(36), primary_key=True),

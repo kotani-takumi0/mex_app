@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     """アプリケーション設定"""
 
     model_config = SettingsConfigDict(
-        env_file=str(_ENV_FILE),
+        env_file=str(_ENV_FILE) if _ENV_FILE.exists() else None,
         env_file_encoding="utf-8",
         enable_decoding=False,
     )
@@ -45,6 +45,9 @@ class Settings(BaseSettings):
     jwt_secret_key: str = "dev-secret-key-change-in-production"
     jwt_algorithm: str = "HS256"
     jwt_access_token_expire_minutes: int = 60
+
+    # Sentry
+    sentry_dsn: str = ""
 
     # Stripe
     stripe_secret_key: str = ""

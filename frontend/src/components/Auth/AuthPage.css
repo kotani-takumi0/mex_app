@@ -16,16 +16,18 @@
   overflow: hidden;
 }
 
-/* 装飾: 背景のグロー効果 */
+/* 装飾: 有機的な楕円グロー（紫ではなくブランドカラーの暖色系） */
 .auth-page::before {
   content: '';
   position: absolute;
-  top: 20%;
-  left: 50%;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(92, 107, 192, 0.2) 0%, transparent 70%);
-  transform: translateX(-50%);
+  top: 15%;
+  left: 40%;
+  width: 700px;
+  height: 500px;
+  background:
+    radial-gradient(ellipse at 30% 40%, rgba(196, 138, 94, 0.15) 0%, transparent 65%),
+    radial-gradient(ellipse at 70% 60%, rgba(138, 95, 63, 0.1) 0%, transparent 55%);
+  transform: translateX(-50%) rotate(-8deg);
   pointer-events: none;
 }
 
@@ -39,7 +41,7 @@
   text-align: center;
   position: relative;
   z-index: 1;
-  animation: fadeInUp 0.5s ease;
+  animation: revealUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .auth-brand-link {
@@ -48,11 +50,12 @@
 }
 
 .auth-title {
+  font-family: var(--font-family-heading);
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
   color: var(--color-primary-900);
   margin-bottom: var(--space-1);
-  letter-spacing: -0.02em;
+  letter-spacing: var(--letter-spacing-tight);
 }
 
 .auth-subtitle {
@@ -121,7 +124,7 @@
   color: var(--color-error-dark);
   font-size: var(--font-size-sm);
   text-align: left;
-  animation: fadeInDown 0.3s ease;
+  animation: fadeInDown 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 /* 送信ボタン */
@@ -144,12 +147,12 @@
 }
 
 .auth-submit:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(26, 35, 126, 0.35);
+  box-shadow: 0 6px 20px rgba(138, 95, 63, 0.3);
+  filter: brightness(1.06);
 }
 
 .auth-submit:active:not(:disabled) {
-  transform: translateY(0);
+  filter: brightness(0.96);
 }
 
 .auth-submit:disabled {

@@ -5,13 +5,15 @@
  * ハンバーガーメニュー(モバイル対応)、plan-badge色分け
  */
 .main-navigation {
-  background-color: var(--color-primary-900);
+  background-color: rgba(85, 54, 38, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   color: var(--text-inverse);
   padding: 0 var(--space-6);
   display: flex;
   align-items: center;
   height: var(--nav-height);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 1px 0 rgba(85, 54, 38, 0.15);
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
@@ -19,12 +21,14 @@
 
 /* ブランド */
 .nav-brand-link {
+  font-family: var(--font-family-heading);
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
   color: var(--text-inverse);
   text-decoration: none;
   margin-right: var(--space-10);
   white-space: nowrap;
+  letter-spacing: var(--letter-spacing-tight);
 }
 
 .nav-brand-link:hover {
@@ -123,7 +127,7 @@
 }
 
 .plan-badge.pro {
-  background: linear-gradient(135deg, #ffd700, #ffab00);
+  background: var(--gradient-gold);
   color: var(--color-gray-900);
 }
 
@@ -171,7 +175,7 @@
 
   .nav-menu.open {
     display: flex;
-    animation: slideDown 0.2s ease;
+    animation: slideDown 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
   .nav-links {

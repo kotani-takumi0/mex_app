@@ -160,6 +160,56 @@ claude
 
 詳しくは `MCP_SERVER.md` を参照してください。
 
+## `/document` コマンド（技術ドキュメント自動生成）
+
+Claude Code で `/document` を実行すると、直前のコミットの変更内容から技術ドキュメントを自動生成し、Notion にページを作成して MEX App に記録します。
+
+**生成されるドキュメント構成:**
+- 実装サマリー（何を作ったか・変更規模）
+- 技術分解（使われた技術要素の一覧）
+- 各技術要素の解説（何か・なぜ必要か・他の選択肢・壊れたらどうなるか）
+- 想定Q&A（基礎・判断・応用の3段階、計6問以上）
+
+### 推奨ワークフロー
+
+```
+1. 機能を実装する
+2. git commit する
+3. Claude Code で /document を実行する
+```
+
+`/document` は `git diff HEAD~1` で変更内容を取得するため、コミットしてから実行してください。
+
+### セットアップ
+
+`/document` を使うには **MEX MCP サーバー**（上記）に加えて、**Notion MCP** と **`/document` コマンドファイル** の設定が必要です。
+
+**Step 1: Notion MCP を登録**（プロジェクトごとに 1 回）
+
+```bash
+cd ~/your-project
+claude mcp add notion -s project --transport http https://mcp.notion.com/mcp
+```
+
+Claude Code を起動すると Notion の OAuth 認証画面が開くので、ドキュメントを作成したいワークスペースへのアクセスを許可してください。
+
+**Step 2: `/document` コマンドをコピー**（初回のみ）
+
+```bash
+mkdir -p ~/.claude/commands
+cp /path/to/mex_app/.claude/commands/document.md ~/.claude/commands/document.md
+```
+
+`~/.claude/commands/` に置くことで、どのプロジェクトからでも `/document` が使えるようになります。
+
+### 使用例
+
+```
+/document                          # 直近の git diff から自動推定
+/document React Routerの導入        # 主題を明示的に指定
+/document バグ修正: APIレスポンス   # デバッグ系ドキュメント
+```
+
 **Dev Commands**
 ```bash
 # Backend

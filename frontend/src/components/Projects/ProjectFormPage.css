@@ -24,8 +24,8 @@
 }
 
 .project-form .submit-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-colored);
+  filter: brightness(1.06);
 }
 
 .project-form .submit-btn:disabled {

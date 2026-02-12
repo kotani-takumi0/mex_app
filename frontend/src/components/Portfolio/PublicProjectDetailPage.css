@@ -163,5 +163,5 @@
   max-width: var(--content-max-width);
   margin: 0 auto;
   padding: var(--space-6);
-  animation: fadeInUp 0.4s ease;
+  animation: revealUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
