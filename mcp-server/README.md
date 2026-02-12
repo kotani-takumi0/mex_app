@@ -2,44 +2,47 @@
 
 MEX App の開発ログを AI コーディングツールから自動記録するための [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) サーバーです。
 
-## インストール
-
-```bash
-npm install -g mex-mcp-server
-```
-
-または `npx` で直接実行できます（インストール不要）。
-
 ## セットアップ
 
-### 1. MEX App でアカウントを作成し、API トークンを発行
+### 1. ビルド
+
+```bash
+cd mcp-server
+npm install && npm run build
+```
+
+### 2. MEX App でアカウントを作成し、API トークンを発行
 
 1. MEX App にログイン
 2. 設定ページ（`/settings`）→「API トークン」セクションでトークンを発行
 3. 表示されたトークンをコピー（**この画面でしか表示されません**）
 
-### 2. セットアップ CLI を実行
+### 3. セットアップ CLI を実行
 
 対話形式でログイン → トークン取得 → 設定ファイル作成をすべて自動で行います。
 
 ```bash
-npx mex-setup
+node dist/cli/setup.js
 ```
 
 プロンプトに従ってメールアドレス・パスワードを入力すると、`~/.mex/config.json` が自動生成されます。
 
-### 3. Claude Code の MCP 設定に登録
+> 手動で設定する場合は [MCP_SERVER.md](../MCP_SERVER.md) を参照してください。
+
+### 4. Claude Code の MCP 設定に登録
 
 `~/.claude/mcp_servers.json` に以下を追加します：
 
 ```json
 {
   "mex": {
-    "command": "npx",
-    "args": ["mex-mcp-server"]
+    "command": "node",
+    "args": ["/absolute/path/to/mcp-server/dist/index.js"]
   }
 }
 ```
+
+> `args` のパスは実際の `dist/index.js` の絶対パスに置き換えてください。
 
 ## 提供ツール
 
