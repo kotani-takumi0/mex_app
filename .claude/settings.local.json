@@ -35,7 +35,12 @@
       "Bash(npm run dev:*)",
       "Bash(npm view:*)",
       "Bash(npm publish:*)",
-      "Bash(npm link:*)"
+      "Bash(npm link:*)",
+      "Bash(wc:*)",
+      "Bash(grep:*)",
+      "Bash(git -C /home/takumi/mex_app ls-files)",
+      "Bash(git -C /home/takumi/mex_app show HEAD:.env)",
+      "Skill(document)"
     ]
   },
   "enableAllProjectMcpServers": true,

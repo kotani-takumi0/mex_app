@@ -7,15 +7,17 @@ import logging
 import re
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel, Field
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from pydantic import BaseModel, EmailStr, Field, field_validator
 from passlib.context import CryptContext
 from sqlalchemy.exc import OperationalError
+from sqlalchemy.orm import Session
 
 from app.auth.jwt import JWTService
 from app.auth.dependencies import CurrentUser, get_current_user_dependency
-from app.infrastructure.database.session import SessionLocal
-from app.infrastructure.database.models import User, MCPToken
+from app.infrastructure.database.session import get_db
+from app.infrastructure.database.models import User, MCPToken, utc_now
+from app.rate_limit import limiter
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 logger = logging.getLogger(__name__)
@@ -30,14 +32,27 @@ _jwt_service = JWTService()
 # リクエスト/レスポンススキーマ
 class RegisterRequest(BaseModel):
     """ユーザー登録リクエスト"""
-    email: str = Field(..., description="メールアドレス")
-    password: str = Field(..., min_length=8, description="パスワード（8文字以上）")
+    email: EmailStr = Field(..., description="メールアドレス")
+    password: str = Field(..., min_length=10, max_length=128, description="パスワード（10文字以上、英大文字・小文字・数字・記号を含む）")
     display_name: str = Field(..., min_length=1, max_length=100, description="表示名")
+
+    @field_validator("password")
+    @classmethod
+    def validate_password_strength(cls, v: str) -> str:
+        if not any(c.isupper() for c in v):
+            raise ValueError("パスワードには英大文字を1文字以上含めてください")
+        if not any(c.islower() for c in v):
+            raise ValueError("パスワードには英小文字を1文字以上含めてください")
+        if not any(c.isdigit() for c in v):
+            raise ValueError("パスワードには数字を1文字以上含めてください")
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>\-_=+\[\]~`]', v):
+            raise ValueError("パスワードには記号を1文字以上含めてください")
+        return v
 
 
 class LoginRequest(BaseModel):
     """ログインリクエスト"""
-    email: str = Field(..., description="メールアドレス")
+    email: EmailStr = Field(..., description="メールアドレス")
     password: str = Field(..., description="パスワード")
 
 
@@ -59,29 +74,39 @@ class UserResponse(BaseModel):
     github_url: str | None
 
 
+def _user_response(user: User) -> UserResponse:
+    return UserResponse(
+        id=user.id,
+        email=user.email,
+        display_name=user.display_name,
+        plan=user.plan,
+        username=user.username,
+        bio=user.bio,
+        github_url=user.github_url,
+    )
+
+
 @router.post("/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
-async def register(request: RegisterRequest):
+@limiter.limit("5/minute")
+async def register(request: Request, body: RegisterRequest, db: Session = Depends(get_db)):
     """
     ユーザー登録
 
     メールアドレスとパスワードで新規ユーザーを作成し、
     JWTトークンを返却する
     """
-    db = SessionLocal()
     try:
-        # メールアドレスの重複チェック
-        existing = db.query(User).filter(User.email == request.email).first()
+        existing = db.query(User).filter(User.email == body.email).first()
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="このメールアドレスは既に登録されています",
             )
 
-        # ユーザー作成
         user = User(
-            email=request.email,
-            display_name=request.display_name,
-            hashed_password=pwd_context.hash(request.password),
+            email=body.email,
+            display_name=body.display_name,
+            hashed_password=pwd_context.hash(body.password),
             auth_provider="email",
             plan="free",
         )
@@ -89,25 +114,13 @@ async def register(request: RegisterRequest):
         db.commit()
         db.refresh(user)
 
-        # トークン生成
         token = _jwt_service.create_access_token(
             data={"sub": user.id, "plan": user.plan}
         )
 
-        return AuthResponse(
-            access_token=token,
-            user=UserResponse(
-                id=user.id,
-                email=user.email,
-                display_name=user.display_name,
-                plan=user.plan,
-                username=user.username,
-                bio=user.bio,
-                github_url=user.github_url,
-            ),
-        )
+        return AuthResponse(access_token=token, user=_user_response(user))
 
-    except OperationalError as e:
+    except OperationalError:
         logger.exception("Database error during register")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -115,27 +128,24 @@ async def register(request: RegisterRequest):
         )
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         logger.exception("Unexpected error during register")
-        db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e) or repr(e),
+            detail="An unexpected error occurred",
         )
-    finally:
-        db.close()
 
 
 @router.post("/login", response_model=AuthResponse)
-async def login(request: LoginRequest):
+@limiter.limit("10/minute")
+async def login(request: Request, body: LoginRequest, db: Session = Depends(get_db)):
     """
     ログイン
 
     メールアドレスとパスワードで認証し、JWTトークンを返却する
     """
-    db = SessionLocal()
     try:
-        user = db.query(User).filter(User.email == request.email).first()
+        user = db.query(User).filter(User.email == body.email).first()
 
         if user is None or user.hashed_password is None:
             raise HTTPException(
@@ -143,31 +153,19 @@ async def login(request: LoginRequest):
                 detail="メールアドレスまたはパスワードが正しくありません",
             )
 
-        if not pwd_context.verify(request.password, user.hashed_password):
+        if not pwd_context.verify(body.password, user.hashed_password):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="メールアドレスまたはパスワードが正しくありません",
             )
 
-        # トークン生成
         token = _jwt_service.create_access_token(
             data={"sub": user.id, "plan": user.plan}
         )
 
-        return AuthResponse(
-            access_token=token,
-            user=UserResponse(
-                id=user.id,
-                email=user.email,
-                display_name=user.display_name,
-                plan=user.plan,
-                username=user.username,
-                bio=user.bio,
-                github_url=user.github_url,
-            ),
-        )
+        return AuthResponse(access_token=token, user=_user_response(user))
 
-    except OperationalError as e:
+    except OperationalError:
         logger.exception("Database error during login")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -175,42 +173,27 @@ async def login(request: LoginRequest):
         )
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         logger.exception("Unexpected error during login")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e) or repr(e),
+            detail="An unexpected error occurred",
         )
-    finally:
-        db.close()
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_me(current_user: CurrentUser = Depends(get_current_user_dependency)):
-    """
-    現在のユーザー情報を取得
-    """
-    db = SessionLocal()
-    try:
-        user = db.query(User).filter(User.id == current_user.user_id).first()
-
-        if user is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="ユーザーが見つかりません",
-            )
-
-        return UserResponse(
-            id=user.id,
-            email=user.email,
-            display_name=user.display_name,
-            plan=user.plan,
-            username=user.username,
-            bio=user.bio,
-            github_url=user.github_url,
+async def get_me(
+    current_user: CurrentUser = Depends(get_current_user_dependency),
+    db: Session = Depends(get_db),
+):
+    """現在のユーザー情報を取得"""
+    user = db.query(User).filter(User.id == current_user.user_id).first()
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="ユーザーが見つかりません",
         )
-    finally:
-        db.close()
+    return _user_response(user)
 
 
 # --- MCP用長寿命APIトークン ---
@@ -259,11 +242,10 @@ def _hash_token(token: str) -> str:
 async def create_api_token(
     request: ApiTokenRequest | None = None,
     current_user: CurrentUser = Depends(get_current_user_dependency),
+    db: Session = Depends(get_db),
 ):
     """
     MCP Server 等の外部ツール向けに長寿命APIトークン（30日間有効）を発行する。
-    通常のJWTは60分で切れるため、開発中にMCPからの呼び出しが途切れる問題を解消する。
-    トークンのハッシュをDBに保存し、後から無効化できるようにする。
     """
     expires_days = 30
     token = _jwt_service.create_access_token(
@@ -271,8 +253,6 @@ async def create_api_token(
         expires_delta=timedelta(days=expires_days),
     )
 
-    # トークンハッシュをDBに記録（無効化管理用）
-    db = SessionLocal()
     try:
         mcp_token = MCPToken(
             user_id=current_user.user_id,
@@ -283,13 +263,11 @@ async def create_api_token(
         db.commit()
         db.refresh(mcp_token)
         token_id = mcp_token.id
-    except Exception as e:
+    except Exception:
         logger.exception("Failed to store MCP token record")
         db.rollback()
         # トークン自体は発行済みなので、DB記録失敗でもトークンは返す
         token_id = ""
-    finally:
-        db.close()
 
     return ApiTokenResponse(api_token=token, token_id=token_id, expires_in_days=expires_days)
 
@@ -297,85 +275,62 @@ async def create_api_token(
 @router.get("/mcp-tokens", response_model=MCPTokenListResponse)
 async def list_mcp_tokens(
     current_user: CurrentUser = Depends(get_current_user_dependency),
+    db: Session = Depends(get_db),
 ):
-    """
-    現在のユーザーが発行したMCPトークンの一覧を返す。
-    トークン本体は返さず、メタ情報のみ返却する。
-    """
-    db = SessionLocal()
-    try:
-        tokens = (
-            db.query(MCPToken)
-            .filter(MCPToken.user_id == current_user.user_id)
-            .order_by(MCPToken.created_at.desc())
-            .all()
-        )
+    """現在のユーザーが発行したMCPトークンの一覧を返す。"""
+    tokens = (
+        db.query(MCPToken)
+        .filter(MCPToken.user_id == current_user.user_id)
+        .order_by(MCPToken.created_at.desc())
+        .all()
+    )
 
-        return MCPTokenListResponse(
-            tokens=[
-                MCPTokenInfo(
-                    id=t.id,
-                    name=t.name,
-                    scope=t.scope,
-                    created_at=t.created_at.isoformat() if t.created_at else "",
-                    revoked_at=t.revoked_at.isoformat() if t.revoked_at else None,
-                )
-                for t in tokens
-            ]
-        )
-    finally:
-        db.close()
+    return MCPTokenListResponse(
+        tokens=[
+            MCPTokenInfo(
+                id=t.id,
+                name=t.name,
+                scope=t.scope,
+                created_at=t.created_at.isoformat() if t.created_at else "",
+                revoked_at=t.revoked_at.isoformat() if t.revoked_at else None,
+            )
+            for t in tokens
+        ]
+    )
 
 
 @router.post("/mcp-token/revoke", status_code=status.HTTP_200_OK)
 async def revoke_mcp_token(
     request: RevokeTokenRequest,
     current_user: CurrentUser = Depends(get_current_user_dependency),
+    db: Session = Depends(get_db),
 ):
-    """
-    MCPトークンを無効化する。
-    無効化されたトークンは以降のAPI呼び出しで拒否される。
-    """
-    db = SessionLocal()
-    try:
-        token_record = (
-            db.query(MCPToken)
-            .filter(
-                MCPToken.id == request.token_id,
-                MCPToken.user_id == current_user.user_id,
-            )
-            .first()
+    """MCPトークンを無効化する。"""
+    token_record = (
+        db.query(MCPToken)
+        .filter(
+            MCPToken.id == request.token_id,
+            MCPToken.user_id == current_user.user_id,
         )
+        .first()
+    )
 
-        if token_record is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="トークンが見つかりません",
-            )
-
-        if token_record.revoked_at is not None:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="このトークンは既に無効化されています",
-            )
-
-        from app.infrastructure.database.models import utc_now
-        token_record.revoked_at = utc_now()
-        db.commit()
-
-        return {"message": "トークンを無効化しました", "token_id": request.token_id}
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.exception("Failed to revoke MCP token")
-        db.rollback()
+    if token_record is None:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="トークンの無効化に失敗しました",
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="トークンが見つかりません",
         )
-    finally:
-        db.close()
+
+    if token_record.revoked_at is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="このトークンは既に無効化されています",
+        )
+
+    token_record.revoked_at = utc_now()
+    db.commit()
+
+    return {"message": "トークンを無効化しました", "token_id": request.token_id}
 
 
 # --- プロフィール編集 ---
@@ -393,67 +348,43 @@ class ProfileUpdateRequest(BaseModel):
 async def update_profile(
     request: ProfileUpdateRequest,
     current_user: CurrentUser = Depends(get_current_user_dependency),
+    db: Session = Depends(get_db),
 ):
-    """
-    プロフィール情報を更新する。
-    usernameは公開ポートフォリオのURLパスに使用されるため、
-    英小文字・数字・ハイフンのみ許可し、一意性を検証する。
-    """
-    db = SessionLocal()
-    try:
-        user = db.query(User).filter(User.id == current_user.user_id).first()
-        if user is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="ユーザーが見つかりません",
-            )
-
-        if request.username is not None:
-            username = request.username.lower().strip()
-            if not _USERNAME_PATTERN.match(username):
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="ユーザー名は英小文字・数字・ハイフンのみ、3〜30文字で指定してください",
-                )
-            existing = (
-                db.query(User)
-                .filter(User.username == username, User.id != user.id)
-                .first()
-            )
-            if existing:
-                raise HTTPException(
-                    status_code=status.HTTP_409_CONFLICT,
-                    detail="このユーザー名は既に使用されています",
-                )
-            user.username = username
-
-        if request.display_name is not None:
-            user.display_name = request.display_name
-        if request.bio is not None:
-            user.bio = request.bio
-        if request.github_url is not None:
-            user.github_url = request.github_url
-
-        db.commit()
-        db.refresh(user)
-
-        return UserResponse(
-            id=user.id,
-            email=user.email,
-            display_name=user.display_name,
-            plan=user.plan,
-            username=user.username,
-            bio=user.bio,
-            github_url=user.github_url,
-        )
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.exception("Unexpected error during profile update")
-        db.rollback()
+    """プロフィール情報を更新する。"""
+    user = db.query(User).filter(User.id == current_user.user_id).first()
+    if user is None:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e) or repr(e),
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="ユーザーが見つかりません",
         )
-    finally:
-        db.close()
+
+    if request.username is not None:
+        username = request.username.lower().strip()
+        if not _USERNAME_PATTERN.match(username):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="ユーザー名は英小文字・数字・ハイフンのみ、3〜30文字で指定してください",
+            )
+        existing = (
+            db.query(User)
+            .filter(User.username == username, User.id != user.id)
+            .first()
+        )
+        if existing:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="このユーザー名は既に使用されています",
+            )
+        user.username = username
+
+    if request.display_name is not None:
+        user.display_name = request.display_name
+    if request.bio is not None:
+        user.bio = request.bio
+    if request.github_url is not None:
+        user.github_url = request.github_url
+
+    db.commit()
+    db.refresh(user)
+
+    return _user_response(user)

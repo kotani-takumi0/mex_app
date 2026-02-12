@@ -115,14 +115,29 @@ class DevLogService:
             if entry is None:
                 raise ValueError("DevLog entry not found")
 
+            # シークレット検出・マスキング（create_entryと同様に適用）
+            detector = get_secret_detector()
+
             if data.source is not None:
                 entry.source = data.source
             if data.entry_type is not None:
                 entry.entry_type = data.entry_type
             if data.summary is not None:
-                entry.summary = data.summary
+                masked_summary = detector.mask(data.summary)
+                if masked_summary != data.summary:
+                    logger.warning(
+                        "シークレットを検出しマスキングしました (user_id=%s, entry_id=%s, field=summary)",
+                        user_id, entry_id,
+                    )
+                entry.summary = masked_summary
             if data.detail is not None:
-                entry.detail = data.detail
+                masked_detail = detector.mask(data.detail)
+                if masked_detail != data.detail:
+                    logger.warning(
+                        "シークレットを検出しマスキングしました (user_id=%s, entry_id=%s, field=detail)",
+                        user_id, entry_id,
+                    )
+                entry.detail = masked_detail
             if data.technologies is not None:
                 entry.technologies = data.technologies
             if data.ai_tool is not None:

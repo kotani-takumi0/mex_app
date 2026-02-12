@@ -1,5 +1,5 @@
 """開発ログAPI"""
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
 
 from app.auth.dependencies import CurrentUser, get_current_user_dependency
@@ -71,7 +71,7 @@ class DevLogListResponse(BaseModel):
 @router.get("/{project_id}", response_model=DevLogListResponse)
 async def list_devlogs(
     project_id: str,
-    limit: int | None = None,
+    limit: int | None = Query(None, ge=1, le=200, description="取得件数（1〜200）"),
     current_user: CurrentUser = Depends(get_current_user_dependency),
 ):
     try:

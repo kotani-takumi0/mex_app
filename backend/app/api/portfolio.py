@@ -1,8 +1,11 @@
 """公開ポートフォリオAPI"""
-from fastapi import APIRouter, HTTPException, status
-from pydantic import BaseModel
+import re
 
-from app.infrastructure.database.session import SessionLocal
+from fastapi import APIRouter, Depends, HTTPException, Path, status
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from app.infrastructure.database.session import get_db
 from app.infrastructure.database.models import (
     User,
     Project,
@@ -77,125 +80,141 @@ class PublicProjectDetailResponse(BaseModel):
     quiz_summary: PublicQuizSummary
 
 
+_USERNAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9\-]{1,28}[a-z0-9]$")
+
+
+def _validate_username(username: str) -> str:
+    """usernameの形式を検証"""
+    if not _USERNAME_PATTERN.match(username):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid username format",
+        )
+    return username
+
+
 @router.get("/{username}", response_model=PublicPortfolioResponse)
-async def get_public_portfolio(username: str):
-    db = SessionLocal()
-    try:
-        user = db.query(User).filter(User.username == username).first()
-        if user is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+async def get_public_portfolio(
+    username: str = Path(..., min_length=3, max_length=30),
+    db: Session = Depends(get_db),
+):
+    _validate_username(username)
 
-        projects = (
-            db.query(Project)
-            .filter(Project.user_id == user.id, Project.is_public.is_(True))
-            .order_by(Project.updated_at.desc())
-            .all()
+    user = db.query(User).filter(User.username == username).first()
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    projects = (
+        db.query(Project)
+        .filter(Project.user_id == user.id, Project.is_public.is_(True))
+        .order_by(Project.updated_at.desc())
+        .all()
+    )
+
+    project_responses = [
+        PublicProjectResponse(
+            id=p.id,
+            title=p.title,
+            description=p.description,
+            technologies=p.technologies or [],
+            repository_url=p.repository_url,
+            demo_url=p.demo_url,
+            status=p.status,
+            is_public=p.is_public,
+            devlog_count=db.query(DevLogEntry).filter(DevLogEntry.project_id == p.id).count(),
+            quiz_score=_project_quiz_score(db, p.id, user.id),
+            created_at=p.created_at.isoformat() if p.created_at else "",
+            updated_at=p.updated_at.isoformat() if p.updated_at else "",
         )
+        for p in projects
+    ]
 
-        project_responses = [
-            PublicProjectResponse(
-                id=p.id,
-                title=p.title,
-                description=p.description,
-                technologies=p.technologies or [],
-                repository_url=p.repository_url,
-                demo_url=p.demo_url,
-                status=p.status,
-                is_public=p.is_public,
-                devlog_count=db.query(DevLogEntry).filter(DevLogEntry.project_id == p.id).count(),
-                quiz_score=_project_quiz_score(db, p.id, user.id),
-                created_at=p.created_at.isoformat() if p.created_at else "",
-                updated_at=p.updated_at.isoformat() if p.updated_at else "",
+    skills = (
+        db.query(SkillScore)
+        .filter(SkillScore.user_id == user.id)
+        .order_by(SkillScore.score.desc())
+        .all()
+    )
+
+    return PublicPortfolioResponse(
+        user=PublicUserResponse(
+            display_name=user.display_name,
+            bio=user.bio,
+            github_url=user.github_url,
+        ),
+        projects=project_responses,
+        skills=[
+            PublicSkillResponse(
+                technology=s.technology,
+                score=s.score,
+                total_questions=s.total_questions,
+                correct_answers=s.correct_answers,
+                last_assessed_at=s.last_assessed_at.isoformat() if s.last_assessed_at else None,
             )
-            for p in projects
-        ]
-
-        skills = (
-            db.query(SkillScore)
-            .filter(SkillScore.user_id == user.id)
-            .order_by(SkillScore.score.desc())
-            .all()
-        )
-
-        return PublicPortfolioResponse(
-            user=PublicUserResponse(
-                display_name=user.display_name,
-                bio=user.bio,
-                github_url=user.github_url,
-            ),
-            projects=project_responses,
-            skills=[
-                PublicSkillResponse(
-                    technology=s.technology,
-                    score=s.score,
-                    total_questions=s.total_questions,
-                    correct_answers=s.correct_answers,
-                    last_assessed_at=s.last_assessed_at.isoformat() if s.last_assessed_at else None,
-                )
-                for s in skills
-            ],
-        )
-    finally:
-        db.close()
+            for s in skills
+        ],
+    )
 
 
 @router.get("/{username}/{project_id}", response_model=PublicProjectDetailResponse)
-async def get_public_project_detail(username: str, project_id: str):
-    db = SessionLocal()
-    try:
-        user = db.query(User).filter(User.username == username).first()
-        if user is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+async def get_public_project_detail(
+    username: str = Path(..., min_length=3, max_length=30),
+    project_id: str = Path(...),
+    db: Session = Depends(get_db),
+):
+    _validate_username(username)
 
-        project = (
-            db.query(Project)
-            .filter(
-                Project.id == project_id,
-                Project.user_id == user.id,
-                Project.is_public.is_(True),
+    user = db.query(User).filter(User.username == username).first()
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    project = (
+        db.query(Project)
+        .filter(
+            Project.id == project_id,
+            Project.user_id == user.id,
+            Project.is_public.is_(True),
+        )
+        .first()
+    )
+    if project is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
+
+    devlog_entries = (
+        db.query(DevLogEntry)
+        .filter(DevLogEntry.project_id == project.id)
+        .order_by(DevLogEntry.created_at.desc())
+        .all()
+    )
+
+    quiz_summary = _build_quiz_summary(db, project.id, user.id)
+
+    return PublicProjectDetailResponse(
+        project=PublicProjectResponse(
+            id=project.id,
+            title=project.title,
+            description=project.description,
+            technologies=project.technologies or [],
+            repository_url=project.repository_url,
+            demo_url=project.demo_url,
+            status=project.status,
+            is_public=project.is_public,
+            devlog_count=db.query(DevLogEntry).filter(DevLogEntry.project_id == project.id).count(),
+            quiz_score=quiz_summary.score if quiz_summary.total_questions else None,
+            created_at=project.created_at.isoformat() if project.created_at else "",
+            updated_at=project.updated_at.isoformat() if project.updated_at else "",
+        ),
+        devlog=[
+            PublicDevLogEntry(
+                entry_type=e.entry_type,
+                summary=e.summary,
+                technologies=e.technologies or [],
+                created_at=e.created_at.isoformat() if e.created_at else "",
             )
-            .first()
-        )
-        if project is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found")
-
-        devlog_entries = (
-            db.query(DevLogEntry)
-            .filter(DevLogEntry.project_id == project.id)
-            .order_by(DevLogEntry.created_at.desc())
-            .all()
-        )
-
-        quiz_summary = _build_quiz_summary(db, project.id, user.id)
-
-        return PublicProjectDetailResponse(
-            project=PublicProjectResponse(
-                id=project.id,
-                title=project.title,
-                description=project.description,
-                technologies=project.technologies or [],
-                repository_url=project.repository_url,
-                demo_url=project.demo_url,
-                status=project.status,
-                is_public=project.is_public,
-                devlog_count=db.query(DevLogEntry).filter(DevLogEntry.project_id == project.id).count(),
-                quiz_score=quiz_summary.score if quiz_summary.total_questions else None,
-                created_at=project.created_at.isoformat() if project.created_at else "",
-                updated_at=project.updated_at.isoformat() if project.updated_at else "",
-            ),
-            devlog=[
-                PublicDevLogEntry(
-                    entry_type=e.entry_type,
-                    summary=e.summary,
-                    technologies=e.technologies or [],
-                    created_at=e.created_at.isoformat() if e.created_at else "",
-                )
-                for e in devlog_entries
-            ],
-            quiz_summary=quiz_summary,
-        )
-    finally:
-        db.close()
+            for e in devlog_entries
+        ],
+        quiz_summary=quiz_summary,
+    )
 
 
 def _project_quiz_score(db, project_id: str, user_id: str) -> float | None:

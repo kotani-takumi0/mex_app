@@ -2,13 +2,21 @@
 決済APIエンドポイント
 Stripe Checkout Session / Customer Portal / Webhook
 """
+import logging
+
 import stripe
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
 from app.auth.dependencies import CurrentUser, get_current_user_dependency
 from app.application.billing_service import BillingService
 from app.config import get_settings
+from app.infrastructure.database.session import get_db
+from app.infrastructure.database.models import StripeWebhookEvent
+from app.rate_limit import limiter
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/billing", tags=["Billing"])
 
@@ -90,8 +98,9 @@ async def create_portal_session(
 
 
 @router.post("/webhook")
-async def stripe_webhook(request: Request):
-    """Stripe Webhook処理"""
+@limiter.limit("30/minute")
+async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
+    """Stripe Webhook処理（冪等性保証付き）"""
     settings = get_settings()
     payload = await request.body()
     sig_header = request.headers.get("stripe-signature", "")
@@ -103,6 +112,17 @@ async def stripe_webhook(request: Request):
     except stripe.SignatureVerificationError:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid signature")
 
+    # --- 冪等性チェック: 同一イベントの二重処理を防止 ---
+    stripe_event_id = event["id"]
+    existing = (
+        db.query(StripeWebhookEvent)
+        .filter(StripeWebhookEvent.stripe_event_id == stripe_event_id)
+        .first()
+    )
+    if existing:
+        logger.info("Stripe webhook event already processed: %s", stripe_event_id)
+        return {"status": "ok", "duplicate": True}
+
     service = get_service()
 
     if event["type"] == "checkout.session.completed":
@@ -113,4 +133,12 @@ async def stripe_webhook(request: Request):
     ):
         await service.handle_subscription_updated(event["data"]["object"])
 
+    # 処理完了後にイベントを記録
+    db.add(StripeWebhookEvent(
+        stripe_event_id=stripe_event_id,
+        event_type=event["type"],
+    ))
+    db.commit()
+
+    logger.info("Stripe webhook processed: %s (%s)", stripe_event_id, event["type"])
     return {"status": "ok"}

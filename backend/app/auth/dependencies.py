@@ -59,9 +59,12 @@ def _is_token_revoked(token: str) -> bool:
         finally:
             db.close()
     except Exception:
-        # DB接続エラー等はフェイルオープン（トークンを許可）
-        logger.warning("Failed to check token revocation status", exc_info=True)
-        return False
+        # DB接続エラー等はフェイルクローズ（安全側に倒してトークンを拒否）
+        logger.error(
+            "Failed to check token revocation status — denying access for safety",
+            exc_info=True,
+        )
+        return True
 
 
 def get_current_user(authorization: str) -> CurrentUser:

@@ -69,7 +69,7 @@ class TestAPIEndpointsIntegration:
             "/api/auth/register",
             json={
                 "email": "test@example.com",
-                "password": "testpassword123",
+                "password": "TestPass123!",
                 "display_name": "Test User",
             },
         )

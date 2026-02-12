@@ -276,3 +276,20 @@ class MCPToken(Base):
         Index("idx_mcp_tokens_user_id", "user_id"),
         Index("idx_mcp_tokens_token_hash", "token_hash"),
     )
+
+
+class StripeWebhookEvent(Base):
+    """
+    Stripe Webhookイベント重複排除テーブル
+    同一イベントの二重処理を防止する
+    """
+    __tablename__ = "stripe_webhook_events"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    stripe_event_id = Column(String(255), nullable=False, unique=True)
+    event_type = Column(String(100), nullable=False)
+    processed_at = Column(DateTime(timezone=True), default=utc_now)
+
+    __table_args__ = (
+        Index("idx_stripe_webhook_events_stripe_event_id", "stripe_event_id"),
+    )

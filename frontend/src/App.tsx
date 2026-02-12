@@ -6,6 +6,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { AppLoadingScreen } from './components/common/AppLoadingScreen';
 import { Navigation } from './components/common/Navigation';
 import { LandingPage } from './components/Landing/LandingPage';
@@ -154,6 +155,7 @@ function AppRoutes() {
 
 function App() {
   return (
+    <ErrorBoundary>
     <BrowserRouter>
       <AuthProvider>
         <AppRoutes />
@@ -177,6 +179,7 @@ function App() {
         />
       </AuthProvider>
     </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 
