@@ -90,62 +90,75 @@ npm start
 ```
 
 **MCP Server (Optional)**
-AIツールから開発ログを自動記録する場合は MCP サーバーを設定します。
-詳しい手順は `MCP_SERVER.md` を参照してください。
-トークンはログイン後、`/settings` から発行できます。
+
+AI ツール（Claude Code）から開発ログを自動記録する場合は MCP サーバーを設定します。
+初回のセットアップは 3 ステップで、一度だけ行えば以降はどのプロジェクトでも使えます。
+
+**前提条件**
+- MEX App のアカウントを作成済みであること（`/auth` で新規登録）
+- MEX App のバックエンドが起動していること（別ターミナルで `uvicorn app.main:app --reload`）
+- Node.js がインストールされていること
+
+**Step 1: ユーザー認証の設定**（初回のみ・どのディレクトリで実行しても OK）
 
 ```bash
-# 1. セットアップ（対話形式で ~/.mex/config.json を作成）
-#    ※ 事前にバックエンドを起動しておくこと（別ターミナルで uvicorn app.main:app --reload）
 npx -p mex-mcp-server mex-setup
 ```
 
-セットアップ CLI では以下の質問に回答します：
+対話形式で以下の質問に回答します：
 
 | 質問 | 入力内容 |
 |---|---|
 | API URL | そのまま Enter（ローカル開発なら `http://localhost:8000/api` でOK） |
 | メールアドレス | MEX App に登録済みのメールアドレス |
 | パスワード | MEX App に登録済みのパスワード |
-| AI Tool名 | そのまま Enter（デフォルト `claude_code`。開発ログの記録元ツールを識別するラベル） |
+| AI Tool名 | そのまま Enter（デフォルト `claude_code`） |
 
-認証に成功すると API トークンが自動取得され、`~/.mex/config.json` が作成されます。
+成功すると `~/.mex/config.json` が自動生成されます。これは API の認証情報を保持するファイルで、全プロジェクト共通で使われます。
+
+**Step 2: Claude Code に MCP サーバーを登録**（プロジェクトごとに 1 回）
+
+MCP サーバーを使いたいプロジェクトのディレクトリで以下を実行します：
 
 ```bash
-# 2. Claude Code の MCP 設定に登録
-#    プロジェクトごと: .claude/mcp_servers.json
-#    または全プロジェクト共通: ~/.claude/settings.json の mcpServers
+cd ~/your-project
+claude mcp add mex -s project -- npx mex-mcp-server
 ```
 
-```json
-{
-  "mex": {
-    "command": "npx",
-    "args": ["mex-mcp-server"]
-  }
-}
+これで `.claude/mcp_server.json` が自動生成されます。
+
+**Step 3: Claude Code を起動して MCP を承認**
+
+```bash
+claude
 ```
 
-**設定ファイルの構成**
+初回起動時に MCP サーバーの接続許可を求められるので、承認してください。
+`/mcp` コマンドで `mex` が表示されればセットアップ完了です。
 
-MCP サーバーの設定は「ユーザー認証」と「プロジェクト紐付け」の2層に分かれています。
+**仕組み: 自動生成される設定ファイル**
+
+すべてコマンドが自動で作成するため、手動でファイルを作る必要はありません。
 
 ```
-~/.mex/config.json              ← ユーザー認証情報（全プロジェクト共通、1つだけ）
-~/.claude/mcp_servers.json      ← Claude Code のMCPサーバー登録（全プロジェクト共通）
+ホームディレクトリ（全プロジェクト共通）
+  ~/.mex/config.json              ← Step 1 で自動生成（API認証情報）
 
-~/mex_app/.mex.json             ← このリポジトリのプロジェクトID
-~/other-project/.mex.json       ← 別リポジトリのプロジェクトID
+各プロジェクト（プロジェクトごと）
+  ~/your-project/.claude/mcp_server.json  ← Step 2 で自動生成（MCPサーバー登録）
+  ~/your-project/.mex.json                ← /document 初回実行時に自動生成（プロジェクトID）
 ```
 
-| ファイル | 場所 | 役割 | 作成タイミング |
-|---|---|---|---|
-| `~/.mex/config.json` | ホームディレクトリ | API URL + 認証トークン | `npx -p mex-mcp-server mex-setup` 実行時に一度だけ |
-| `~/.claude/mcp_servers.json` | ホームディレクトリ | Claude Code にMCPサーバーを登録 | 手動で一度だけ |
-| `.mex.json` | 各リポジトリのルート | MEX App 上のプロジェクトIDを保持 | `/document` 初回実行時に自動生成 |
+| ファイル | 作成コマンド | 役割 |
+|---|---|---|
+| `~/.mex/config.json` | `npx -p mex-mcp-server mex-setup` | API URL + 認証トークン（30日間有効） |
+| `.claude/mcp_server.json` | `claude mcp add mex ...` | Claude Code にどの MCP サーバーを使うか教える |
+| `.mex.json` | `/document` 初回実行時 | MEX App 上のプロジェクト ID を保持 |
 
-複数のプロジェクトで開発ログを記録する場合でも、セットアップ（Step 1〜3）は一度だけで済みます。
-各リポジトリで `/document` を初めて実行すると、MEX App にプロジェクトが自動作成され、そのリポジトリのルートに `.mex.json` が生成されます。
+複数のプロジェクトで使う場合、Step 1 は一度だけで OK です。
+新しいプロジェクトでは Step 2 → Step 3 を行うだけで使えます。
+
+詳しくは `MCP_SERVER.md` を参照してください。
 
 **Dev Commands**
 ```bash
