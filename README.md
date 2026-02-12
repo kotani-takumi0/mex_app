@@ -95,13 +95,9 @@ AIツールから開発ログを自動記録する場合は MCP サーバーを�
 トークンはログイン後、`/settings` から発行できます。
 
 ```bash
-# 1. MCP サーバーをビルド（MEX App リポジトリ内で実行）
-cd /path/to/mex_app/mcp-server
-npm install && npm run build
-
-# 2. セットアップ（対話形式で ~/.mex/config.json を作成）
+# 1. セットアップ（対話形式で ~/.mex/config.json を作成）
 #    ※ 事前にバックエンドを起動しておくこと（別ターミナルで uvicorn app.main:app --reload）
-node dist/cli/setup.js
+npx -p mex-mcp-server mex-setup
 ```
 
 セットアップ CLI では以下の質問に回答します：
@@ -116,12 +112,19 @@ node dist/cli/setup.js
 認証に成功すると API トークンが自動取得され、`~/.mex/config.json` が作成されます。
 
 ```bash
-# 3. Claude Code の MCP 設定に登録（~/.claude/mcp_servers.json）
-# { "mex": { "command": "node", "args": ["/path/to/mex_app/mcp-server/dist/index.js"] } }
+# 2. Claude Code の MCP 設定に登録
+#    プロジェクトごと: .claude/mcp_servers.json
+#    または全プロジェクト共通: ~/.claude/settings.json の mcpServers
 ```
 
-> MCP サーバーのソースコードは本リポジトリの `mcp-server/` にあります。
-> ビルドは本リポジトリ内で一度だけ行えば、他のプロジェクトからも共通で利用できます。
+```json
+{
+  "mex": {
+    "command": "npx",
+    "args": ["mex-mcp-server"]
+  }
+}
+```
 
 **設定ファイルの構成**
 
@@ -137,7 +140,7 @@ MCP サーバーの設定は「ユーザー認証」と「プロジェクト紐�
 
 | ファイル | 場所 | 役割 | 作成タイミング |
 |---|---|---|---|
-| `~/.mex/config.json` | ホームディレクトリ | API URL + 認証トークン | `node dist/cli/setup.js` 実行時に一度だけ |
+| `~/.mex/config.json` | ホームディレクトリ | API URL + 認証トークン | `npx -p mex-mcp-server mex-setup` 実行時に一度だけ |
 | `~/.claude/mcp_servers.json` | ホームディレクトリ | Claude Code にMCPサーバーを登録 | 手動で一度だけ |
 | `.mex.json` | 各リポジトリのルート | MEX App 上のプロジェクトIDを保持 | `/document` 初回実行時に自動生成 |
 

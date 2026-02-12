@@ -17,19 +17,13 @@ MCP サーバーは MEX App の API と通信し、以下の操作を AI ツー�
 
 ## セットアップ
 
-### 1. MCP サーバーをビルド
-
-```bash
-cd mcp-server
-npm install && npm run build
-```
-
-### 2. セットアップ CLI を実行
+### 1. セットアップ CLI を実行
 
 対話形式でログイン → トークン取得 → `~/.mex/config.json` 作成をすべて自動で行います。
+事前にバックエンドを起動しておいてください（`uvicorn app.main:app --reload`）。
 
 ```bash
-node dist/cli/setup.js
+npx -p mex-mcp-server mex-setup
 ```
 
 > 手動で設定する場合は `~/.mex/config.json` を以下の内容で作成してください：
@@ -45,7 +39,7 @@ node dist/cli/setup.js
 > - `api_url` と `api_key` は必須です。
 > - `ai_tool` は省略可能で、未指定時は `claude_code` が使われます。
 
-### 3. MCP サーバーを登録
+### 2. MCP サーバーを登録
 
 Claude Code の MCP 設定に登録すれば、自動で起動されます（下記「Claude Code 連携例」参照）。
 
@@ -65,13 +59,11 @@ MCP は「AI が使えるツールを提供する仕組み」です。
 ```json
 {
   "mex": {
-    "command": "node",
-    "args": ["/absolute/path/to/mex_app/mcp-server/dist/index.js"]
+    "command": "npx",
+    "args": ["mex-mcp-server"]
   }
 }
 ```
-
-> `args` のパスは実際の `mcp-server/dist/index.js` の絶対パスに置き換えてください。
 
 ## 実際の利用例（プロンプト例）
 
