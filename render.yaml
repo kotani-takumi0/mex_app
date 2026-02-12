@@ -21,7 +21,7 @@ services:
       - key: APP_ENV
         value: production
       - key: PYTHON_VERSION
-        value: "3.11"
+        value: "3.11.12"
       - key: SENTRY_DSN
         sync: false
     plan: free
