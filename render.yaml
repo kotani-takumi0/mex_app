@@ -4,7 +4,7 @@ services:
     runtime: python
     repo: https://github.com/kotani-takumi0/mex_app
     rootDir: backend
-    buildCommand: pip install .
+    buildCommand: pip install --no-cache-dir .
     startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/health
     envVars:
