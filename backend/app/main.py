@@ -2,8 +2,9 @@
 FastAPIアプリケーションのエントリーポイント
 AI開発ポートフォリオプラットフォーム
 """
-from contextlib import asynccontextmanager
+
 import logging
+from contextlib import asynccontextmanager
 
 import sentry_sdk
 from fastapi import FastAPI, Request, Response
@@ -36,6 +37,7 @@ async def lifespan(app: FastAPI):
     logger.info("MEX App starting up")
     yield
 
+
 app = FastAPI(
     title="MEX App - AI開発ポートフォリオ",
     description="開発過程と理解度を可視化するポートフォリオプラットフォーム",
@@ -46,6 +48,7 @@ app = FastAPI(
 # レート制限
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 
 # セキュリティヘッダーミドルウェア
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):

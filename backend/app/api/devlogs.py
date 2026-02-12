@@ -1,9 +1,10 @@
 """開発ログAPI"""
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
 
+from app.application.devlog_service import DevLogCreate, DevLogService, DevLogSummary, DevLogUpdate
 from app.auth.dependencies import CurrentUser, get_current_user_dependency
-from app.application.devlog_service import DevLogService, DevLogCreate, DevLogUpdate, DevLogSummary
 
 router = APIRouter(prefix="/devlogs", tags=["DevLogs"])
 
@@ -99,7 +100,9 @@ async def list_devlogs(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 
-@router.post("/{project_id}/entries", response_model=DevLogEntryResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/{project_id}/entries", response_model=DevLogEntryResponse, status_code=status.HTTP_201_CREATED
+)
 async def create_devlog(
     project_id: str,
     request: DevLogCreateRequest,

@@ -2,12 +2,13 @@
 シードデータローダー
 タスク6.2: サンプルデータ投入とコールドスタート対応
 """
-from typing import Any
+
 import uuid
 from datetime import datetime
+from typing import Any
 
-from .failure_patterns import MASTER_FAILURE_PATTERNS
 from .decision_cases import SAMPLE_DECISION_CASES
+from .failure_patterns import MASTER_FAILURE_PATTERNS
 
 
 class SeedDataLoader:

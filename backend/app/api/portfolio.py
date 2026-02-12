@@ -1,19 +1,20 @@
 """公開ポートフォリオAPI"""
+
 import re
 
 from fastapi import APIRouter, Depends, HTTPException, Path, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from app.infrastructure.database.session import get_db
 from app.infrastructure.database.models import (
-    User,
-    Project,
     DevLogEntry,
-    QuizQuestion,
+    Project,
     QuizAttempt,
+    QuizQuestion,
     SkillScore,
+    User,
 )
+from app.infrastructure.database.session import get_db
 
 router = APIRouter(prefix="/portfolio", tags=["Portfolio"])
 
@@ -262,7 +263,9 @@ def _build_quiz_summary(db, project_id: str, user_id: str) -> PublicQuizSummary:
 
     by_technology = []
     for tech, counts in by_tech.items():
-        tech_score = round((counts["correct"] / counts["total"]) * 100, 1) if counts["total"] else 0.0
+        tech_score = (
+            round((counts["correct"] / counts["total"]) * 100, 1) if counts["total"] else 0.0
+        )
         by_technology.append(
             QuizSummaryByTech(
                 technology=tech,

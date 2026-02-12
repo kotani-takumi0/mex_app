@@ -2,7 +2,6 @@
 TDD: シードデータ投入のテスト
 タスク6.2: サンプルデータ投入とコールドスタート対応
 """
-import pytest
 
 
 class TestFailurePatternTagsMaster:

@@ -2,11 +2,13 @@
 同時リクエストハンドラー
 タスク6.3: パフォーマンス検証と最適化
 """
+
 import asyncio
-import time
 import random
+import time
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
-from typing import Any, Callable, Awaitable
+from typing import Any
 
 
 @dataclass

@@ -4,7 +4,8 @@
 PostgreSQL + pgvector を使用したベクトル類似検索。
 Qdrantは廃止され、embeddingはdevlog_entriesテーブルに直接保存される。
 """
-from dataclasses import dataclass, field
+
+from dataclasses import dataclass
 
 from sqlalchemy import text
 
@@ -15,6 +16,7 @@ from app.infrastructure.database.session import get_db
 @dataclass
 class SimilarityConfig:
     """類似検索設定"""
+
     vector_weight: float = 0.7
     text_weight: float = 0.3
     default_limit: int = 10
@@ -23,6 +25,7 @@ class SimilarityConfig:
 @dataclass
 class DevLogFilter:
     """開発ログ検索フィルター"""
+
     entry_types: list[str] | None = None
     technologies: list[str] | None = None
 
@@ -30,6 +33,7 @@ class DevLogFilter:
 @dataclass
 class SimilarityResult:
     """類似検索結果"""
+
     devlog_id: str
     project_id: str
     score: float
@@ -164,12 +168,15 @@ class SimilarityEngine:
         db_gen = get_db()
         db = next(db_gen)
         try:
-            result = db.execute(text(sql), {
-                "query_embedding": embedding_str,
-                "user_id": user_id,
-                "project_id": project_id,
-                "limit": limit,
-            })
+            result = db.execute(
+                text(sql),
+                {
+                    "query_embedding": embedding_str,
+                    "user_id": user_id,
+                    "project_id": project_id,
+                    "limit": limit,
+                },
+            )
             rows = result.fetchall()
 
             return [

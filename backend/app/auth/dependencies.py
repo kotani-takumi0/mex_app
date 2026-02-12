@@ -3,25 +3,28 @@
 個人開発版: tenant_idを削除し、planを追加
 MCPトークン無効化チェック対応
 """
+
 import hashlib
 import logging
 
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel
 
-from .jwt import JWTService, TokenExpiredError, InvalidTokenError
+from .jwt import InvalidTokenError, JWTService, TokenExpiredError
 
 logger = logging.getLogger(__name__)
 
 
 class AuthenticationError(Exception):
     """認証エラー"""
+
     pass
 
 
 class CurrentUser(BaseModel):
     """現在のユーザー情報 - tenant_id削除、plan追加"""
+
     user_id: str
     plan: str = "free"
 
@@ -40,17 +43,13 @@ def _is_token_revoked(token: str) -> bool:
     DB記録がないトークン（通常のセッションJWT）はそのままパスする。
     """
     try:
-        from app.infrastructure.database.session import SessionLocal
         from app.infrastructure.database.models import MCPToken
+        from app.infrastructure.database.session import SessionLocal
 
         token_hash = hashlib.sha256(token.encode()).hexdigest()
         db = SessionLocal()
         try:
-            record = (
-                db.query(MCPToken)
-                .filter(MCPToken.token_hash == token_hash)
-                .first()
-            )
+            record = db.query(MCPToken).filter(MCPToken.token_hash == token_hash).first()
             # DB記録なし → 通常JWT → revoke対象外
             if record is None:
                 return False

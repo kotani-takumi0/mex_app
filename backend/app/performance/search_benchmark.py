@@ -2,10 +2,10 @@
 類似検索ベンチマーク
 タスク6.3: パフォーマンス検証と最適化
 """
-import time
+
 import random
+import time
 from dataclasses import dataclass
-from typing import Any
 
 
 @dataclass
@@ -32,12 +32,14 @@ class SearchBenchmark:
         """モックケースデータを生成"""
         cases = []
         for i in range(num_cases):
-            cases.append({
-                "id": f"case-{i}",
-                "title": f"テストケース {i}",
-                "purpose": f"テスト目的 {i}",
-                "embedding": [random.random() for _ in range(128)],  # 簡略化
-            })
+            cases.append(
+                {
+                    "id": f"case-{i}",
+                    "title": f"テストケース {i}",
+                    "purpose": f"テスト目的 {i}",
+                    "embedding": [random.random() for _ in range(128)],  # 簡略化
+                }
+            )
         return cases
 
     def _mock_similarity_search(

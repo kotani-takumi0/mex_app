@@ -2,28 +2,29 @@
 データベースモデル定義
 MEX App（AI開発ポートフォリオ）向けスキーマ
 """
+
 import uuid
 from datetime import datetime, timezone
 
+from pgvector.sqlalchemy import Vector
 from sqlalchemy import (
+    JSON,
+    Boolean,
     Column,
-    String,
-    Text,
     DateTime,
+    Float,
     ForeignKey,
     Index,
-    JSON,
     Integer,
-    Float,
-    Boolean,
+    String,
+    Text,
 )
 from sqlalchemy.orm import DeclarativeBase, relationship
-
-from pgvector.sqlalchemy import Vector
 
 
 class Base(DeclarativeBase):
     """SQLAlchemy Base class"""
+
     pass
 
 
@@ -42,6 +43,7 @@ class User(Base):
     ユーザーテーブル
     メール/パスワードまたはOAuth認証に対応
     """
+
     __tablename__ = "users"
 
     # --- 既存カラム（変更なし） ---
@@ -73,6 +75,7 @@ class Project(Base):
     プロジェクトテーブル
     ユーザーが開発したプロジェクトを管理する
     """
+
     __tablename__ = "projects"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
@@ -89,8 +92,12 @@ class Project(Base):
 
     # Relationships
     user = relationship("User", back_populates="projects")
-    devlog_entries = relationship("DevLogEntry", back_populates="project", cascade="all, delete-orphan")
-    quiz_questions = relationship("QuizQuestion", back_populates="project", cascade="all, delete-orphan")
+    devlog_entries = relationship(
+        "DevLogEntry", back_populates="project", cascade="all, delete-orphan"
+    )
+    quiz_questions = relationship(
+        "QuizQuestion", back_populates="project", cascade="all, delete-orphan"
+    )
 
     __table_args__ = (
         Index("idx_projects_user_id", "user_id"),
@@ -104,6 +111,7 @@ class DevLogEntry(Base):
     技術ドキュメント
     MCPサーバーまたは手動入力から保存される技術ドキュメント
     """
+
     __tablename__ = "devlog_entries"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
@@ -141,12 +149,15 @@ class QuizQuestion(Base):
     理解度チェック問題
     開発ログからLLMが自動生成する4択クイズ
     """
+
     __tablename__ = "quiz_questions"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
     project_id = Column(String(36), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
     user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    devlog_entry_id = Column(String(36), ForeignKey("devlog_entries.id", ondelete="SET NULL"), nullable=True)
+    devlog_entry_id = Column(
+        String(36), ForeignKey("devlog_entries.id", ondelete="SET NULL"), nullable=True
+    )
 
     technology = Column(String(100), nullable=False)
     question = Column(Text, nullable=False)
@@ -173,10 +184,13 @@ class QuizAttempt(Base):
     クイズ回答記録
     ユーザーの各回答を記録し、スコア計算に使用
     """
+
     __tablename__ = "quiz_attempts"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
-    quiz_question_id = Column(String(36), ForeignKey("quiz_questions.id", ondelete="CASCADE"), nullable=False)
+    quiz_question_id = Column(
+        String(36), ForeignKey("quiz_questions.id", ondelete="CASCADE"), nullable=False
+    )
     user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     selected_answer = Column(Integer, nullable=False)
     is_correct = Column(Boolean, nullable=False)
@@ -197,6 +211,7 @@ class SkillScore(Base):
     技術別理解度スコア
     クイズ結果から集計される技術別のスコア
     """
+
     __tablename__ = "skill_scores"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
@@ -220,6 +235,7 @@ class UsageLog(Base):
     利用量ログテーブル
     各API呼び出しを記録
     """
+
     __tablename__ = "usage_logs"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
@@ -239,10 +255,13 @@ class Subscription(Base):
     サブスクリプションテーブル
     Stripe決済と連動
     """
+
     __tablename__ = "subscriptions"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
-    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True)
+    user_id = Column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True
+    )
     stripe_customer_id = Column(String(255), nullable=True)
     stripe_subscription_id = Column(String(255), nullable=True)
     plan = Column(String(20), nullable=False, default="free")
@@ -262,6 +281,7 @@ class MCPToken(Base):
     MCPトークン管理テーブル
     MCP Server用の長寿命トークンを管理し、無効化（revoke）をサポートする
     """
+
     __tablename__ = "mcp_tokens"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
@@ -283,6 +303,7 @@ class StripeWebhookEvent(Base):
     Stripe Webhookイベント重複排除テーブル
     同一イベントの二重処理を防止する
     """
+
     __tablename__ = "stripe_webhook_events"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
@@ -290,6 +311,4 @@ class StripeWebhookEvent(Base):
     event_type = Column(String(100), nullable=False)
     processed_at = Column(DateTime(timezone=True), default=utc_now)
 
-    __table_args__ = (
-        Index("idx_stripe_webhook_events_stripe_event_id", "stripe_event_id"),
-    )
+    __table_args__ = (Index("idx_stripe_webhook_events_stripe_event_id", "stripe_event_id"),)

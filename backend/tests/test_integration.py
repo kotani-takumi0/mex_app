@@ -2,11 +2,12 @@
 フロントエンド・バックエンド統合テスト
 ピボット後のポートフォリオアプリ向けに更新
 """
+
 import pytest
 from fastapi.testclient import TestClient
 
-from app.main import app
 from app.auth.jwt import JWTService
+from app.main import app
 
 
 class TestCORSConfiguration:
@@ -52,9 +53,7 @@ class TestAPIEndpointsIntegration:
     def auth_headers(self):
         """認証ヘッダー"""
         service = JWTService()
-        token = service.create_access_token(
-            data={"sub": "test-user", "plan": "free"}
-        )
+        token = service.create_access_token(data={"sub": "test-user", "plan": "free"})
         return {"Authorization": f"Bearer {token}"}
 
     def test_health_check_no_auth_required(self, client):
@@ -119,19 +118,13 @@ class TestTokenIntegrity:
     def test_token_contains_plan(self):
         """トークンにプランが含まれる"""
         service = JWTService()
-        token = service.create_access_token(
-            data={"sub": "user123", "plan": "pro"}
-        )
+        token = service.create_access_token(data={"sub": "user123", "plan": "pro"})
         payload = service.decode_token(token)
         assert payload["plan"] == "pro"
 
     def test_different_plans_get_different_tokens(self):
         """異なるプランは異なるトークンを取得"""
         service = JWTService()
-        token1 = service.create_access_token(
-            data={"sub": "user1", "plan": "free"}
-        )
-        token2 = service.create_access_token(
-            data={"sub": "user1", "plan": "pro"}
-        )
+        token1 = service.create_access_token(data={"sub": "user1", "plan": "free"})
+        token2 = service.create_access_token(data={"sub": "user1", "plan": "pro"})
         assert token1 != token2

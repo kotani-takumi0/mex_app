@@ -9,16 +9,18 @@ AI開発ポートフォリオ向けピボット:
 - users に username, bio, github_url を追加
 - decision_cases, failure_pattern_tags, case_failure_patterns, idea_memos を削除
 """
-from typing import Sequence, Union
+
+from collections.abc import Sequence
+
+import sqlalchemy as sa
 
 from alembic import op
-import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = "003"
-down_revision: Union[str, None] = "002"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = "002"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -33,7 +35,9 @@ def upgrade() -> None:
     op.create_table(
         "projects",
         sa.Column("id", sa.String(36), primary_key=True),
-        sa.Column("user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        ),
         sa.Column("title", sa.String(255), nullable=False),
         sa.Column("description", sa.Text(), nullable=True),
         sa.Column("technologies", sa.JSON(), nullable=True),
@@ -52,8 +56,15 @@ def upgrade() -> None:
     op.create_table(
         "devlog_entries",
         sa.Column("id", sa.String(36), primary_key=True),
-        sa.Column("project_id", sa.String(36), sa.ForeignKey("projects.id", ondelete="CASCADE"), nullable=False),
-        sa.Column("user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "project_id",
+            sa.String(36),
+            sa.ForeignKey("projects.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
+        sa.Column(
+            "user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        ),
         sa.Column("source", sa.String(20), nullable=False, server_default="manual"),
         sa.Column("entry_type", sa.String(30), nullable=False),
         sa.Column("summary", sa.String(500), nullable=False),
@@ -72,9 +83,21 @@ def upgrade() -> None:
     op.create_table(
         "quiz_questions",
         sa.Column("id", sa.String(36), primary_key=True),
-        sa.Column("project_id", sa.String(36), sa.ForeignKey("projects.id", ondelete="CASCADE"), nullable=False),
-        sa.Column("user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
-        sa.Column("devlog_entry_id", sa.String(36), sa.ForeignKey("devlog_entries.id", ondelete="SET NULL"), nullable=True),
+        sa.Column(
+            "project_id",
+            sa.String(36),
+            sa.ForeignKey("projects.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
+        sa.Column(
+            "user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        ),
+        sa.Column(
+            "devlog_entry_id",
+            sa.String(36),
+            sa.ForeignKey("devlog_entries.id", ondelete="SET NULL"),
+            nullable=True,
+        ),
         sa.Column("technology", sa.String(100), nullable=False),
         sa.Column("question", sa.Text(), nullable=False),
         sa.Column("options", sa.JSON(), nullable=False),
@@ -91,8 +114,15 @@ def upgrade() -> None:
     op.create_table(
         "quiz_attempts",
         sa.Column("id", sa.String(36), primary_key=True),
-        sa.Column("quiz_question_id", sa.String(36), sa.ForeignKey("quiz_questions.id", ondelete="CASCADE"), nullable=False),
-        sa.Column("user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "quiz_question_id",
+            sa.String(36),
+            sa.ForeignKey("quiz_questions.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
+        sa.Column(
+            "user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        ),
         sa.Column("selected_answer", sa.Integer(), nullable=False),
         sa.Column("is_correct", sa.Boolean(), nullable=False),
         sa.Column("time_spent_seconds", sa.Integer(), nullable=True),
@@ -105,7 +135,9 @@ def upgrade() -> None:
     op.create_table(
         "skill_scores",
         sa.Column("id", sa.String(36), primary_key=True),
-        sa.Column("user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        ),
         sa.Column("technology", sa.String(100), nullable=False),
         sa.Column("score", sa.Float(), nullable=False, server_default="0"),
         sa.Column("total_questions", sa.Integer(), nullable=False, server_default="0"),

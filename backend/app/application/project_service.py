@@ -1,13 +1,15 @@
 """プロジェクト管理サービス"""
+
 from dataclasses import dataclass, field
 
+from app.infrastructure.database.models import DevLogEntry, Project, QuizAttempt, QuizQuestion
 from app.infrastructure.database.session import SessionLocal
-from app.infrastructure.database.models import Project, DevLogEntry, QuizAttempt, QuizQuestion
 
 
 @dataclass
 class ProjectCreate:
     """プロジェクト作成入力"""
+
     title: str
     description: str | None = None
     technologies: list[str] = field(default_factory=list)
@@ -20,6 +22,7 @@ class ProjectCreate:
 @dataclass
 class ProjectUpdate:
     """プロジェクト更新入力"""
+
     title: str | None = None
     description: str | None = None
     technologies: list[str] | None = None
@@ -32,6 +35,7 @@ class ProjectUpdate:
 @dataclass
 class ProjectSummary:
     """プロジェクト情報（一覧・詳細用）"""
+
     id: str
     title: str
     description: str | None
@@ -127,20 +131,14 @@ class ProjectService:
 
     def _get_project(self, db, user_id: str, project_id: str) -> Project:
         project = (
-            db.query(Project)
-            .filter(Project.id == project_id, Project.user_id == user_id)
-            .first()
+            db.query(Project).filter(Project.id == project_id, Project.user_id == user_id).first()
         )
         if project is None:
             raise ValueError("Project not found")
         return project
 
     def _to_summary(self, db, project: Project, user_id: str) -> ProjectSummary:
-        devlog_count = (
-            db.query(DevLogEntry)
-            .filter(DevLogEntry.project_id == project.id)
-            .count()
-        )
+        devlog_count = db.query(DevLogEntry).filter(DevLogEntry.project_id == project.id).count()
 
         quiz_score = self._calculate_quiz_score(db, project.id, user_id)
 

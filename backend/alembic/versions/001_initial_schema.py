@@ -7,17 +7,19 @@ Create Date: 2026-02-05
 タスク1.2: データベーススキーマとマイグレーションの実装
 Design.mdの Physical Data Model に基づく実装
 """
-from typing import Sequence, Union
 
-from alembic import op
+from collections.abc import Sequence
+
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
+from alembic import op
+
 # revision identifiers, used by Alembic.
 revision: str = "001"
-down_revision: Union[str, None] = None
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = None
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -36,13 +38,22 @@ def upgrade() -> None:
         sa.Column("purpose", sa.Text(), nullable=False),
         sa.Column("target_market", sa.String(255), nullable=True),
         sa.Column("business_model", sa.Text(), nullable=True),
-        sa.Column("outcome", sa.String(50), nullable=False),  # adopted, rejected, withdrawn, cancelled
+        sa.Column(
+            "outcome", sa.String(50), nullable=False
+        ),  # adopted, rejected, withdrawn, cancelled
         sa.Column("decision_type", sa.String(10), nullable=False),  # go, no_go
         sa.Column("decision_reason", sa.Text(), nullable=False),
-        sa.Column("failed_hypotheses", postgresql.JSONB(astext_type=sa.Text()), server_default="[]"),
+        sa.Column(
+            "failed_hypotheses", postgresql.JSONB(astext_type=sa.Text()), server_default="[]"
+        ),
         sa.Column("discussions", postgresql.JSONB(astext_type=sa.Text()), server_default="[]"),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
-        sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), onupdate=sa.func.now()),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.func.now(),
+            onupdate=sa.func.now(),
+        ),
     )
 
     # Failure Pattern Tags テーブル
@@ -51,14 +62,26 @@ def upgrade() -> None:
         sa.Column("id", sa.String(36), primary_key=True),
         sa.Column("name", sa.String(100), nullable=False, unique=True),
         sa.Column("description", sa.Text(), nullable=True),
-        sa.Column("category", sa.String(50), nullable=False),  # financial, operational, market, technical, organizational
+        sa.Column(
+            "category", sa.String(50), nullable=False
+        ),  # financial, operational, market, technical, organizational
     )
 
     # Case Failure Patterns 関連テーブル（多対多）
     op.create_table(
         "case_failure_patterns",
-        sa.Column("case_id", sa.String(36), sa.ForeignKey("decision_cases.id", ondelete="CASCADE"), primary_key=True),
-        sa.Column("tag_id", sa.String(36), sa.ForeignKey("failure_pattern_tags.id", ondelete="CASCADE"), primary_key=True),
+        sa.Column(
+            "case_id",
+            sa.String(36),
+            sa.ForeignKey("decision_cases.id", ondelete="CASCADE"),
+            primary_key=True,
+        ),
+        sa.Column(
+            "tag_id",
+            sa.String(36),
+            sa.ForeignKey("failure_pattern_tags.id", ondelete="CASCADE"),
+            primary_key=True,
+        ),
     )
 
     # Idea Memos テーブル（Go/NoGo判断がないレコード用）

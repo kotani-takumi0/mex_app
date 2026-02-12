@@ -4,6 +4,7 @@
 開発ログに含まれるAPIキー等のシークレットを検出し、
 マスキングする機能のユニットテスト。
 """
+
 import pytest
 
 from app.domain.security.secret_detector import SecretDetector, get_secret_detector

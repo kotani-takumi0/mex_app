@@ -7,28 +7,32 @@
 - APIキー管理とレート制限対応
 - リトライロジックとフォールバック処理
 """
+
 import asyncio
 from dataclasses import dataclass
-from typing import Any
 
-from openai import AsyncOpenAI, RateLimitError as OpenAIRateLimitError, APIError
+from openai import APIError, AsyncOpenAI
+from openai import RateLimitError as OpenAIRateLimitError
 
 from app.config import get_settings
 
 
 class EmbeddingError(Exception):
     """埋め込み生成エラー"""
+
     pass
 
 
 class RateLimitError(EmbeddingError):
     """レート制限エラー"""
+
     pass
 
 
 @dataclass
 class EmbeddingConfig:
     """埋め込み生成設定"""
+
     model: str = "text-embedding-3-small"
     dimensions: int = 1536
     max_retries: int = 3
@@ -38,6 +42,7 @@ class EmbeddingConfig:
 @dataclass
 class EmbeddingResult:
     """埋め込み生成結果"""
+
     text: str
     embedding: list[float]
     model: str
@@ -134,7 +139,7 @@ class EmbeddingService:
                 last_error = e
                 if attempt < self.config.max_retries - 1:
                     # エクスポネンシャルバックオフ
-                    delay = self.config.retry_delay * (2 ** attempt)
+                    delay = self.config.retry_delay * (2**attempt)
                     await asyncio.sleep(delay)
                 continue
 
@@ -175,7 +180,7 @@ class EmbeddingService:
             except OpenAIRateLimitError as e:
                 last_error = e
                 if attempt < self.config.max_retries - 1:
-                    delay = self.config.retry_delay * (2 ** attempt)
+                    delay = self.config.retry_delay * (2**attempt)
                     await asyncio.sleep(delay)
                 continue
 

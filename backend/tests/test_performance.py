@@ -2,10 +2,10 @@
 TDD: パフォーマンス検証のテスト（モックベース）
 タスク6.3: パフォーマンス検証と最適化
 """
-import pytest
-import asyncio
+
 import time
-from unittest.mock import Mock, AsyncMock, patch
+
+import pytest
 
 
 class TestSimilaritySearchPerformance:

@@ -2,6 +2,7 @@
 LLMサービス
 プラン別モデル切り替え対応（Free: GPT-4o-mini / Pro: GPT-4o）
 """
+
 from dataclasses import dataclass
 from typing import Any
 
@@ -13,6 +14,7 @@ from app.config import get_settings
 @dataclass
 class LLMConfig:
     """LLM設定"""
+
     model: str = "gpt-4o-mini"  # デフォルトはFreeプラン向け
     temperature: float = 0.7
     max_tokens: int = 2000
@@ -94,5 +96,6 @@ class LLMService:
         )
 
         import json
+
         content = response.choices[0].message.content or "{}"
         return json.loads(content)

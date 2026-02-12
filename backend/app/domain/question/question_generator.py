@@ -1,4 +1,5 @@
 """クイズ生成エンジン"""
+
 from dataclasses import dataclass
 
 from app.domain.llm.llm_service import LLMService
@@ -7,6 +8,7 @@ from app.domain.llm.llm_service import LLMService
 @dataclass
 class GeneratedQuizQuestion:
     """生成されたクイズ問題"""
+
     technology: str
     question: str
     options: list[str]
@@ -77,7 +79,7 @@ class QuestionGenerator:
 {entries_text}
 
 ## 対象技術
-{', '.join(technologies)}
+{", ".join(technologies)}
 
 ## 要求
 - {count}問の4択クイズを生成

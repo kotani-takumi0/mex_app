@@ -2,14 +2,11 @@
 Alembicマイグレーション管理ユーティリティ
 タスク1.2: バージョン管理可能なスキーマ変更を実現
 """
-import os
+
 from pathlib import Path
-from typing import Any
 
 from alembic.config import Config
 from alembic.script import ScriptDirectory
-from alembic.runtime.migration import MigrationContext
-from sqlalchemy import create_engine
 
 
 def get_alembic_config() -> Config:

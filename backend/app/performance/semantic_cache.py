@@ -2,10 +2,11 @@
 セマンティックキャッシュ
 タスク6.3: パフォーマンス検証と最適化
 """
+
 import time
-from typing import Any
 from dataclasses import dataclass
 from threading import Lock
+from typing import Any
 
 
 @dataclass

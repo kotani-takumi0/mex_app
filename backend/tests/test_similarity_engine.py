@@ -5,14 +5,14 @@ pgvectorを使用したベクトル類似検索のテスト。
 実際のDBテストはインテグレーションテストで実施。
 ここではデータクラスとエンジンの初期化をテスト。
 """
-import pytest
-from unittest.mock import AsyncMock, Mock, patch
+
+from unittest.mock import patch
 
 from app.domain.similarity.similarity_engine import (
-    SimilarityEngine,
-    SimilarityConfig,
-    SimilarityResult,
     DevLogFilter,
+    SimilarityConfig,
+    SimilarityEngine,
+    SimilarityResult,
 )
 
 

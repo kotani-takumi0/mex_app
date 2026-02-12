@@ -1,15 +1,16 @@
 """理解度チェック（クイズ）API"""
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 
-from app.auth.dependencies import CurrentUser, get_current_user_dependency
 from app.application.quiz_service import (
-    QuizService,
+    QuizAnswerResult,
     QuizGenerateRequest,
     QuizQuestionSummary,
-    QuizAnswerResult,
+    QuizService,
     SkillScoreSummary,
 )
+from app.auth.dependencies import CurrentUser, get_current_user_dependency
 
 router = APIRouter(prefix="/quiz", tags=["Quiz"])
 

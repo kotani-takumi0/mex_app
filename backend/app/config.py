@@ -2,6 +2,7 @@
 アプリケーション設定
 環境変数からの設定読み込み
 """
+
 import logging
 from functools import lru_cache
 from pathlib import Path
@@ -64,14 +65,12 @@ class Settings(BaseSettings):
         if self.jwt_secret_key == "dev-secret-key-change-in-production":
             raise ValueError(
                 "CRITICAL: JWT_SECRET_KEY must be changed in production. "
-                "Generate with: python3 -c \"import secrets; print(secrets.token_urlsafe(32))\""
+                'Generate with: python3 -c "import secrets; print(secrets.token_urlsafe(32))"'
             )
 
         # JWT秘密鍵が短すぎる場合も拒否
         if len(self.jwt_secret_key) < 32:
-            raise ValueError(
-                "JWT_SECRET_KEY must be at least 32 characters in production"
-            )
+            raise ValueError("JWT_SECRET_KEY must be at least 32 characters in production")
 
         # DATABASE_URLがデフォルトのままなら警告
         if "postgres:postgres@localhost" in self.database_url:
@@ -94,6 +93,7 @@ class Settings(BaseSettings):
             if cleaned.startswith("["):
                 try:
                     import json
+
                     parsed = json.loads(cleaned)
                     if isinstance(parsed, list):
                         return [str(item).strip() for item in parsed if str(item).strip()]

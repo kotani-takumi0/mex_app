@@ -1,15 +1,16 @@
 """ダッシュボード統計サービス"""
+
 from dataclasses import dataclass
 
-from app.infrastructure.database.session import SessionLocal
 from app.infrastructure.database.models import (
-    User,
-    Project,
     DevLogEntry,
+    Project,
     QuizAttempt,
     QuizQuestion,
     SkillScore,
+    User,
 )
+from app.infrastructure.database.session import SessionLocal
 
 
 @dataclass
@@ -72,8 +73,12 @@ class DashboardService:
                 raise ValueError("User not found")
 
             total_projects = db.query(Project).filter(Project.user_id == user_id).count()
-            total_devlog_entries = db.query(DevLogEntry).filter(DevLogEntry.user_id == user_id).count()
-            total_quiz_answered = db.query(QuizAttempt).filter(QuizAttempt.user_id == user_id).count()
+            total_devlog_entries = (
+                db.query(DevLogEntry).filter(DevLogEntry.user_id == user_id).count()
+            )
+            total_quiz_answered = (
+                db.query(QuizAttempt).filter(QuizAttempt.user_id == user_id).count()
+            )
 
             skill_scores = (
                 db.query(SkillScore)
@@ -104,7 +109,9 @@ class DashboardService:
                     demo_url=p.demo_url,
                     status=p.status,
                     is_public=p.is_public,
-                    devlog_count=db.query(DevLogEntry).filter(DevLogEntry.project_id == p.id).count(),
+                    devlog_count=db.query(DevLogEntry)
+                    .filter(DevLogEntry.project_id == p.id)
+                    .count(),
                     quiz_score=self._calculate_quiz_score(db, p.id, user_id),
                     created_at=p.created_at.isoformat() if p.created_at else "",
                     updated_at=p.updated_at.isoformat() if p.updated_at else "",

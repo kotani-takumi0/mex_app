@@ -59,7 +59,15 @@ select = [
     "C4",  # flake8-comprehensions
     "UP",  # pyupgrade
 ]
-ignore = ["E501"]
+ignore = [
+    "E501",   # line too long
+    "B008",   # Depends() in function defaults — FastAPI standard pattern
+    "B904",   # raise ... from — noisy in HTTP exception handlers
+]
+
+[tool.ruff.lint.per-file-ignores]
+"alembic/*" = ["E402", "UP007", "UP035"]  # Alembic structure requires late imports and old typing
+"tests/*" = ["F401"]  # test fixtures often appear as unused imports
 
 [tool.mypy]
 python_version = "3.10"

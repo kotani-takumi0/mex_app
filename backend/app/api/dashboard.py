@@ -1,9 +1,10 @@
 """ダッシュボードAPIエンドポイント"""
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 
+from app.application.usage_service import DashboardData, DashboardService
 from app.auth.dependencies import CurrentUser, get_current_user_dependency
-from app.application.usage_service import DashboardService, DashboardData
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
 

@@ -105,7 +105,7 @@ SAMPLE_DECISION_CASES: list[dict] = [
             {
                 "hypothesis": "オペレーターコストを50%削減できる",
                 "failure_reason": "複雑な問い合わせは結局人間対応が必要で、削減効果は20%程度",
-            }
+            },
         ],
         "discussions": [
             {

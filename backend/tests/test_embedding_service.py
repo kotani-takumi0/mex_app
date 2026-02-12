@@ -7,15 +7,16 @@ TDD: 埋め込み生成サービスのテスト
 - APIキー管理とレート制限対応
 - リトライロジックとフォールバック処理
 """
+
+from unittest.mock import AsyncMock, Mock, patch
+
 import pytest
-from unittest.mock import Mock, patch, AsyncMock, MagicMock
-import httpx
 
 from app.domain.embedding.embedding_service import (
-    EmbeddingService,
     EmbeddingConfig,
-    EmbeddingResult,
     EmbeddingError,
+    EmbeddingResult,
+    EmbeddingService,
     RateLimitError,
 )
 

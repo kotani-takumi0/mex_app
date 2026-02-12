@@ -2,9 +2,10 @@
 TDD: JWT認証のテスト
 タスク6.1: フロントエンド・バックエンド統合
 """
+
+from datetime import timedelta
+
 import pytest
-from datetime import datetime, timedelta
-from unittest.mock import patch
 
 
 class TestJWTConfig:
@@ -42,9 +43,7 @@ class TestJWTService:
         from app.auth.jwt import JWTService
 
         service = JWTService()
-        token = service.create_access_token(
-            data={"sub": "user123", "tenant_id": "tenant001"}
-        )
+        token = service.create_access_token(data={"sub": "user123", "tenant_id": "tenant001"})
         assert isinstance(token, str)
         assert len(token) > 0
 
@@ -53,9 +52,7 @@ class TestJWTService:
         from app.auth.jwt import JWTService
 
         service = JWTService()
-        token = service.create_access_token(
-            data={"sub": "user123", "tenant_id": "tenant001"}
-        )
+        token = service.create_access_token(data={"sub": "user123", "tenant_id": "tenant001"})
         payload = service.decode_token(token)
         assert payload["sub"] == "user123"
         assert payload["tenant_id"] == "tenant001"
@@ -75,7 +72,7 @@ class TestJWTService:
 
     def test_decode_invalid_token_raises_error(self):
         """無効なトークンはエラーを発生させる"""
-        from app.auth.jwt import JWTService, InvalidTokenError
+        from app.auth.jwt import InvalidTokenError, JWTService
 
         service = JWTService()
         with pytest.raises(InvalidTokenError):
@@ -109,9 +106,7 @@ class TestAuthDependency:
         from app.auth.jwt import JWTService
 
         service = JWTService()
-        token = service.create_access_token(
-            data={"sub": "user123", "plan": "free"}
-        )
+        token = service.create_access_token(data={"sub": "user123", "plan": "free"})
         # Authorization headerのフォーマットでテスト
         user = get_current_user(f"Bearer {token}")
         assert user.user_id == "user123"
@@ -119,14 +114,14 @@ class TestAuthDependency:
 
     def test_get_current_user_without_bearer_raises_error(self):
         """Bearerプレフィックスがない場合エラー"""
-        from app.auth.dependencies import get_current_user, AuthenticationError
+        from app.auth.dependencies import AuthenticationError, get_current_user
 
         with pytest.raises(AuthenticationError):
             get_current_user("invalid_token")
 
     def test_get_current_user_with_invalid_token_raises_error(self):
         """無効なトークンでエラー"""
-        from app.auth.dependencies import get_current_user, AuthenticationError
+        from app.auth.dependencies import AuthenticationError, get_current_user
 
         with pytest.raises(AuthenticationError):
             get_current_user("Bearer invalid.token.here")

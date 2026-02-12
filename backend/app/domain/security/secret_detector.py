@@ -7,6 +7,7 @@
 3つのAIレビューすべてが「開発ログへのシークレット漏洩」を
 Critical Issueとして指摘したため実装。
 """
+
 import re
 from dataclasses import dataclass
 
@@ -14,6 +15,7 @@ from dataclasses import dataclass
 @dataclass
 class SecretMatch:
     """検出されたシークレット"""
+
     pattern_name: str
     original: str
     masked: str
@@ -51,7 +53,10 @@ _SECRET_PATTERNS: list[tuple[str, re.Pattern, str]] = [
     # Generic API Key patterns (key=..., api_key=..., apikey=...)
     (
         "generic_api_key",
-        re.compile(r"(?:api[_-]?key|apikey|secret[_-]?key|access[_-]?token)\s*[:=]\s*['\"]?([a-zA-Z0-9_\-./+=]{16,})['\"]?", re.IGNORECASE),
+        re.compile(
+            r"(?:api[_-]?key|apikey|secret[_-]?key|access[_-]?token)\s*[:=]\s*['\"]?([a-zA-Z0-9_\-./+=]{16,})['\"]?",
+            re.IGNORECASE,
+        ),
         "***API_KEY***",
     ),
     # Password patterns (password=..., passwd=...)
@@ -63,7 +68,9 @@ _SECRET_PATTERNS: list[tuple[str, re.Pattern, str]] = [
     # Private Key blocks
     (
         "private_key",
-        re.compile(r"-----BEGIN\s+(?:RSA\s+|EC\s+|DSA\s+|OPENSSH\s+)?PRIVATE\s+KEY-----[\s\S]*?-----END\s+(?:RSA\s+|EC\s+|DSA\s+|OPENSSH\s+)?PRIVATE\s+KEY-----"),
+        re.compile(
+            r"-----BEGIN\s+(?:RSA\s+|EC\s+|DSA\s+|OPENSSH\s+)?PRIVATE\s+KEY-----[\s\S]*?-----END\s+(?:RSA\s+|EC\s+|DSA\s+|OPENSSH\s+)?PRIVATE\s+KEY-----"
+        ),
         "***PRIVATE_KEY***",
     ),
     # Database URLs with credentials
@@ -120,13 +127,15 @@ class SecretDetector:
         matches: list[SecretMatch] = []
         for pattern_name, regex, mask in self._patterns:
             for match in regex.finditer(text):
-                matches.append(SecretMatch(
-                    pattern_name=pattern_name,
-                    original=match.group(0),
-                    masked=mask,
-                    start=match.start(),
-                    end=match.end(),
-                ))
+                matches.append(
+                    SecretMatch(
+                        pattern_name=pattern_name,
+                        original=match.group(0),
+                        masked=mask,
+                        start=match.start(),
+                        end=match.end(),
+                    )
+                )
 
         return matches
 
@@ -144,7 +153,7 @@ class SecretDetector:
             return text
 
         result = text
-        for pattern_name, regex, mask in self._patterns:
+        for _pattern_name, regex, mask in self._patterns:
             result = regex.sub(mask, result)
 
         return result

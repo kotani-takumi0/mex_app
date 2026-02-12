@@ -2,7 +2,6 @@
 コールドスタート対応（フォールバック）
 タスク6.2: サンプルデータ投入とコールドスタート対応
 """
-from typing import Any
 
 
 def get_empty_results_message(result_type: str) -> str:

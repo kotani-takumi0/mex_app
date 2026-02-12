@@ -1,15 +1,23 @@
 """理解度チェック（クイズ）サービス"""
+
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
 from app.domain.question.question_generator import QuestionGenerator
+from app.infrastructure.database.models import (
+    DevLogEntry,
+    Project,
+    QuizAttempt,
+    QuizQuestion,
+    SkillScore,
+)
 from app.infrastructure.database.session import SessionLocal
-from app.infrastructure.database.models import DevLogEntry, Project, QuizQuestion, QuizAttempt, SkillScore
 
 
 @dataclass
 class QuizGenerateRequest:
     """クイズ生成リクエスト"""
+
     count: int = 5
     difficulty: str = "medium"
     technologies: list[str] = field(default_factory=list)
@@ -18,6 +26,7 @@ class QuizGenerateRequest:
 @dataclass
 class QuizQuestionSummary:
     """クイズ問題（回答前）"""
+
     id: str
     technology: str
     question: str
@@ -29,6 +38,7 @@ class QuizQuestionSummary:
 @dataclass
 class ScoreUpdate:
     """スコア更新結果"""
+
     technology: str
     previous_score: float
     new_score: float
@@ -39,6 +49,7 @@ class ScoreUpdate:
 @dataclass
 class QuizAnswerResult:
     """クイズ回答結果"""
+
     is_correct: bool
     correct_answer: int
     explanation: str
@@ -48,6 +59,7 @@ class QuizAnswerResult:
 @dataclass
 class SkillScoreSummary:
     """スキルスコア概要"""
+
     technology: str
     score: float
     total_questions: int
@@ -61,7 +73,9 @@ class QuizService:
     def __init__(self, generator: QuestionGenerator | None = None):
         self._generator = generator or QuestionGenerator()
 
-    async def generate_quiz(self, user_id: str, project_id: str, request: QuizGenerateRequest) -> list[QuizQuestionSummary]:
+    async def generate_quiz(
+        self, user_id: str, project_id: str, request: QuizGenerateRequest
+    ) -> list[QuizQuestionSummary]:
         db = SessionLocal()
         try:
             project = (

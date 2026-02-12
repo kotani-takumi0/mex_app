@@ -2,8 +2,7 @@
 TDD: プロジェクト構造のテスト
 タスク1.1: 開発環境とプロジェクト構造の初期化
 """
-import importlib
-import os
+
 from pathlib import Path
 
 
@@ -16,10 +15,10 @@ class TestProjectStructure:
 
         required_dirs = [
             "app",
-            "app/api",           # API Layer
-            "app/application",   # Application Layer
-            "app/domain",        # Domain Layer
-            "app/infrastructure", # Infrastructure Layer
+            "app/api",  # API Layer
+            "app/application",  # Application Layer
+            "app/domain",  # Domain Layer
+            "app/infrastructure",  # Infrastructure Layer
             "tests",
         ]
 
@@ -31,17 +30,20 @@ class TestProjectStructure:
     def test_app_package_is_importable(self):
         """appパッケージがインポート可能"""
         import app
+
         assert app is not None
 
     def test_fastapi_app_exists(self):
         """FastAPIアプリケーションインスタンスが存在"""
         from app.main import app
+
         assert app is not None
         assert hasattr(app, "routes")
 
     def test_api_router_exists(self):
         """APIルーターが存在"""
         from app.api import router
+
         assert router is not None
 
 
@@ -59,7 +61,7 @@ class TestFastapiConfiguration:
         """APIプレフィックス /api が設定されている"""
         from app.main import app
 
-        api_routes = [route.path for route in app.routes if hasattr(route, 'path')]
+        api_routes = [route.path for route in app.routes if hasattr(route, "path")]
         # /api プレフィックスのルートが存在することを確認
         assert any(route.startswith("/api") for route in api_routes)
 
@@ -70,6 +72,7 @@ class TestHealthEndpoint:
     def test_health_endpoint_exists(self):
         """ヘルスチェックエンドポイントが存在"""
         from fastapi.testclient import TestClient
+
         from app.main import app
 
         client = TestClient(app)
@@ -79,6 +82,7 @@ class TestHealthEndpoint:
     def test_health_endpoint_returns_status(self):
         """ヘルスチェックがステータスを返す"""
         from fastapi.testclient import TestClient
+
         from app.main import app
 
         client = TestClient(app)

@@ -2,13 +2,14 @@
 決済サービス
 Stripe Checkout + Customer Portal パターン
 """
+
 from typing import Any
 
 import stripe
 
 from app.config import get_settings
+from app.infrastructure.database.models import Subscription, User
 from app.infrastructure.database.session import SessionLocal
-from app.infrastructure.database.models import User, Subscription
 
 
 class BillingService:

@@ -2,6 +2,7 @@
 決済APIエンドポイント
 Stripe Checkout Session / Customer Portal / Webhook
 """
+
 import logging
 
 import stripe
@@ -9,11 +10,11 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from app.auth.dependencies import CurrentUser, get_current_user_dependency
 from app.application.billing_service import BillingService
+from app.auth.dependencies import CurrentUser, get_current_user_dependency
 from app.config import get_settings
-from app.infrastructure.database.session import get_db
 from app.infrastructure.database.models import StripeWebhookEvent
+from app.infrastructure.database.session import get_db
 from app.rate_limit import limiter
 
 logger = logging.getLogger(__name__)
@@ -33,22 +34,26 @@ def get_service() -> BillingService:
 
 class CheckoutRequest(BaseModel):
     """Checkoutリクエスト"""
+
     success_url: str = Field(..., description="決済成功時のリダイレクトURL")
     cancel_url: str = Field(..., description="キャンセル時のリダイレクトURL")
 
 
 class CheckoutResponse(BaseModel):
     """Checkoutレスポンス"""
+
     checkout_url: str
 
 
 class PortalRequest(BaseModel):
     """Portalリクエスト"""
+
     return_url: str = Field(..., description="Portal終了後のリダイレクトURL")
 
 
 class PortalResponse(BaseModel):
     """Portalレスポンス"""
+
     portal_url: str
 
 
@@ -106,9 +111,7 @@ async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
     sig_header = request.headers.get("stripe-signature", "")
 
     try:
-        event = stripe.Webhook.construct_event(
-            payload, sig_header, settings.stripe_webhook_secret
-        )
+        event = stripe.Webhook.construct_event(payload, sig_header, settings.stripe_webhook_secret)
     except stripe.SignatureVerificationError:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid signature")
 
@@ -134,10 +137,12 @@ async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
         await service.handle_subscription_updated(event["data"]["object"])
 
     # 処理完了後にイベントを記録
-    db.add(StripeWebhookEvent(
-        stripe_event_id=stripe_event_id,
-        event_type=event["type"],
-    ))
+    db.add(
+        StripeWebhookEvent(
+            stripe_event_id=stripe_event_id,
+            event_type=event["type"],
+        )
+    )
     db.commit()
 
     logger.info("Stripe webhook processed: %s (%s)", stripe_event_id, event["type"])

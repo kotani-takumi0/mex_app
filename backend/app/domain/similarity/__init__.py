@@ -1,11 +1,12 @@
 """
 類似検索ドメイン（pgvector版）
 """
+
 from .similarity_engine import (
-    SimilarityEngine,
-    SimilarityConfig,
-    SimilarityResult,
     DevLogFilter,
+    SimilarityConfig,
+    SimilarityEngine,
+    SimilarityResult,
 )
 
 __all__ = [

@@ -10,19 +10,21 @@ Create Date: 2026-02-09
 - IVFFlat インデックス作成（コサイン距離）
 - mcp_tokens テーブル新規作成（トークン無効化対応）
 """
+
 import logging
-from typing import Sequence, Union
+from collections.abc import Sequence
+
+import sqlalchemy as sa
 
 from alembic import op
-import sqlalchemy as sa
 
 logger = logging.getLogger(__name__)
 
 # revision identifiers, used by Alembic.
 revision: str = "004"
-down_revision: Union[str, None] = "003"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = "003"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -49,7 +51,9 @@ def upgrade() -> None:
     op.create_table(
         "mcp_tokens",
         sa.Column("id", sa.String(36), primary_key=True),
-        sa.Column("user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        ),
         sa.Column("token_hash", sa.String(255), nullable=False),
         sa.Column("name", sa.String(100), nullable=True),
         sa.Column("scope", sa.String(100), nullable=False, server_default="devlog:write"),

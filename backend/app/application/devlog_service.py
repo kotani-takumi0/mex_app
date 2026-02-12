@@ -1,10 +1,11 @@
 """開発ログ管理サービス"""
+
 import logging
 from dataclasses import dataclass, field
 
-from app.infrastructure.database.session import SessionLocal
-from app.infrastructure.database.models import DevLogEntry, Project
 from app.domain.security.secret_detector import get_secret_detector
+from app.infrastructure.database.models import DevLogEntry, Project
+from app.infrastructure.database.session import SessionLocal
 
 logger = logging.getLogger(__name__)
 
@@ -12,6 +13,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class DevLogCreate:
     """開発ログ作成入力"""
+
     source: str = "manual"
     entry_type: str = ""
     summary: str = ""
@@ -24,6 +26,7 @@ class DevLogCreate:
 @dataclass
 class DevLogUpdate:
     """開発ログ更新入力"""
+
     source: str | None = None
     entry_type: str | None = None
     summary: str | None = None
@@ -36,6 +39,7 @@ class DevLogUpdate:
 @dataclass
 class DevLogSummary:
     """開発ログ概要（一覧用）"""
+
     id: str
     project_id: str
     source: str
@@ -51,7 +55,9 @@ class DevLogSummary:
 class DevLogService:
     """開発ログ管理サービス"""
 
-    def list_entries(self, user_id: str, project_id: str, limit: int | None = None) -> tuple[list[DevLogSummary], int]:
+    def list_entries(
+        self, user_id: str, project_id: str, limit: int | None = None
+    ) -> tuple[list[DevLogSummary], int]:
         db = SessionLocal()
         try:
             self._ensure_project(db, user_id, project_id)
@@ -83,7 +89,8 @@ class DevLogService:
             if masked_summary != data.summary or masked_detail != data.detail:
                 logger.warning(
                     "シークレットを検出しマスキングしました (user_id=%s, project_id=%s)",
-                    user_id, project_id,
+                    user_id,
+                    project_id,
                 )
 
             entry = DevLogEntry(
@@ -127,7 +134,8 @@ class DevLogService:
                 if masked_summary != data.summary:
                     logger.warning(
                         "シークレットを検出しマスキングしました (user_id=%s, entry_id=%s, field=summary)",
-                        user_id, entry_id,
+                        user_id,
+                        entry_id,
                     )
                 entry.summary = masked_summary
             if data.detail is not None:
@@ -135,7 +143,8 @@ class DevLogService:
                 if masked_detail != data.detail:
                     logger.warning(
                         "シークレットを検出しマスキングしました (user_id=%s, entry_id=%s, field=detail)",
-                        user_id, entry_id,
+                        user_id,
+                        entry_id,
                     )
                 entry.detail = masked_detail
             if data.technologies is not None:
@@ -169,9 +178,7 @@ class DevLogService:
     @staticmethod
     def _ensure_project(db, user_id: str, project_id: str) -> None:
         project = (
-            db.query(Project)
-            .filter(Project.id == project_id, Project.user_id == user_id)
-            .first()
+            db.query(Project).filter(Project.id == project_id, Project.user_id == user_id).first()
         )
         if project is None:
             raise ValueError("Project not found")

@@ -7,24 +7,27 @@ Design.mdに基づく仕様:
 - Go/NoGo判断と理由（1〜3文）の有無を検証し、ケースとアイデアメモを区別して保存
 - 失敗パターンタグの候補をLLMで推定し、ユーザーに提示
 """
+
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from typing import Any
 
 from app.domain.case.case_manager import (
-    CaseManager,
     CaseCreateInput,
+    CaseManager,
     CaseOutcome,
+)
+from app.domain.case.case_manager import (
     GoNoGoDecision as DomainGoNoGoDecision,
 )
 from app.domain.llm.llm_service import LLMService
-from app.infrastructure.database.session import SessionLocal
 from app.infrastructure.database.models import IdeaMemo
+from app.infrastructure.database.session import SessionLocal
 
 
 class ProjectOutcome(Enum):
     """プロジェクト結果"""
+
     WITHDRAWN = "withdrawn"
     CANCELLED = "cancelled"
     PENDING = "pending"
@@ -33,6 +36,7 @@ class ProjectOutcome(Enum):
 @dataclass
 class GoNoGoDecision:
     """Go/NoGo判断"""
+
     decision: str  # "go" or "no_go"
     reason: str  # 1-3文
 
@@ -40,6 +44,7 @@ class GoNoGoDecision:
 @dataclass
 class FailedHypothesis:
     """失敗した仮説"""
+
     hypothesis: str
     failure_reason: str
 
@@ -47,6 +52,7 @@ class FailedHypothesis:
 @dataclass
 class DiscussionRecord:
     """議論記録"""
+
     topic: str
     summary: str
     discussed_at: str
@@ -55,6 +61,7 @@ class DiscussionRecord:
 @dataclass
 class PostmortemTemplate:
     """ポストモーテムテンプレート"""
+
     project_id: str
     sections: list[dict[str, str]]
     outcome_options: list[str]
@@ -63,6 +70,7 @@ class PostmortemTemplate:
 @dataclass
 class PostmortemSubmission:
     """ポストモーテム提出"""
+
     project_id: str
     outcome: ProjectOutcome
     decision: GoNoGoDecision | None
@@ -73,6 +81,7 @@ class PostmortemSubmission:
 @dataclass
 class PostmortemResult:
     """ポストモーテム結果"""
+
     record_type: str  # "decision_case" or "idea_memo"
     record_id: str
     assigned_patterns: list[str]
@@ -81,6 +90,7 @@ class PostmortemResult:
 @dataclass
 class FailurePatternSuggestion:
     """失敗パターン提案"""
+
     category: str
     name: str
     confidence: float
@@ -281,8 +291,7 @@ class PostmortemService:
         hypotheses_text = ""
         if submission.failed_hypotheses:
             hypotheses_text = "\n".join(
-                f"- {fh.hypothesis}: {fh.failure_reason}"
-                for fh in submission.failed_hypotheses
+                f"- {fh.hypothesis}: {fh.failure_reason}" for fh in submission.failed_hypotheses
             )
         else:
             hypotheses_text = "なし"
@@ -290,8 +299,7 @@ class PostmortemService:
         discussions_text = ""
         if submission.discussions:
             discussions_text = "\n".join(
-                f"- {d.topic}: {d.summary}"
-                for d in submission.discussions
+                f"- {d.topic}: {d.summary}" for d in submission.discussions
             )
         else:
             discussions_text = "なし"

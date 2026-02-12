@@ -2,6 +2,7 @@
 JWT認証サービス
 個人開発版: tenant_idを削除し、planを追加
 """
+
 import os
 from datetime import datetime, timedelta, timezone
 from typing import Any
@@ -12,16 +13,19 @@ from pydantic import BaseModel
 
 class TokenExpiredError(Exception):
     """トークン有効期限切れエラー"""
+
     pass
 
 
 class InvalidTokenError(Exception):
     """無効なトークンエラー"""
+
     pass
 
 
 class JWTConfig(BaseModel):
     """JWT設定"""
+
     secret_key: str = os.getenv("JWT_SECRET_KEY", "dev-secret-key-change-in-production")
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 60
@@ -29,6 +33,7 @@ class JWTConfig(BaseModel):
 
 class TokenPayload(BaseModel):
     """トークンペイロード - tenant_id削除、plan追加"""
+
     sub: str  # ユーザーID
     plan: str = "free"  # ユーザープラン（free/pro）
     exp: datetime | None = None

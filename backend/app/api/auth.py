@@ -2,21 +2,22 @@
 認証APIエンドポイント
 メール/パスワードによるユーザー登録・ログイン・プロフィール編集・APIトークン発行・MCPトークン管理
 """
+
 import hashlib
 import logging
 import re
 from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from pydantic import BaseModel, EmailStr, Field, field_validator
 from passlib.context import CryptContext
+from pydantic import BaseModel, EmailStr, Field, field_validator
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 
-from app.auth.jwt import JWTService
 from app.auth.dependencies import CurrentUser, get_current_user_dependency
+from app.auth.jwt import JWTService
+from app.infrastructure.database.models import MCPToken, User, utc_now
 from app.infrastructure.database.session import get_db
-from app.infrastructure.database.models import User, MCPToken, utc_now
 from app.rate_limit import limiter
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -32,8 +33,14 @@ _jwt_service = JWTService()
 # リクエスト/レスポンススキーマ
 class RegisterRequest(BaseModel):
     """ユーザー登録リクエスト"""
+
     email: EmailStr = Field(..., description="メールアドレス")
-    password: str = Field(..., min_length=10, max_length=128, description="パスワード（10文字以上、英大文字・小文字・数字・記号を含む）")
+    password: str = Field(
+        ...,
+        min_length=10,
+        max_length=128,
+        description="パスワード（10文字以上、英大文字・小文字・数字・記号を含む）",
+    )
     display_name: str = Field(..., min_length=1, max_length=100, description="表示名")
 
     @field_validator("password")
@@ -52,12 +59,14 @@ class RegisterRequest(BaseModel):
 
 class LoginRequest(BaseModel):
     """ログインリクエスト"""
+
     email: EmailStr = Field(..., description="メールアドレス")
     password: str = Field(..., description="パスワード")
 
 
 class AuthResponse(BaseModel):
     """認証レスポンス"""
+
     access_token: str
     token_type: str = "bearer"
     user: "UserResponse"
@@ -65,6 +74,7 @@ class AuthResponse(BaseModel):
 
 class UserResponse(BaseModel):
     """ユーザー情報レスポンス"""
+
     id: str
     email: str
     display_name: str
@@ -114,9 +124,7 @@ async def register(request: Request, body: RegisterRequest, db: Session = Depend
         db.commit()
         db.refresh(user)
 
-        token = _jwt_service.create_access_token(
-            data={"sub": user.id, "plan": user.plan}
-        )
+        token = _jwt_service.create_access_token(data={"sub": user.id, "plan": user.plan})
 
         return AuthResponse(access_token=token, user=_user_response(user))
 
@@ -159,9 +167,7 @@ async def login(request: Request, body: LoginRequest, db: Session = Depends(get_
                 detail="メールアドレスまたはパスワードが正しくありません",
             )
 
-        token = _jwt_service.create_access_token(
-            data={"sub": user.id, "plan": user.plan}
-        )
+        token = _jwt_service.create_access_token(data={"sub": user.id, "plan": user.plan})
 
         return AuthResponse(access_token=token, user=_user_response(user))
 
@@ -204,11 +210,15 @@ _USERNAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9\-]{1,28}[a-z0-9]$")
 
 class ApiTokenRequest(BaseModel):
     """APIトークン発行リクエスト"""
-    name: str | None = Field(None, max_length=100, description="トークンの識別名（例: MacBook Pro）")
+
+    name: str | None = Field(
+        None, max_length=100, description="トークンの識別名（例: MacBook Pro）"
+    )
 
 
 class ApiTokenResponse(BaseModel):
     """APIトークンレスポンス"""
+
     api_token: str
     token_id: str
     expires_in_days: int
@@ -216,6 +226,7 @@ class ApiTokenResponse(BaseModel):
 
 class MCPTokenInfo(BaseModel):
     """MCPトークン情報"""
+
     id: str
     name: str | None
     scope: str
@@ -225,11 +236,13 @@ class MCPTokenInfo(BaseModel):
 
 class MCPTokenListResponse(BaseModel):
     """MCPトークン一覧レスポンス"""
+
     tokens: list[MCPTokenInfo]
 
 
 class RevokeTokenRequest(BaseModel):
     """トークン無効化リクエスト"""
+
     token_id: str = Field(..., description="無効化するトークンのID")
 
 
@@ -338,7 +351,10 @@ async def revoke_mcp_token(
 
 class ProfileUpdateRequest(BaseModel):
     """プロフィール更新リクエスト"""
-    username: str | None = Field(None, min_length=3, max_length=30, description="ユーザー名（公開URL用）")
+
+    username: str | None = Field(
+        None, min_length=3, max_length=30, description="ユーザー名（公開URL用）"
+    )
     display_name: str | None = Field(None, min_length=1, max_length=100, description="表示名")
     bio: str | None = Field(None, max_length=500, description="自己紹介")
     github_url: str | None = Field(None, max_length=500, description="GitHub URL")
@@ -365,11 +381,7 @@ async def update_profile(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="ユーザー名は英小文字・数字・ハイフンのみ、3〜30文字で指定してください",
             )
-        existing = (
-            db.query(User)
-            .filter(User.username == username, User.id != user.id)
-            .first()
-        )
+        existing = db.query(User).filter(User.username == username, User.id != user.id).first()
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,

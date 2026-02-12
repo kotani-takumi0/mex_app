@@ -10,17 +10,18 @@ Create Date: 2026-02-07
 - usage_logsテーブル追加
 - subscriptionsテーブル追加
 """
-from typing import Sequence, Union
+
+from collections.abc import Sequence
+
+import sqlalchemy as sa
 
 from alembic import op
-import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision: str = "002"
-down_revision: Union[str, None] = "001"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = "001"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -58,8 +59,10 @@ def upgrade() -> None:
     op.alter_column("decision_cases", "user_id", nullable=False)
     op.create_foreign_key(
         "fk_decision_cases_user_id",
-        "decision_cases", "users",
-        ["user_id"], ["id"],
+        "decision_cases",
+        "users",
+        ["user_id"],
+        ["id"],
         ondelete="CASCADE",
     )
     op.create_index("idx_decision_cases_user_id", "decision_cases", ["user_id"])
@@ -76,8 +79,10 @@ def upgrade() -> None:
     op.alter_column("idea_memos", "user_id", nullable=False)
     op.create_foreign_key(
         "fk_idea_memos_user_id",
-        "idea_memos", "users",
-        ["user_id"], ["id"],
+        "idea_memos",
+        "users",
+        ["user_id"],
+        ["id"],
         ondelete="CASCADE",
     )
     op.create_index("idx_idea_memos_user_id", "idea_memos", ["user_id"])
@@ -86,7 +91,9 @@ def upgrade() -> None:
     op.create_table(
         "usage_logs",
         sa.Column("id", sa.String(36), primary_key=True),
-        sa.Column("user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        ),
         sa.Column("action", sa.String(50), nullable=False),
         sa.Column("tokens_used", sa.Integer(), nullable=False, server_default="0"),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
@@ -98,7 +105,13 @@ def upgrade() -> None:
     op.create_table(
         "subscriptions",
         sa.Column("id", sa.String(36), primary_key=True),
-        sa.Column("user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True),
+        sa.Column(
+            "user_id",
+            sa.String(36),
+            sa.ForeignKey("users.id", ondelete="CASCADE"),
+            nullable=False,
+            unique=True,
+        ),
         sa.Column("stripe_customer_id", sa.String(255), nullable=True),
         sa.Column("stripe_subscription_id", sa.String(255), nullable=True),
         sa.Column("plan", sa.String(20), nullable=False, server_default="free"),
