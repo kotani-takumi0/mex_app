@@ -14,6 +14,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import readline from 'readline';
+import { fileURLToPath } from 'url';
 
 const DEFAULT_API_URL = 'http://localhost:8000/api';
 
@@ -158,6 +159,8 @@ async function main() {
     console.log(`✓ 設定ファイル作成: ${configPath}`);
 
     // Step 4: Show MCP config snippet
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
     const serverPath = path.resolve(__dirname, '..', 'index.js');
     console.log('');
     console.log('=== セットアップ完了 ===');
