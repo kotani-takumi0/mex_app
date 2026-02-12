@@ -95,17 +95,19 @@ AIツールから開発ログを自動記録する場合は MCP サーバーを�
 トークンはログイン後、`/settings` から発行できます。
 
 ```bash
-# 1. MCP サーバーをビルド
-cd mcp-server
+# 1. MCP サーバーをビルド（MEX App リポジトリ内で実行）
+cd /path/to/mex_app/mcp-server
 npm install && npm run build
-cd ..
 
-# 2. セットアップ（対話形式でトークン取得 + 設定ファイル作成）
-node mcp-server/dist/cli/setup.js
+# 2. セットアップ（対話形式でトークン取得 + ~/.mex/config.json 作成）
+node dist/cli/setup.js
 
 # 3. Claude Code の MCP 設定に登録（~/.claude/mcp_servers.json）
-# { "mex": { "command": "node", "args": ["/absolute/path/to/mex_app/mcp-server/dist/index.js"] } }
+# { "mex": { "command": "node", "args": ["/path/to/mex_app/mcp-server/dist/index.js"] } }
 ```
+
+> MCP サーバーのソースコードは本リポジトリの `mcp-server/` にあります。
+> ビルドは本リポジトリ内で一度だけ行えば、他のプロジェクトからも共通で利用できます。
 
 **Dev Commands**
 ```bash
