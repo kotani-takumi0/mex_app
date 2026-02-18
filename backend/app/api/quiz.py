@@ -1,6 +1,6 @@
 """理解度チェック（クイズ）API"""
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, Field
 
 from app.application.quiz_service import (
@@ -10,18 +10,12 @@ from app.application.quiz_service import (
     QuizService,
     SkillScoreSummary,
 )
+from app.application.usage_tracking import log_usage
 from app.auth.dependencies import CurrentUser, get_current_user_dependency
+from app.auth.plan_guards import check_quiz_limit
+from app.rate_limit import limiter
 
 router = APIRouter(prefix="/quiz", tags=["Quiz"])
-
-_service: QuizService | None = None
-
-
-def get_service() -> QuizService:
-    global _service
-    if _service is None:
-        _service = QuizService()
-    return _service
 
 
 class GenerateQuizRequest(BaseModel):
@@ -77,13 +71,15 @@ class SkillScoreListResponse(BaseModel):
 
 
 @router.post("/{project_id}/generate", response_model=GenerateQuizResponse)
+@limiter.limit("10/minute")
 async def generate_quiz(
+    request_obj: Request,
     project_id: str,
     request: GenerateQuizRequest,
-    current_user: CurrentUser = Depends(get_current_user_dependency),
+    current_user: CurrentUser = Depends(check_quiz_limit),
 ):
     try:
-        service = get_service()
+        service = QuizService(plan=current_user.plan)
         questions = await service.generate_quiz(
             current_user.user_id,
             project_id,
@@ -93,6 +89,9 @@ async def generate_quiz(
                 technologies=request.technologies,
             ),
         )
+
+        log_usage(current_user.user_id, "quiz_generate")
+
         return GenerateQuizResponse(
             questions=[_to_question_response(q) for q in questions],
             total_generated=len(questions),
@@ -108,7 +107,7 @@ async def answer_quiz(
     current_user: CurrentUser = Depends(get_current_user_dependency),
 ):
     try:
-        service = get_service()
+        service = QuizService()
         result = service.answer_question(
             current_user.user_id,
             question_id,
@@ -124,7 +123,7 @@ async def answer_quiz(
 async def get_skill_scores(
     current_user: CurrentUser = Depends(get_current_user_dependency),
 ):
-    service = get_service()
+    service = QuizService()
     scores = service.get_skill_scores(current_user.user_id)
     return SkillScoreListResponse(scores=[_to_score_response(s) for s in scores])
 
@@ -134,7 +133,7 @@ async def get_quiz_questions(
     project_id: str,
     current_user: CurrentUser = Depends(get_current_user_dependency),
 ):
-    service = get_service()
+    service = QuizService()
     questions = service.get_questions(current_user.user_id, project_id)
     return GenerateQuizResponse(
         questions=[_to_question_response(q) for q in questions],

@@ -57,6 +57,67 @@ class PortalResponse(BaseModel):
     portal_url: str
 
 
+class PlanInfoResponse(BaseModel):
+    """プラン情報レスポンス"""
+
+    plan: str
+    project_limit: int | None
+    project_count: int
+    quiz_monthly_limit: int | None
+    quiz_used_this_month: int
+    llm_model: str
+    subscription_status: str | None
+    current_period_end: str | None
+
+
+@router.get("/plan-info", response_model=PlanInfoResponse)
+async def get_plan_info(
+    current_user: CurrentUser = Depends(get_current_user_dependency),
+    db: Session = Depends(get_db),
+):
+    """現在のプラン情報と利用状況を返す"""
+    from datetime import datetime, timezone
+
+    from app.auth.plan_guards import FREE_PROJECT_LIMIT, FREE_QUIZ_MONTHLY_LIMIT
+    from app.infrastructure.database.models import Project, Subscription, UsageLog, User
+
+    user = db.query(User).filter(User.id == current_user.user_id).first()
+    plan = user.plan if user else "free"
+
+    project_count = (
+        db.query(Project)
+        .filter(Project.user_id == current_user.user_id)
+        .count()
+    )
+
+    now = datetime.now(timezone.utc)
+    month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    quiz_used = (
+        db.query(UsageLog)
+        .filter(
+            UsageLog.user_id == current_user.user_id,
+            UsageLog.action == "quiz_generate",
+            UsageLog.created_at >= month_start,
+        )
+        .count()
+    )
+
+    sub = db.query(Subscription).filter(Subscription.user_id == current_user.user_id).first()
+
+    is_free = plan == "free"
+
+    return PlanInfoResponse(
+        plan=plan,
+        project_limit=FREE_PROJECT_LIMIT if is_free else None,
+        project_count=project_count,
+        quiz_monthly_limit=FREE_QUIZ_MONTHLY_LIMIT if is_free else None,
+        quiz_used_this_month=quiz_used,
+        llm_model="gpt-4o-mini" if is_free else "gpt-4o",
+        subscription_status=sub.status if sub else None,
+        current_period_end=sub.current_period_end.isoformat() if sub and sub.current_period_end else None,
+    )
+
+
 @router.post("/checkout-session", response_model=CheckoutResponse)
 async def create_checkout_session(
     request: CheckoutRequest,

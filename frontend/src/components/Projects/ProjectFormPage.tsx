@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import { LuLoader } from 'react-icons/lu';
 import { createProject, getProject, updateProject } from '../../api/projects';
 import { PageHeader } from '../common/PageHeader';
+import { UpgradePrompt } from '../common/UpgradePrompt';
 import './ProjectFormPage.css';
 
 const statusOptions = [
@@ -31,6 +32,7 @@ export const ProjectFormPage: React.FC = () => {
   const [demoUrl, setDemoUrl] = useState('');
   const [status, setStatus] = useState('in_progress');
   const [isPublic, setIsPublic] = useState(false);
+  const [showUpgrade, setShowUpgrade] = useState(false);
 
   // 編集モード: 既存プロジェクトを取得してフォームにプリフィル
   useEffect(() => {
@@ -79,7 +81,7 @@ export const ProjectFormPage: React.FC = () => {
     };
 
     if (isEditMode && id) {
-      const { data, error } = await updateProject(id, payload);
+      const { data, error, status: resStatus } = await updateProject(id, payload);
       if (error) {
         toast.error(error);
       } else if (data) {
@@ -87,7 +89,12 @@ export const ProjectFormPage: React.FC = () => {
         navigate(`/projects/${data.id}`);
       }
     } else {
-      const { data, error } = await createProject(payload);
+      const { data, error, status: resStatus } = await createProject(payload);
+      if (resStatus === 403) {
+        setShowUpgrade(true);
+        setIsSubmitting(false);
+        return;
+      }
       if (error) {
         toast.error(error);
       } else if (data) {
@@ -112,6 +119,12 @@ export const ProjectFormPage: React.FC = () => {
 
   return (
     <div className="page-container">
+      {showUpgrade && (
+        <UpgradePrompt
+          message="Freeプランではプロジェクトは2件までです。Proプランにアップグレードすると無制限に作成できます。"
+          onClose={() => setShowUpgrade(false)}
+        />
+      )}
       <PageHeader
         title={isEditMode ? 'プロジェクト編集' : '新規プロジェクト'}
         description={

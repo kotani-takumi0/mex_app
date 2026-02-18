@@ -20,8 +20,8 @@ class GeneratedQuizQuestion:
 class QuestionGenerator:
     """開発ログから4択クイズを生成する"""
 
-    def __init__(self, llm_service: LLMService | None = None):
-        self._llm = llm_service or LLMService()
+    def __init__(self, llm_service: LLMService | None = None, plan: str = "free"):
+        self._llm = llm_service or LLMService.for_plan(plan)
 
     async def generate_questions(
         self,

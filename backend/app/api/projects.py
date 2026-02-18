@@ -10,6 +10,7 @@ from app.application.project_service import (
     ProjectUpdate,
 )
 from app.auth.dependencies import CurrentUser, get_current_user_dependency
+from app.auth.plan_guards import check_project_limit
 
 router = APIRouter(prefix="/projects", tags=["Projects"])
 
@@ -74,7 +75,7 @@ async def list_projects(
 @router.post("", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED)
 async def create_project(
     request: ProjectCreateRequest,
-    current_user: CurrentUser = Depends(get_current_user_dependency),
+    current_user: CurrentUser = Depends(check_project_limit),
 ):
     service = get_service()
     project = service.create_project(

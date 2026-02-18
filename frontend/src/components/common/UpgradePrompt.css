@@ -1,0 +1,147 @@
+/* UpgradePrompt モーダル */
+.upgrade-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(51, 40, 32, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+  padding: var(--space-4);
+}
+
+.upgrade-modal {
+  background: var(--bg-primary);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-10) var(--space-8);
+  max-width: 440px;
+  width: 100%;
+  position: relative;
+  box-shadow: var(--shadow-2xl);
+  text-align: center;
+}
+
+.upgrade-close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-md);
+  transition: color var(--transition-fast);
+}
+
+.upgrade-close:hover {
+  color: var(--text-primary);
+}
+
+.upgrade-icon-circle {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, var(--color-primary-100) 0%, var(--color-primary-200) 100%);
+  color: var(--color-primary-700);
+  border-radius: var(--radius-2xl);
+  margin: 0 auto var(--space-5);
+}
+
+.upgrade-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+  font-family: var(--font-family-heading);
+}
+
+.upgrade-message {
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--space-6);
+}
+
+.upgrade-benefits {
+  text-align: left;
+  margin-bottom: var(--space-6);
+}
+
+.upgrade-benefits li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+}
+
+.upgrade-check {
+  color: var(--color-success);
+  flex-shrink: 0;
+}
+
+.upgrade-price {
+  margin-bottom: var(--space-6);
+}
+
+.upgrade-price-amount {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
+}
+
+.upgrade-price-period {
+  font-size: var(--font-size-md);
+  color: var(--text-tertiary);
+}
+
+.upgrade-actions {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.upgrade-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  background: var(--gradient-primary);
+  color: #fff;
+  border: none;
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-colored);
+}
+
+.upgrade-cta:hover:not(:disabled) {
+  filter: brightness(1.06);
+  box-shadow: 0 8px 24px rgba(168, 122, 83, 0.3);
+}
+
+.upgrade-cta:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.upgrade-cancel {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  padding: var(--space-2);
+  transition: color var(--transition-fast);
+}
+
+.upgrade-cancel:hover {
+  color: var(--text-secondary);
+}

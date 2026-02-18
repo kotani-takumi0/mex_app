@@ -1,0 +1,55 @@
+.billing-success-page {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.billing-success-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--radius-xl);
+  padding: var(--space-12) var(--space-8);
+  text-align: center;
+  box-shadow: var(--shadow-xs);
+}
+
+.billing-success-icon {
+  color: var(--color-success);
+  margin-bottom: var(--space-5);
+}
+
+.billing-success-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.billing-success-description {
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--space-8);
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.billing-success-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  background: var(--gradient-primary);
+  color: #fff;
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.billing-success-link:hover {
+  filter: brightness(1.06);
+  box-shadow: var(--shadow-colored);
+  color: #fff;
+}

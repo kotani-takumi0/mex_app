@@ -80,11 +80,12 @@ export const LandingPage: React.FC = () => {
             <div className="pricing-badge">学生向け</div>
             <h3>Free</h3>
             <div className="price">
-              $0<span className="price-period">/月</span>
+              &yen;0<span className="price-period">/月</span>
             </div>
             <ul className="pricing-features">
-              <li><LuCheck size={16} className="check-icon" /> 開発ログの自動記録</li>
-              <li><LuCheck size={16} className="check-icon" /> Notion技術ドキュメント自動生成</li>
+              <li><LuCheck size={16} className="check-icon" /> プロジェクト2件</li>
+              <li><LuCheck size={16} className="check-icon" /> クイズ生成 月2回</li>
+              <li><LuCheck size={16} className="check-icon" /> GPT-4o-miniモデル</li>
               <li><LuCheck size={16} className="check-icon" /> 公開ポートフォリオ</li>
             </ul>
             <button className="cta-button" onClick={goToAuth}>
@@ -93,19 +94,21 @@ export const LandingPage: React.FC = () => {
           </div>
           <div className="pricing-card">
             <div className="pricing-badge upcoming">
-              <LuSparkles size={14} /> Coming Soon
+              <LuSparkles size={14} /> Pro
             </div>
             <h3>Pro</h3>
-            <div className="price muted">
-              近日公開
+            <div className="price">
+              &yen;780<span className="price-period">/月</span>
             </div>
+            <div className="price-annual">年間 &yen;7,800</div>
             <ul className="pricing-features">
-              <li><LuCheck size={16} className="check-icon" /> 高度な分析レポート</li>
-              <li><LuCheck size={16} className="check-icon" /> 追加テンプレート</li>
-              <li><LuCheck size={16} className="check-icon" /> 優先サポート</li>
+              <li><LuCheck size={16} className="check-icon" /> プロジェクト無制限</li>
+              <li><LuCheck size={16} className="check-icon" /> クイズ生成 無制限</li>
+              <li><LuCheck size={16} className="check-icon" /> GPT-4oモデル</li>
+              <li><LuCheck size={16} className="check-icon" /> PDFエクスポート（予定）</li>
             </ul>
-            <button className="cta-button secondary" disabled>
-              通知を受け取る
+            <button className="cta-button secondary" onClick={goToAuth}>
+              Proで始める
             </button>
           </div>
         </div>

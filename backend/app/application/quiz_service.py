@@ -70,8 +70,8 @@ class SkillScoreSummary:
 class QuizService:
     """クイズ生成・回答・スコア管理サービス"""
 
-    def __init__(self, generator: QuestionGenerator | None = None):
-        self._generator = generator or QuestionGenerator()
+    def __init__(self, generator: QuestionGenerator | None = None, plan: str = "free"):
+        self._generator = generator or QuestionGenerator(plan=plan)
 
     async def generate_quiz(
         self, user_id: str, project_id: str, request: QuizGenerateRequest

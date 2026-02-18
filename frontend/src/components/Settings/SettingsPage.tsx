@@ -12,6 +12,8 @@ import {
   LuTrash2,
   LuLoader,
   LuCheck,
+  LuCrown,
+  LuSparkles,
 } from 'react-icons/lu';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -20,6 +22,7 @@ import {
   listMcpTokens,
   revokeMcpToken,
 } from '../../api/auth';
+import { getPlanInfo, createCheckout, createPortal, type PlanInfo } from '../../api/billing';
 import { MCPTokenInfo } from '../../types';
 import { PageHeader } from '../common/PageHeader';
 import './SettingsPage.css';
@@ -73,6 +76,10 @@ export const SettingsPage: React.FC = () => {
   const [tokensError, setTokensError] = useState('');
   const [revokingId, setRevokingId] = useState<string | null>(null);
 
+  const [planInfo, setPlanInfo] = useState<PlanInfo | null>(null);
+  const [planLoading, setPlanLoading] = useState(false);
+  const [billingLoading, setBillingLoading] = useState(false);
+
   useEffect(() => {
     if (!user) return;
     setDisplayName(user.display_name || '');
@@ -96,6 +103,51 @@ export const SettingsPage: React.FC = () => {
   useEffect(() => {
     fetchTokens();
   }, []);
+
+  const fetchPlanInfo = async () => {
+    setPlanLoading(true);
+    const { data } = await getPlanInfo();
+    if (data) {
+      setPlanInfo(data);
+    }
+    setPlanLoading(false);
+  };
+
+  useEffect(() => {
+    fetchPlanInfo();
+  }, []);
+
+  const handleUpgrade = async () => {
+    setBillingLoading(true);
+    const origin = window.location.origin;
+    const { data, error } = await createCheckout(
+      `${origin}/billing/success`,
+      `${origin}/billing/cancel`,
+    );
+    setBillingLoading(false);
+
+    if (error) {
+      toast.error(error);
+      return;
+    }
+    if (data?.checkout_url) {
+      window.location.href = data.checkout_url;
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    setBillingLoading(true);
+    const { data, error } = await createPortal(window.location.href);
+    setBillingLoading(false);
+
+    if (error) {
+      toast.error(error);
+      return;
+    }
+    if (data?.portal_url) {
+      window.location.href = data.portal_url;
+    }
+  };
 
   const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -196,6 +248,103 @@ export const SettingsPage: React.FC = () => {
         title="設定"
         description="プロフィールとMCPトークンを管理します。"
       />
+
+      <section className="settings-section">
+        <div className="settings-section-header">
+          <div>
+            <h2 className="settings-section-title">
+              {planInfo?.plan === 'pro' ? <LuCrown size={18} /> : <LuSparkles size={18} />}
+              プラン管理
+            </h2>
+            <p className="settings-section-description">
+              現在のプランと利用状況を確認できます。
+            </p>
+          </div>
+        </div>
+
+        {planLoading ? (
+          <div className="plan-loading">
+            <LuLoader size={16} className="spin" /> 読み込み中...
+          </div>
+        ) : planInfo ? (
+          <div className="plan-info-grid">
+            <div className="plan-current">
+              <span className="plan-label">現在のプラン</span>
+              <span className={`plan-badge ${planInfo.plan === 'pro' ? 'plan-badge-pro' : 'plan-badge-free'}`}>
+                {planInfo.plan === 'pro' ? 'Pro' : 'Free'}
+              </span>
+            </div>
+
+            {planInfo.plan === 'free' && (
+              <>
+                <div className="plan-usage-row">
+                  <span className="plan-usage-label">プロジェクト</span>
+                  <span className="plan-usage-value">
+                    {planInfo.project_count} / {planInfo.project_limit}
+                  </span>
+                </div>
+                <div className="plan-usage-row">
+                  <span className="plan-usage-label">クイズ生成（今月）</span>
+                  <span className="plan-usage-value">
+                    {planInfo.quiz_used_this_month} / {planInfo.quiz_monthly_limit}
+                  </span>
+                </div>
+              </>
+            )}
+
+            <div className="plan-usage-row">
+              <span className="plan-usage-label">LLMモデル</span>
+              <span className="plan-usage-value">{planInfo.llm_model}</span>
+            </div>
+
+            {planInfo.plan === 'pro' && planInfo.current_period_end && (
+              <div className="plan-usage-row">
+                <span className="plan-usage-label">次回請求日</span>
+                <span className="plan-usage-value">
+                  {formatDateTime(planInfo.current_period_end)}
+                </span>
+              </div>
+            )}
+
+            <div className="plan-actions">
+              {planInfo.plan === 'free' ? (
+                <button
+                  className="settings-primary-btn"
+                  onClick={handleUpgrade}
+                  disabled={billingLoading}
+                >
+                  {billingLoading ? (
+                    <>
+                      <LuLoader size={16} className="spin" />
+                      処理中...
+                    </>
+                  ) : (
+                    <>
+                      <LuSparkles size={16} />
+                      Proにアップグレード
+                    </>
+                  )}
+                </button>
+              ) : (
+                <button
+                  className="settings-secondary-btn"
+                  onClick={handleManageSubscription}
+                  disabled={billingLoading}
+                >
+                  {billingLoading ? (
+                    <>
+                      <LuLoader size={16} className="spin" />
+                      処理中...
+                    </>
+                  ) : (
+                    'サブスクリプション管理'
+                  )}
+                </button>
+              )}
+            </div>
+          </div>
+        ) : null}
+      </section>
 
       <section className="settings-section">
         <div className="settings-section-header">

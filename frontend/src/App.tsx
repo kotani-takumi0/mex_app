@@ -18,6 +18,8 @@ import { QuizPage } from './components/Quiz/QuizPage';
 import { PublicPortfolioPage } from './components/Portfolio/PublicPortfolioPage';
 import { PublicProjectDetailPage } from './components/Portfolio/PublicProjectDetailPage';
 import { SettingsPage } from './components/Settings/SettingsPage';
+import { BillingSuccessPage } from './components/Billing/BillingSuccessPage';
+import { BillingCancelPage } from './components/Billing/BillingCancelPage';
 import { UsernameSetupModal } from './components/common/UsernameSetupModal';
 import './App.css';
 
@@ -142,6 +144,26 @@ function AppRoutes() {
           <ProtectedRoute>
             <AuthenticatedLayout>
               <SettingsPage />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/billing/success"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <BillingSuccessPage />
+            </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/billing/cancel"
+        element={
+          <ProtectedRoute>
+            <AuthenticatedLayout>
+              <BillingCancelPage />
             </AuthenticatedLayout>
           </ProtectedRoute>
         }

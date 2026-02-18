@@ -149,6 +149,13 @@ class BillingService:
 
             sub.status = status
 
+            # current_period_end を保存（フロントエンドでの次回請求日表示用）
+            period_end = subscription.get("current_period_end")
+            if period_end:
+                from datetime import datetime, timezone
+
+                sub.current_period_end = datetime.fromtimestamp(period_end, tz=timezone.utc)
+
             # キャンセル時はプランをfreeに戻す
             if status in ("canceled", "unpaid"):
                 sub.plan = "free"
