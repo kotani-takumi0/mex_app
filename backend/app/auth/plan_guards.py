@@ -41,11 +41,7 @@ async def check_project_limit(
     if plan != "free":
         return current_user
 
-    project_count = (
-        db.query(Project)
-        .filter(Project.user_id == current_user.user_id)
-        .count()
-    )
+    project_count = db.query(Project).filter(Project.user_id == current_user.user_id).count()
 
     if project_count >= FREE_PROJECT_LIMIT:
         raise HTTPException(

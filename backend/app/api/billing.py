@@ -84,11 +84,7 @@ async def get_plan_info(
     user = db.query(User).filter(User.id == current_user.user_id).first()
     plan = user.plan if user else "free"
 
-    project_count = (
-        db.query(Project)
-        .filter(Project.user_id == current_user.user_id)
-        .count()
-    )
+    project_count = db.query(Project).filter(Project.user_id == current_user.user_id).count()
 
     now = datetime.now(timezone.utc)
     month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -114,7 +110,9 @@ async def get_plan_info(
         quiz_used_this_month=quiz_used,
         llm_model="gpt-4o-mini" if is_free else "gpt-4o",
         subscription_status=sub.status if sub else None,
-        current_period_end=sub.current_period_end.isoformat() if sub and sub.current_period_end else None,
+        current_period_end=sub.current_period_end.isoformat()
+        if sub and sub.current_period_end
+        else None,
     )
 
 
