@@ -73,9 +73,9 @@ class SkillScoreListResponse(BaseModel):
 @router.post("/{project_id}/generate", response_model=GenerateQuizResponse)
 @limiter.limit("10/minute")
 async def generate_quiz(
-    request_obj: Request,
+    request: Request,
     project_id: str,
-    request: GenerateQuizRequest,
+    body: GenerateQuizRequest,
     current_user: CurrentUser = Depends(check_quiz_limit),
 ):
     try:
@@ -84,9 +84,9 @@ async def generate_quiz(
             current_user.user_id,
             project_id,
             QuizGenerateRequest(
-                count=request.count,
-                difficulty=request.difficulty,
-                technologies=request.technologies,
+                count=body.count,
+                difficulty=body.difficulty,
+                technologies=body.technologies,
             ),
         )
 

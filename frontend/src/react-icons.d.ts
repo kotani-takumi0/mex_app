@@ -31,6 +31,7 @@ declare module 'react-icons/lu' {
   export const LuLoader: IconType;
   export const LuCopy: IconType;
   export const LuCircleCheck: IconType;
+  export const LuCircleX: IconType;
   export const LuFolder: IconType;
   export const LuFolderKanban: IconType;
   export const LuPlus: IconType;

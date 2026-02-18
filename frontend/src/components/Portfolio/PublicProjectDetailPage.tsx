@@ -41,9 +41,13 @@ export const PublicProjectDetailPage: React.FC = () => {
         toast.error(error);
       } else {
         setDetail(data);
+        if (data) {
+          document.title = `${data.project.title} — ${username} — MEX App`;
+        }
       }
     };
     fetchDetail();
+    return () => { document.title = 'MEX App — AI時代の技術ポートフォリオ'; };
   }, [username, projectId]);
 
   if (!detail) {

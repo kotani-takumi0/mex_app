@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { LuZap, LuCheck, LuLayoutDashboard, LuSparkles } from 'react-icons/lu';
+import { LuZap, LuCheck, LuLayoutDashboard, LuSparkles, LuArrowRight } from 'react-icons/lu';
 import './LandingPage.css';
 
 export const LandingPage: React.FC = () => {
@@ -24,16 +24,21 @@ export const LandingPage: React.FC = () => {
 
       <section className="landing-hero" aria-labelledby="hero-title">
         <div className="landing-hero-inner">
+          <p className="hero-tagline">AI時代の技術ポートフォリオ</p>
           <h1 id="hero-title" className="hero-title">
             AIで作ったものを、<br />自分の学びに変えよう
           </h1>
           <p className="hero-description">
             開発過程を自動記録し、技術ドキュメントを自動生成。
-            学んだことを自分の言葉で残すことで、面接官に理解度を証明できます。
+            クイズで理解度を証明して、面接官に「本当に分かっている」と伝えられるポートフォリオを作ろう。
           </p>
-          <button className="cta-button" onClick={goToAuth}>
-            無料で始める
-          </button>
+          <div className="hero-actions">
+            <button className="cta-button" onClick={goToAuth}>
+              無料で始める
+              <LuArrowRight size={16} />
+            </button>
+            <span className="hero-note">クレジットカード不要 / 2プロジェクトまで無料</span>
+          </div>
         </div>
       </section>
 
@@ -71,6 +76,33 @@ export const LandingPage: React.FC = () => {
             </p>
           </div>
         </div>
+      </section>
+
+      <section className="landing-steps" aria-labelledby="steps-title">
+        <h2 id="steps-title" className="section-title">使い方</h2>
+        <ol className="steps-list">
+          <li className="step-item">
+            <span className="step-number">1</span>
+            <div>
+              <h3>プロジェクトを作成</h3>
+              <p>開発中のプロジェクトを登録し、MCP Serverを接続。</p>
+            </div>
+          </li>
+          <li className="step-item">
+            <span className="step-number">2</span>
+            <div>
+              <h3>開発しながら自動記録</h3>
+              <p>Claude Codeで開発するだけで、過程が自動的にMEXに記録されます。</p>
+            </div>
+          </li>
+          <li className="step-item">
+            <span className="step-number">3</span>
+            <div>
+              <h3>クイズで理解度を証明</h3>
+              <p>AIが生成するクイズに回答して、技術スコアをポートフォリオに反映。</p>
+            </div>
+          </li>
+        </ol>
       </section>
 
       <section className="landing-pricing" aria-labelledby="pricing-title">

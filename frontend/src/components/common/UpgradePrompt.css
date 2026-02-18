@@ -85,6 +85,12 @@
 }
 
 .upgrade-price {
+  margin-bottom: var(--space-2);
+}
+
+.upgrade-price-annual {
+  font-size: var(--font-size-sm);
+  color: var(--color-primary-600);
   margin-bottom: var(--space-6);
 }
 

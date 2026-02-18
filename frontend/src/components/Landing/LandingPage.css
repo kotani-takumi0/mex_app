@@ -161,6 +161,31 @@
   animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
 
+/* ヒーロー タグライン */
+.hero-tagline {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--landing-accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-4);
+  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ヒーロー CTA 周辺 */
+.hero-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.hero-note {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
 .cta-button {
   display: inline-flex;
   align-items: center;
@@ -295,6 +320,55 @@
   line-height: var(--line-height-relaxed);
   position: relative;
   z-index: 1;
+}
+
+/* ===== 使い方セクション ===== */
+.landing-steps {
+  padding: var(--space-20) var(--space-6);
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.steps-list {
+  display: grid;
+  gap: var(--space-6);
+  list-style: none;
+  counter-reset: none;
+}
+
+.step-item {
+  display: flex;
+  gap: var(--space-5);
+  align-items: flex-start;
+}
+
+.step-number {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, var(--landing-paper-2) 0%, var(--landing-paper-3) 100%);
+  color: var(--landing-accent-strong);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+  border-radius: var(--radius-xl);
+  font-family: var(--landing-font-display);
+}
+
+.step-item h3 {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.step-item p {
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+  line-height: var(--line-height-relaxed);
 }
 
 /* ===== 価格セクション ===== */

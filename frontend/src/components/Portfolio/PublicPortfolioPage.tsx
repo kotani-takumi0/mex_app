@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { LuGithub, LuFolderKanban } from 'react-icons/lu';
+import { LuGithub, LuFolderKanban, LuArrowRight } from 'react-icons/lu';
 import { getPublicPortfolio } from '../../api/portfolio';
 import { PublicPortfolio } from '../../types';
 import { EmptyState } from '../common/EmptyState';
@@ -23,9 +23,13 @@ export const PublicPortfolioPage: React.FC = () => {
         toast.error(error);
       } else {
         setPortfolio(data);
+        if (data) {
+          document.title = `${data.user.display_name} のポートフォリオ — MEX App`;
+        }
       }
     };
     fetchPortfolio();
+    return () => { document.title = 'MEX App — AI時代の技術ポートフォリオ'; };
   }, [username]);
 
   if (!portfolio) {
@@ -119,6 +123,13 @@ export const PublicPortfolioPage: React.FC = () => {
           </div>
         )}
       </section>
+      <footer className="public-cta-footer">
+        <p>MEX App で技術ポートフォリオを作りませんか？</p>
+        <button className="public-cta-button" onClick={() => navigate('/auth')}>
+          無料で始める
+          <LuArrowRight size={16} />
+        </button>
+      </footer>
     </div>
   );
 };

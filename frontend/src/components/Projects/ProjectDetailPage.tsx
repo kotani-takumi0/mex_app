@@ -7,7 +7,6 @@ import toast from 'react-hot-toast';
 import {
   LuCheck,
   LuExternalLink,
-  LuHardHat,
   LuLoader,
   LuPlus,
   LuSquarePen,
@@ -267,10 +266,10 @@ export const ProjectDetailPage: React.FC = () => {
               <LuSquarePen size={16} />
               編集
             </Link>
-            <span className="quiz-link quiz-link--disabled">
-              <LuHardHat size={16} />
-              クイズ機能（作成中）
-            </span>
+            <Link to={`/projects/${project.id}/quiz`} className="quiz-link">
+              <LuSparkles size={16} />
+              理解度チェック
+            </Link>
           </div>
         }
       />

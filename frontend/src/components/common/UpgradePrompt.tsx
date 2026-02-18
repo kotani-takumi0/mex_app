@@ -15,7 +15,7 @@ interface UpgradePromptProps {
 const PRO_BENEFITS = [
   'プロジェクト無制限',
   'クイズ生成無制限',
-  'GPT-4oモデル使用',
+  '高精度GPT-4oモデルで質の高い問題',
   'PDFエクスポート（予定）',
 ];
 
@@ -67,6 +67,7 @@ export const UpgradePrompt: React.FC<UpgradePromptProps> = ({ message, onClose }
           <span className="upgrade-price-amount">&yen;780</span>
           <span className="upgrade-price-period">/月</span>
         </div>
+        <p className="upgrade-price-annual">年間プランなら &yen;7,800（2ヶ月分おトク）</p>
 
         <div className="upgrade-actions">
           <button className="upgrade-cta" onClick={handleUpgrade} disabled={loading}>
