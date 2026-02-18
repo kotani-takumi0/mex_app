@@ -51,7 +51,8 @@
       "Bash(xargs:*)",
       "Bash(npm uninstall:*)",
       "Bash(npx react-scripts build:*)",
-      "WebFetch(domain:skills.sh)"
+      "WebFetch(domain:skills.sh)",
+      "Bash(tmux -V:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -28,8 +28,8 @@ export const LandingPage: React.FC = () => {
             AIで作ったものを、<br />自分の学びに変えよう
           </h1>
           <p className="hero-description">
-            開発過程を自動記録し、理解度を証明する新しいポートフォリオ。
-            完成物だけでは伝わらない努力と学びを企業に届けます。
+            開発過程を自動記録し、技術ドキュメントを自動生成。
+            学んだことを自分の言葉で残すことで、面接官に理解度を証明できます。
           </p>
           <button className="cta-button" onClick={goToAuth}>
             無料で始める
@@ -54,20 +54,20 @@ export const LandingPage: React.FC = () => {
             <div className="feature-icon-circle">
               <LuCheck size={28} />
             </div>
-            <h3>理解度チェック</h3>
+            <h3>技術ドキュメント自動生成</h3>
             <p>
-              使用した技術の理解度を4択クイズで確認。
-              苦手分野を可視化し、学び直しの指針にできます。
+              コミットからNotionに教育的ドキュメントを自動生成。
+              WHY・HOWの解説と基礎〜応用のQ&Aで、使った技術を深く理解できます。
             </p>
           </div>
           <div className="feature-card">
             <div className="feature-icon-circle">
               <LuLayoutDashboard size={28} />
             </div>
-            <h3>新しいポートフォリオ</h3>
+            <h3>自分の言葉で残すポートフォリオ</h3>
             <p>
-              「完成物 + 過程 + 理解度」をまとめて提示。
-              AI時代でも技術理解を証明できるポートフォリオを作れます。
+              ドキュメントで学んだことを自分の言葉でアプリに記録。
+              面接官が「本当に理解しているか」を判別できる新しいポートフォリオです。
             </p>
           </div>
         </div>
@@ -84,7 +84,7 @@ export const LandingPage: React.FC = () => {
             </div>
             <ul className="pricing-features">
               <li><LuCheck size={16} className="check-icon" /> 開発ログの自動記録</li>
-              <li><LuCheck size={16} className="check-icon" /> 理解度チェッククイズ</li>
+              <li><LuCheck size={16} className="check-icon" /> Notion技術ドキュメント自動生成</li>
               <li><LuCheck size={16} className="check-icon" /> 公開ポートフォリオ</li>
             </ul>
             <button className="cta-button" onClick={goToAuth}>

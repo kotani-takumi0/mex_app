@@ -106,7 +106,8 @@ async def register(request: Request, body: RegisterRequest, db: Session = Depend
     JWTトークンを返却する
     """
     try:
-        existing = db.query(User).filter(User.email == body.email).first()
+        normalized_email = body.email.lower().strip()
+        existing = db.query(User).filter(User.email == normalized_email).first()
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
@@ -114,7 +115,7 @@ async def register(request: Request, body: RegisterRequest, db: Session = Depend
             )
 
         user = User(
-            email=body.email,
+            email=normalized_email,
             display_name=body.display_name,
             hashed_password=pwd_context.hash(body.password),
             auth_provider="email",
@@ -153,7 +154,8 @@ async def login(request: Request, body: LoginRequest, db: Session = Depends(get_
     メールアドレスとパスワードで認証し、JWTトークンを返却する
     """
     try:
-        user = db.query(User).filter(User.email == body.email).first()
+        normalized_email = body.email.lower().strip()
+        user = db.query(User).filter(User.email == normalized_email).first()
 
         if user is None or user.hashed_password is None:
             raise HTTPException(
