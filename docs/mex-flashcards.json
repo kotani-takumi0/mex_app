@@ -1,0 +1,245 @@
+{
+  "title": "Backend Flashcards",
+  "cards": [
+    {
+      "front": "What is the primary responsibility of the API Endpoint Layer (Backend API)?",
+      "back": "Receiving HTTP requests, applying validation/authentication/rate-limiting, and delegating to the business logic layer."
+    },
+    {
+      "front": "Which architectural layer receives all requests from the React frontend and MCP servers?",
+      "back": "The API Endpoint Layer."
+    },
+    {
+      "front": "What does the API layer do with business logic according to the module overview?",
+      "back": "It contains no business logic and delegates it entirely to the application layer."
+    },
+    {
+      "front": "Which dependency is injected into all authenticated endpoints to identify the user?",
+      "back": "get_current_user_dependency"
+    },
+    {
+      "front": "Which application service does the `projects.py` router delegate its business logic to?",
+      "back": "ProjectService"
+    },
+    {
+      "front": "Which application service is responsible for handling development logs logic?",
+      "back": "DevLogService"
+    },
+    {
+      "front": "What is the purpose of the `api/__init__.py` file in the backend structure?",
+      "back": "It acts as the parent router that integrates all sub-routers under the `/api` prefix."
+    },
+    {
+      "front": "Which API file manages user registration, login, and MCP token management?",
+      "back": "backend/app/api/auth.py"
+    },
+    {
+      "front": "Which API file provides authentication-free access to public data?",
+      "back": "backend/app/api/portfolio.py"
+    },
+    {
+      "front": "What FastAPI tool is used to group endpoints by resource and structure them with prefixes and tags?",
+      "back": "APIRouter"
+    },
+    {
+      "front": "What is the benefit of using `APIRouter` to split the API into six functional areas?",
+      "back": "It prevents a single file from becoming unreadable by keeping files between 100\u2013400 lines."
+    },
+    {
+      "front": "Which library provides type-safe validation and serialization for request and response schemas?",
+      "back": "Pydantic (BaseModel)"
+    },
+    {
+      "front": "How are password complexity rules (e.g., symbols, uppercase) enforced in the `RegisterRequest` schema?",
+      "back": "Using Pydantic's `@field_validator`."
+    },
+    {
+      "front": "What library is used for IP-based rate limiting to prevent brute-force attacks?",
+      "back": "slowapi"
+    },
+    {
+      "front": "What is the specific rate limit set for the registration endpoint to prevent mass account creation?",
+      "back": "5 requests per minute"
+    },
+    {
+      "front": "What is the rate limit for the login endpoint to mitigate password guessing?",
+      "back": "10 requests per minute"
+    },
+    {
+      "front": "How does the system prevent processing the same Stripe Webhook event multiple times?",
+      "back": "By using a `StripeWebhookEvent` table to check for duplicate `stripe_event_id` values."
+    },
+    {
+      "front": "Why is signature verification used in Stripe Webhooks?",
+      "back": "To ensure requests are actually from Stripe and prevent attackers from forging events."
+    },
+    {
+      "front": "What is the purpose of the `SecurityHeadersMiddleware` class?",
+      "back": "To add security-related HTTP headers (e.g., X-Frame-Options, HSTS) to all responses."
+    },
+    {
+      "front": "What is the risk of missing HSTS (Strict-Transport-Security) in a production environment?",
+      "back": "Bearer tokens could be sent in plain text over HTTP, enabling man-in-the-middle attacks."
+    },
+    {
+      "front": "Why do `auth.py` and `portfolio.py` directly reference DB models instead of using the Service Layer?",
+      "back": "It is an intentional MVP trade-off because their logic is simple enough that a service class was deemed excessive."
+    },
+    {
+      "front": "What defines the 'Authentication System' module's responsibility?",
+      "back": "Managing JWT authentication, password handling, MCP token management, and plan limit enforcement."
+    },
+    {
+      "front": "What library is used for generating and decoding JSON Web Tokens?",
+      "back": "PyJWT"
+    },
+    {
+      "front": "Which specific signing algorithm is used for JWTs in this project?",
+      "back": "HS256 (HMAC-SHA256)"
+    },
+    {
+      "front": "How does HS256 protect a JWT from tampering?",
+      "back": "It uses a secret key to sign the token, so any modification to the payload will invalidate the signature."
+    },
+    {
+      "front": "What is the default validity duration for a standard access token in this system?",
+      "back": "60 minutes"
+    },
+    {
+      "front": "What is the validity duration for a token issued to an MCP server?",
+      "back": "30 days"
+    },
+    {
+      "front": "What mechanism does FastAPI use to apply authentication logic across endpoints declaratively?",
+      "back": "The Dependency Injection (Depends) pattern."
+    },
+    {
+      "front": "Which FastAPI security scheme is used to extract the token from the `Authorization: Bearer <token>` header?",
+      "back": "HTTPBearer"
+    },
+    {
+      "front": "What is the effect of setting `auto_error=False` in the `HTTPBearer` scheme?",
+      "back": "It returns `None` instead of a 401 error if the auth header is missing, allowing optional authentication."
+    },
+    {
+      "front": "How does the system handle the stateless nature of JWTs when an MCP token needs to be revoked?",
+      "back": "It stores a SHA-256 hash of the token in the DB and checks if its `revoked_at` field is set."
+    },
+    {
+      "front": "What is the design philosophy when the database is unreachable during an MCP token revocation check?",
+      "back": "Fail-closed (the token is rejected to ensure security)."
+    },
+    {
+      "front": "What is the maximum number of projects allowed for a user on the 'Free' plan?",
+      "back": "2 projects"
+    },
+    {
+      "front": "Why does the Plan Guard check the database instead of the JWT payload for the user's plan?",
+      "back": "Because JWTs are not automatically updated when a user's plan changes via Stripe Webhooks."
+    },
+    {
+      "front": "What HTTP status code is returned when a Free user hits the project limit?",
+      "back": "403 Forbidden"
+    },
+    {
+      "front": "Where are the JWT configuration settings (like secret key and expiration) managed?",
+      "back": "backend/app/auth/jwt.py (specifically in the JWTConfig class)"
+    },
+    {
+      "front": "What is the 'alg none' attack in JWT, and how is it prevented in this implementation?",
+      "back": "It is an exploit where the algorithm is set to none; it's prevented by explicitly specifying the allowed algorithm in `jwt.decode`."
+    },
+    {
+      "front": "Which file contains the implementation for checking Free plan project limits?",
+      "back": "backend/app/auth/plan_guards.py"
+    },
+    {
+      "front": "In the context of the service layer, why is the singleton pattern used for services like `ProjectService`?",
+      "back": "To ensure stateless service instances are shared within a worker, while fresh DB sessions are provided per request."
+    },
+    {
+      "front": "What is the primary trade-off of using DB-based revocation for MCP tokens instead of Redis?",
+      "back": "It avoids additional infrastructure (Redis) but increases DB load for MCP-related requests."
+    },
+    {
+      "front": "How does the `get_optional_user` dependency differ from `get_current_user_dependency`?",
+      "back": "It does not raise an exception if the user is unauthenticated, allowing the endpoint to handle guests."
+    },
+    {
+      "front": "What happens to existing JWTs if the `JWT_SECRET_KEY` is changed?",
+      "back": "All existing tokens become invalid immediately, forcing all users to log in again."
+    },
+    {
+      "front": "Which security header prevents the browser from interpreting files as a different MIME type than what is specified?",
+      "back": "X-Content-Type-Options: nosniff"
+    },
+    {
+      "front": "Which security header prevents the site from being embedded in a frame, mitigating clickjacking?",
+      "back": "X-Frame-Options: DENY"
+    },
+    {
+      "front": "What is the role of the `sub` field in the JWT payload?",
+      "back": "It identifies the 'subject' of the token, which is the user's ID."
+    },
+    {
+      "front": "Why is Pydantic preferred over manual validation for API inputs?",
+      "back": "It reduces boilerplate code and ensures validation is consistently applied at the entry point."
+    },
+    {
+      "front": "What is the 'Service Layer Pattern'?",
+      "back": "An architecture where the API layer only handles request/response processing and delegates business logic to a separate service layer."
+    },
+    {
+      "front": "Why is Stripe Webhook idempotency critical for the 'checkout.session.completed' event?",
+      "back": "To prevent a user's subscription or credits from being added multiple times if Stripe retries a slow response."
+    },
+    {
+      "front": "What dependency does `projects.py` use to prevent unauthorized creation of projects?",
+      "back": "check_project_limit"
+    },
+    {
+      "front": "Which file serves as the main entry point where the integrated API router is registered?",
+      "back": "backend/app/main.py"
+    },
+    {
+      "front": "How does the system differentiate between a standard session token and an MCP token during authentication?",
+      "back": "By checking if the token exists in the `MCPToken` database table for revocation status."
+    },
+    {
+      "front": "What is the purpose of the `portfolio.py` endpoints being authentication-free?",
+      "back": "To allow the public to view portfolios without needing to log in."
+    },
+    {
+      "front": "In `dependencies.py`, what is the purpose of `auto_error=False` in the security scheme?",
+      "back": "It prevents the framework from automatically throwing a 401 error if the Authorization header is missing."
+    },
+    {
+      "front": "What information is typically stored in the `TokenPayload` model?",
+      "back": "The user ID (`sub`) and the user's current plan level."
+    },
+    {
+      "front": "What is the consequence of failing to include a router in `api/__init__.py`?",
+      "back": "All endpoints within that sub-router will return a 404 error."
+    },
+    {
+      "front": "Why is a DB-based idempotency key better than a Redis-based one for Stripe Webhooks in this project?",
+      "back": "It provides a permanent record in the primary database, ensuring protection even if the cache is cleared."
+    },
+    {
+      "front": "How does the system ensure that the `StripeWebhookEvent` table remains reliable?",
+      "back": "It checks for the unique `stripe_event_id` and uses signature verification via `stripe.Webhook.construct_event()`."
+    },
+    {
+      "front": "What is the primary benefit of the HS256 algorithm over RS256 for a small project?",
+      "back": "It is simpler to implement and manage since it only requires a single shared secret key."
+    },
+    {
+      "front": "What is the maximum age set for HSTS (Strict-Transport-Security) in this project?",
+      "back": "63,072,000 seconds (2 years)"
+    },
+    {
+      "front": "What is the primary reason for using JWT instead of traditional session cookies?",
+      "back": "To allow stateless access from external tools like MCP servers that may not easily manage cookies."
+    }
+  ]
+}

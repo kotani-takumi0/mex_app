@@ -1,0 +1,22 @@
+{
+  "feature_name": "understand-skill",
+  "created_at": "2026-02-19T12:00:00Z",
+  "updated_at": "2026-02-19T14:00:00Z",
+  "language": "ja",
+  "phase": "implementation",
+  "approvals": {
+    "requirements": {
+      "generated": true,
+      "approved": true
+    },
+    "design": {
+      "generated": true,
+      "approved": true
+    },
+    "tasks": {
+      "generated": true,
+      "approved": true
+    }
+  },
+  "ready_for_implementation": true
+}
