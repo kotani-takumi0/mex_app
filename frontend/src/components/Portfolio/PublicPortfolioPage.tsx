@@ -87,8 +87,7 @@ export const PublicPortfolioPage: React.FC = () => {
                 </div>
                 {project.description && <p>{project.description}</p>}
                 <div className="public-project-meta">
-                  <span>ログ {project.devlog_count}件</span>
-                  <span>クイズ {project.quiz_score === null ? '未実施' : `${project.quiz_score}%`}</span>
+                  <span>ドキュメント {project.devlog_count}件</span>
                 </div>
                 <div className="public-project-tech">
                   {project.technologies.slice(0, 4).map((tech) => (
@@ -103,26 +102,6 @@ export const PublicPortfolioPage: React.FC = () => {
         )}
       </section>
 
-      <section className="public-section">
-        <h2>スキルスコア</h2>
-        {portfolio.skills.length === 0 ? (
-          <div className="public-skill-empty">クイズ回答がまだありません。</div>
-        ) : (
-          <div className="public-skill-list">
-            {portfolio.skills.map((skill) => (
-              <div key={skill.technology} className="public-skill-card">
-                <div className="public-skill-header">
-                  <span>{skill.technology}</span>
-                  <span>{skill.score.toFixed(1)}%</span>
-                </div>
-                <div className="skill-bar">
-                  <div className="skill-bar-fill" style={{ width: `${skill.score}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
       <footer className="public-cta-footer">
         <p>MEX App で技術ポートフォリオを作りませんか？</p>
         <button className="public-cta-button" onClick={() => navigate('/auth')}>

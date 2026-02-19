@@ -1,12 +1,13 @@
 /**
  * ダッシュボードページ
- * ポートフォリオ概要と最近のプロジェクト、スキルスコアを表示
+ * ポートフォリオ概要と最近のプロジェクトを表示
  */
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {
   LuBookOpen,
+  LuNotebook,
   LuPlus,
   LuFolderKanban,
 } from 'react-icons/lu';
@@ -76,6 +77,13 @@ export const DashboardPage: React.FC = () => {
               <div className="stat-label">ドキュメント</div>
               <div className="stat-value">{data.stats.total_devlog_entries}</div>
             </div>
+            <div className="stat-card">
+              <div className="stat-icon">
+                <LuNotebook size={20} />
+              </div>
+              <div className="stat-label">ノートブック</div>
+              <div className="stat-value">{data.stats.total_notebooks}</div>
+            </div>
           </section>
 
           <section className="dashboard-section">
@@ -112,9 +120,6 @@ export const DashboardPage: React.FC = () => {
                     </div>
                     <div className="project-meta">
                       <span>記録 {project.devlog_count}件</span>
-                      <span>
-                        理解度 {project.quiz_score === null ? '未実施' : `${project.quiz_score}%`}
-                      </span>
                     </div>
                     <div className="project-tech">
                       {project.technologies.slice(0, 3).map((tech) => (
@@ -127,29 +132,6 @@ export const DashboardPage: React.FC = () => {
                       更新日: {new Date(project.updated_at).toLocaleDateString('ja-JP')}
                     </div>
                   </button>
-                ))}
-              </div>
-            )}
-          </section>
-
-          <section className="dashboard-section">
-            <div className="section-header">
-              <h2>技能上位</h2>
-            </div>
-            {data.top_skills.length === 0 ? (
-              <div className="skill-empty">設問に回答すると技能得点が表示されます。</div>
-            ) : (
-              <div className="skill-list">
-                {data.top_skills.map((skill) => (
-                  <div key={skill.technology} className="skill-card">
-                    <div className="skill-header">
-                      <span>{skill.technology}</span>
-                      <span>{skill.score.toFixed(1)}%</span>
-                    </div>
-                    <div className="skill-bar">
-                      <div className="skill-bar-fill" style={{ width: `${skill.score}%` }} />
-                    </div>
-                  </div>
                 ))}
               </div>
             )}

@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass, field
 
-from app.infrastructure.database.models import DevLogEntry, Project, QuizAttempt, QuizQuestion
+from app.infrastructure.database.models import DevLogEntry, Project
 from app.infrastructure.database.session import SessionLocal
 
 
@@ -45,7 +45,6 @@ class ProjectSummary:
     status: str
     is_public: bool
     devlog_count: int
-    quiz_score: float | None
     created_at: str
     updated_at: str
 
@@ -62,7 +61,7 @@ class ProjectService:
                 .order_by(Project.updated_at.desc())
                 .all()
             )
-            return [self._to_summary(db, p, user_id) for p in projects]
+            return [self._to_summary(db, p) for p in projects]
         finally:
             db.close()
 
@@ -70,7 +69,7 @@ class ProjectService:
         db = SessionLocal()
         try:
             project = self._get_project(db, user_id, project_id)
-            return self._to_summary(db, project, user_id)
+            return self._to_summary(db, project)
         finally:
             db.close()
 
@@ -90,7 +89,7 @@ class ProjectService:
             db.add(project)
             db.commit()
             db.refresh(project)
-            return self._to_summary(db, project, user_id)
+            return self._to_summary(db, project)
         finally:
             db.close()
 
@@ -116,7 +115,7 @@ class ProjectService:
 
             db.commit()
             db.refresh(project)
-            return self._to_summary(db, project, user_id)
+            return self._to_summary(db, project)
         finally:
             db.close()
 
@@ -137,10 +136,8 @@ class ProjectService:
             raise ValueError("Project not found")
         return project
 
-    def _to_summary(self, db, project: Project, user_id: str) -> ProjectSummary:
+    def _to_summary(self, db, project: Project) -> ProjectSummary:
         devlog_count = db.query(DevLogEntry).filter(DevLogEntry.project_id == project.id).count()
-
-        quiz_score = self._calculate_quiz_score(db, project.id, user_id)
 
         return ProjectSummary(
             id=project.id,
@@ -152,29 +149,6 @@ class ProjectService:
             status=project.status,
             is_public=project.is_public,
             devlog_count=devlog_count,
-            quiz_score=quiz_score,
             created_at=project.created_at.isoformat() if project.created_at else "",
             updated_at=project.updated_at.isoformat() if project.updated_at else "",
         )
-
-    @staticmethod
-    def _calculate_quiz_score(db, project_id: str, user_id: str) -> float | None:
-        total = (
-            db.query(QuizAttempt)
-            .join(QuizQuestion, QuizAttempt.quiz_question_id == QuizQuestion.id)
-            .filter(QuizQuestion.project_id == project_id, QuizAttempt.user_id == user_id)
-            .count()
-        )
-        if total == 0:
-            return None
-        correct = (
-            db.query(QuizAttempt)
-            .join(QuizQuestion, QuizAttempt.quiz_question_id == QuizQuestion.id)
-            .filter(
-                QuizQuestion.project_id == project_id,
-                QuizAttempt.user_id == user_id,
-                QuizAttempt.is_correct.is_(True),
-            )
-            .count()
-        )
-        return round((correct / total) * 100, 1)

@@ -9,9 +9,6 @@ from sqlalchemy.orm import Session
 from app.infrastructure.database.models import (
     DevLogEntry,
     Project,
-    QuizAttempt,
-    QuizQuestion,
-    SkillScore,
     User,
 )
 from app.infrastructure.database.session import get_db
@@ -35,23 +32,13 @@ class PublicProjectResponse(BaseModel):
     status: str
     is_public: bool
     devlog_count: int
-    quiz_score: float | None
     created_at: str
     updated_at: str
-
-
-class PublicSkillResponse(BaseModel):
-    technology: str
-    score: float
-    total_questions: int
-    correct_answers: int
-    last_assessed_at: str | None
 
 
 class PublicPortfolioResponse(BaseModel):
     user: PublicUserResponse
     projects: list[PublicProjectResponse]
-    skills: list[PublicSkillResponse]
 
 
 class PublicDevLogEntry(BaseModel):
@@ -61,24 +48,9 @@ class PublicDevLogEntry(BaseModel):
     created_at: str
 
 
-class QuizSummaryByTech(BaseModel):
-    technology: str
-    score: float
-    questions: int
-    correct: int
-
-
-class PublicQuizSummary(BaseModel):
-    total_questions: int
-    correct_answers: int
-    score: float
-    by_technology: list[QuizSummaryByTech]
-
-
 class PublicProjectDetailResponse(BaseModel):
     project: PublicProjectResponse
     devlog: list[PublicDevLogEntry]
-    quiz_summary: PublicQuizSummary
 
 
 _USERNAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9\-]{1,28}[a-z0-9]$")
@@ -123,19 +95,11 @@ async def get_public_portfolio(
             status=p.status,
             is_public=p.is_public,
             devlog_count=db.query(DevLogEntry).filter(DevLogEntry.project_id == p.id).count(),
-            quiz_score=_project_quiz_score(db, p.id, user.id),
             created_at=p.created_at.isoformat() if p.created_at else "",
             updated_at=p.updated_at.isoformat() if p.updated_at else "",
         )
         for p in projects
     ]
-
-    skills = (
-        db.query(SkillScore)
-        .filter(SkillScore.user_id == user.id)
-        .order_by(SkillScore.score.desc())
-        .all()
-    )
 
     return PublicPortfolioResponse(
         user=PublicUserResponse(
@@ -144,16 +108,6 @@ async def get_public_portfolio(
             github_url=user.github_url,
         ),
         projects=project_responses,
-        skills=[
-            PublicSkillResponse(
-                technology=s.technology,
-                score=s.score,
-                total_questions=s.total_questions,
-                correct_answers=s.correct_answers,
-                last_assessed_at=s.last_assessed_at.isoformat() if s.last_assessed_at else None,
-            )
-            for s in skills
-        ],
     )
 
 
@@ -188,8 +142,6 @@ async def get_public_project_detail(
         .all()
     )
 
-    quiz_summary = _build_quiz_summary(db, project.id, user.id)
-
     return PublicProjectDetailResponse(
         project=PublicProjectResponse(
             id=project.id,
@@ -201,7 +153,6 @@ async def get_public_project_detail(
             status=project.status,
             is_public=project.is_public,
             devlog_count=db.query(DevLogEntry).filter(DevLogEntry.project_id == project.id).count(),
-            quiz_score=quiz_summary.score if quiz_summary.total_questions else None,
             created_at=project.created_at.isoformat() if project.created_at else "",
             updated_at=project.updated_at.isoformat() if project.updated_at else "",
         ),
@@ -214,70 +165,4 @@ async def get_public_project_detail(
             )
             for e in devlog_entries
         ],
-        quiz_summary=quiz_summary,
-    )
-
-
-def _project_quiz_score(db, project_id: str, user_id: str) -> float | None:
-    total = (
-        db.query(QuizAttempt)
-        .join(QuizQuestion, QuizAttempt.quiz_question_id == QuizQuestion.id)
-        .filter(QuizQuestion.project_id == project_id, QuizAttempt.user_id == user_id)
-        .count()
-    )
-    if total == 0:
-        return None
-    correct = (
-        db.query(QuizAttempt)
-        .join(QuizQuestion, QuizAttempt.quiz_question_id == QuizQuestion.id)
-        .filter(
-            QuizQuestion.project_id == project_id,
-            QuizAttempt.user_id == user_id,
-            QuizAttempt.is_correct.is_(True),
-        )
-        .count()
-    )
-    return round((correct / total) * 100, 1)
-
-
-def _build_quiz_summary(db, project_id: str, user_id: str) -> PublicQuizSummary:
-    attempts = (
-        db.query(QuizAttempt, QuizQuestion)
-        .join(QuizQuestion, QuizAttempt.quiz_question_id == QuizQuestion.id)
-        .filter(QuizQuestion.project_id == project_id, QuizAttempt.user_id == user_id)
-        .all()
-    )
-
-    total = len(attempts)
-    correct = sum(1 for attempt, _ in attempts if attempt.is_correct)
-    score = round((correct / total) * 100, 1) if total else 0.0
-
-    by_tech: dict[str, dict[str, int]] = {}
-    for attempt, question in attempts:
-        tech = question.technology
-        if tech not in by_tech:
-            by_tech[tech] = {"total": 0, "correct": 0}
-        by_tech[tech]["total"] += 1
-        if attempt.is_correct:
-            by_tech[tech]["correct"] += 1
-
-    by_technology = []
-    for tech, counts in by_tech.items():
-        tech_score = (
-            round((counts["correct"] / counts["total"]) * 100, 1) if counts["total"] else 0.0
-        )
-        by_technology.append(
-            QuizSummaryByTech(
-                technology=tech,
-                score=tech_score,
-                questions=counts["total"],
-                correct=counts["correct"],
-            )
-        )
-
-    return PublicQuizSummary(
-        total_questions=total,
-        correct_answers=correct,
-        score=score,
-        by_technology=by_technology,
     )

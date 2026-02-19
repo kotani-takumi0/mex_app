@@ -8,9 +8,10 @@ import {
   LuCheck,
   LuExternalLink,
   LuLoader,
+  LuNotebook,
   LuPlus,
-  LuSquarePen,
   LuSparkles,
+  LuSquarePen,
   LuTag,
   LuTrash2,
   LuX,
@@ -22,7 +23,7 @@ import {
   getDocuments,
   updateDocument,
 } from '../../api/devlogs';
-import { Project, TechDocument } from '../../types';
+import { Project, TechDocument, NotebookInfo } from '../../types';
 import { PageHeader } from '../common/PageHeader';
 import { EmptyState } from '../common/EmptyState';
 import './ProjectDetailPage.css';
@@ -266,10 +267,6 @@ export const ProjectDetailPage: React.FC = () => {
               <LuSquarePen size={16} />
               編集
             </Link>
-            <Link to={`/projects/${project.id}/quiz`} className="quiz-link">
-              <LuSparkles size={16} />
-              理解度チェック
-            </Link>
           </div>
         }
       />
@@ -302,10 +299,6 @@ export const ProjectDetailPage: React.FC = () => {
           <div className="summary-row">
             <span className="summary-label">ドキュメント</span>
             <span>{project.devlog_count}件</span>
-          </div>
-          <div className="summary-row">
-            <span className="summary-label">クイズスコア</span>
-            <span>{project.quiz_score === null ? '未実施' : `${project.quiz_score}%`}</span>
           </div>
         </div>
 
@@ -412,6 +405,83 @@ export const ProjectDetailPage: React.FC = () => {
           </div>
         )}
       </section>
+
+      {(() => {
+        const notebookEntries = documents.filter(
+          (doc) => doc.metadata?.notebook_id
+        );
+        const learningTypeLabel = (type: string): string => {
+          switch (type) {
+            case 'flashcard': return 'フラッシュカード';
+            case 'audio': return '音声ポッドキャスト';
+            case 'summary': return '要約';
+            case 'full': return 'フルセット';
+            default: return type;
+          }
+        };
+        return (
+          <section className="learning-section">
+            <div className="section-header">
+              <h2>
+                <LuNotebook size={20} />
+                学習ハブ
+              </h2>
+            </div>
+            {notebookEntries.length === 0 ? (
+              <EmptyState
+                icon={LuNotebook}
+                title="ノートブックがまだありません"
+                description="Claude Code で /learn コマンドを実行すると、NotebookLM の学習コンテンツが自動生成されます。"
+              />
+            ) : (
+              <div className="notebook-list">
+                {notebookEntries.map((entry) => {
+                  const meta = entry.metadata as unknown as NotebookInfo;
+                  return (
+                    <div key={entry.id} className="notebook-card">
+                      <div className="notebook-header">
+                        <h3>{entry.title}</h3>
+                        <span className="notebook-type">
+                          {learningTypeLabel(meta.learning_type || 'full')}
+                        </span>
+                      </div>
+                      <div className="devlog-tech">
+                        {entry.technologies.map((tech) => (
+                          <span key={tech} className="tech-pill">{tech}</span>
+                        ))}
+                      </div>
+                      <div className="notebook-links">
+                        {meta.notebook_url && (
+                          <a
+                            href={meta.notebook_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="notebook-link"
+                          >
+                            <LuExternalLink size={14} />
+                            NotebookLMで開く
+                          </a>
+                        )}
+                        {meta.public_url && (
+                          <a
+                            href={meta.public_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="notebook-link notebook-link--public"
+                          >
+                            <LuExternalLink size={14} />
+                            公開リンク
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+        );
+      })()}
 
       <section className="devlog-form-section">
         <div className="section-header">

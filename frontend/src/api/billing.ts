@@ -7,8 +7,6 @@ export interface PlanInfo {
   plan: string;
   project_limit: number | null;
   project_count: number;
-  quiz_monthly_limit: number | null;
-  quiz_used_this_month: number;
   llm_model: string;
   subscription_status: string | null;
   current_period_end: string | null;

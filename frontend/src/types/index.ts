@@ -31,7 +31,6 @@ export interface Project {
   status: 'in_progress' | 'completed' | 'archived';
   is_public: boolean;
   devlog_count: number;
-  quiz_score: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -72,40 +71,12 @@ export interface DocumentCreateRequest {
   metadata?: Record<string, unknown>;
 }
 
-// クイズ
-export interface QuizQuestion {
-  id: string;
-  technology: string;
-  question: string;
-  options: string[];
-  difficulty: 'easy' | 'medium' | 'hard';
-  devlog_entry_id: string | null;
-}
-
-export interface QuizAnswerRequest {
-  selected_answer: number;
-  time_spent_seconds?: number;
-}
-
-export interface QuizAnswerResponse {
-  is_correct: boolean;
-  correct_answer: number;
-  explanation: string;
-  score_update: {
-    technology: string;
-    previous_score: number;
-    new_score: number;
-    total_questions: number;
-    correct_answers: number;
-  };
-}
-
-export interface SkillScore {
-  technology: string;
-  score: number;
-  total_questions: number;
-  correct_answers: number;
-  last_assessed_at: string | null;
+// NotebookLM連携
+export interface NotebookInfo {
+  notebook_id: string;
+  notebook_url: string;
+  learning_type: string;
+  public_url?: string;
 }
 
 // プロフィール更新
@@ -146,11 +117,9 @@ export interface DashboardData {
   stats: {
     total_projects: number;
     total_devlog_entries: number;
-    total_quiz_answered: number;
-    overall_score: number;
+    total_notebooks: number;
   };
   recent_projects: Project[];
-  top_skills: SkillScore[];
 }
 
 // 公開ポートフォリオ
@@ -161,21 +130,9 @@ export interface PublicPortfolio {
     github_url: string | null;
   };
   projects: Project[];
-  skills: SkillScore[];
 }
 
 export interface PublicProjectDetail {
   project: Project;
   devlog: Pick<TechDocument, 'category' | 'title' | 'technologies' | 'created_at'>[];
-  quiz_summary: {
-    total_questions: number;
-    correct_answers: number;
-    score: number;
-    by_technology: {
-      technology: string;
-      score: number;
-      questions: number;
-      correct: number;
-    }[];
-  };
 }

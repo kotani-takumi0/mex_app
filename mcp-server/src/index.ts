@@ -8,6 +8,7 @@ import { MexApiClient } from './api-client.js';
 import { saveDocumentTool, handleSaveDocument } from './tools/record-activity.js';
 import { listProjectsTool, handleListProjects } from './tools/list-projects.js';
 import { getProjectContextTool, handleGetProjectContext } from './tools/get-context.js';
+import { saveNotebookTool, handleSaveNotebook } from './tools/save-notebook.js';
 
 async function main() {
   const config = loadConfig();
@@ -28,7 +29,7 @@ async function main() {
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-      tools: [saveDocumentTool, listProjectsTool, getProjectContextTool],
+      tools: [saveDocumentTool, listProjectsTool, getProjectContextTool, saveNotebookTool],
     };
   });
 
@@ -62,6 +63,17 @@ async function main() {
         case 'get_project_context': {
           const projectId = (args as { project_id?: string }).project_id;
           const result = await handleGetProjectContext(client, projectId, localConfig);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(result, null, 2),
+              },
+            ],
+          };
+        }
+        case 'save_notebook': {
+          const result = await handleSaveNotebook(client, config, args as any, localConfig);
           return {
             content: [
               {

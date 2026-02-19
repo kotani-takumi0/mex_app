@@ -283,12 +283,6 @@ export const SettingsPage: React.FC = () => {
                     {planInfo.project_count} / {planInfo.project_limit}
                   </span>
                 </div>
-                <div className="plan-usage-row">
-                  <span className="plan-usage-label">クイズ生成（今月）</span>
-                  <span className="plan-usage-value">
-                    {planInfo.quiz_used_this_month} / {planInfo.quiz_monthly_limit}
-                  </span>
-                </div>
               </>
             )}
 

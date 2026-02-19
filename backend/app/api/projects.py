@@ -54,7 +54,6 @@ class ProjectResponse(BaseModel):
     status: str
     is_public: bool
     devlog_count: int
-    quiz_score: float | None
     created_at: str
     updated_at: str
 
@@ -156,7 +155,6 @@ def _to_response(project: ProjectSummary) -> ProjectResponse:
         status=project.status,
         is_public=project.is_public,
         devlog_count=project.devlog_count,
-        quiz_score=project.quiz_score,
         created_at=project.created_at,
         updated_at=project.updated_at,
     )

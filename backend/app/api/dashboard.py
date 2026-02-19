@@ -28,8 +28,7 @@ class DashboardUserResponse(BaseModel):
 class DashboardStatsResponse(BaseModel):
     total_projects: int
     total_devlog_entries: int
-    total_quiz_answered: int
-    overall_score: float
+    total_notebooks: int
 
 
 class DashboardProjectResponse(BaseModel):
@@ -42,24 +41,14 @@ class DashboardProjectResponse(BaseModel):
     status: str
     is_public: bool
     devlog_count: int
-    quiz_score: float | None
     created_at: str
     updated_at: str
-
-
-class DashboardSkillResponse(BaseModel):
-    technology: str
-    score: float
-    total_questions: int
-    correct_answers: int
-    last_assessed_at: str | None
 
 
 class DashboardResponse(BaseModel):
     user: DashboardUserResponse
     stats: DashboardStatsResponse
     recent_projects: list[DashboardProjectResponse]
-    top_skills: list[DashboardSkillResponse]
 
 
 @router.get("", response_model=DashboardResponse)
@@ -87,8 +76,7 @@ def _to_response(data: DashboardData) -> DashboardResponse:
         stats=DashboardStatsResponse(
             total_projects=data.stats.total_projects,
             total_devlog_entries=data.stats.total_devlog_entries,
-            total_quiz_answered=data.stats.total_quiz_answered,
-            overall_score=data.stats.overall_score,
+            total_notebooks=data.stats.total_notebooks,
         ),
         recent_projects=[
             DashboardProjectResponse(
@@ -101,20 +89,9 @@ def _to_response(data: DashboardData) -> DashboardResponse:
                 status=p.status,
                 is_public=p.is_public,
                 devlog_count=p.devlog_count,
-                quiz_score=p.quiz_score,
                 created_at=p.created_at,
                 updated_at=p.updated_at,
             )
             for p in data.recent_projects
-        ],
-        top_skills=[
-            DashboardSkillResponse(
-                technology=s.technology,
-                score=s.score,
-                total_questions=s.total_questions,
-                correct_answers=s.correct_answers,
-                last_assessed_at=s.last_assessed_at,
-            )
-            for s in data.top_skills
         ],
     )

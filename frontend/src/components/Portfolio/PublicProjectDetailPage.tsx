@@ -62,7 +62,7 @@ export const PublicProjectDetailPage: React.FC = () => {
     );
   }
 
-  const { project, devlog, quiz_summary } = detail;
+  const { project, devlog } = detail;
 
   return (
     <div className="public-page">
@@ -104,40 +104,6 @@ export const PublicProjectDetailPage: React.FC = () => {
             ))}
           </div>
         )}
-      </section>
-
-      <section className="public-detail-section">
-        <h2>クイズスコア</h2>
-        <div className="quiz-summary-card">
-          <div className="quiz-summary-stat">
-            <span>回答数</span>
-            <strong>{quiz_summary.total_questions}</strong>
-          </div>
-          <div className="quiz-summary-stat">
-            <span>正答数</span>
-            <strong>{quiz_summary.correct_answers}</strong>
-          </div>
-          <div className="quiz-summary-stat">
-            <span>スコア</span>
-            <strong>{quiz_summary.score.toFixed(1)}%</strong>
-          </div>
-        </div>
-        <div className="quiz-by-tech">
-          {quiz_summary.by_technology.map((tech) => (
-            <div key={tech.technology} className="quiz-tech-card">
-              <div className="quiz-tech-header">
-                <span>{tech.technology}</span>
-                <span>{tech.score.toFixed(1)}%</span>
-              </div>
-              <div className="skill-bar">
-                <div className="skill-bar-fill" style={{ width: `${tech.score}%` }} />
-              </div>
-              <div className="quiz-tech-meta">
-                {tech.correct} / {tech.questions} 正答
-              </div>
-            </div>
-          ))}
-        </div>
       </section>
     </div>
   );

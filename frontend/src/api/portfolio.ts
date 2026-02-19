@@ -21,7 +21,6 @@ interface BackendPublicProjectDetail {
     technologies: string[];
     created_at: string;
   }[];
-  quiz_summary: PublicProjectDetail['quiz_summary'];
 }
 
 const toCategory = (entryType: BackendEntryType): PublicProjectDetail['devlog'][number]['category'] => {
@@ -64,7 +63,6 @@ export const getPublicProjectDetail = async (
       technologies: entry.technologies,
       created_at: entry.created_at,
     })),
-    quiz_summary: result.data.quiz_summary,
   };
 
   return {

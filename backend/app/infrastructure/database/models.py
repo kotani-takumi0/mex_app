@@ -95,10 +95,6 @@ class Project(Base):
     devlog_entries = relationship(
         "DevLogEntry", back_populates="project", cascade="all, delete-orphan"
     )
-    quiz_questions = relationship(
-        "QuizQuestion", back_populates="project", cascade="all, delete-orphan"
-    )
-
     __table_args__ = (
         Index("idx_projects_user_id", "user_id"),
         Index("idx_projects_status", "status"),
@@ -134,99 +130,11 @@ class DevLogEntry(Base):
 
     # Relationships
     project = relationship("Project", back_populates="devlog_entries")
-    quiz_questions = relationship("QuizQuestion", back_populates="devlog_entry")
-
     __table_args__ = (
         Index("idx_devlog_entries_project_id", "project_id"),
         Index("idx_devlog_entries_user_id", "user_id"),
         Index("idx_devlog_entries_created_at", "created_at"),
         Index("idx_devlog_entries_entry_type", "entry_type"),
-    )
-
-
-class QuizQuestion(Base):
-    """
-    理解度チェック問題
-    開発ログからLLMが自動生成する4択クイズ
-    """
-
-    __tablename__ = "quiz_questions"
-
-    id = Column(String(36), primary_key=True, default=generate_uuid)
-    project_id = Column(String(36), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
-    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    devlog_entry_id = Column(
-        String(36), ForeignKey("devlog_entries.id", ondelete="SET NULL"), nullable=True
-    )
-
-    technology = Column(String(100), nullable=False)
-    question = Column(Text, nullable=False)
-    options = Column(JSON, nullable=False)
-    correct_answer = Column(Integer, nullable=False)
-    explanation = Column(Text, nullable=False)
-    difficulty = Column(String(10), nullable=False, default="medium")
-    created_at = Column(DateTime(timezone=True), default=utc_now)
-
-    # Relationships
-    project = relationship("Project", back_populates="quiz_questions")
-    devlog_entry = relationship("DevLogEntry", back_populates="quiz_questions")
-    attempts = relationship("QuizAttempt", back_populates="question", cascade="all, delete-orphan")
-
-    __table_args__ = (
-        Index("idx_quiz_questions_project_id", "project_id"),
-        Index("idx_quiz_questions_user_id", "user_id"),
-        Index("idx_quiz_questions_technology", "technology"),
-    )
-
-
-class QuizAttempt(Base):
-    """
-    クイズ回答記録
-    ユーザーの各回答を記録し、スコア計算に使用
-    """
-
-    __tablename__ = "quiz_attempts"
-
-    id = Column(String(36), primary_key=True, default=generate_uuid)
-    quiz_question_id = Column(
-        String(36), ForeignKey("quiz_questions.id", ondelete="CASCADE"), nullable=False
-    )
-    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    selected_answer = Column(Integer, nullable=False)
-    is_correct = Column(Boolean, nullable=False)
-    time_spent_seconds = Column(Integer, nullable=True)
-    created_at = Column(DateTime(timezone=True), default=utc_now)
-
-    # Relationships
-    question = relationship("QuizQuestion", back_populates="attempts")
-
-    __table_args__ = (
-        Index("idx_quiz_attempts_user_id", "user_id"),
-        Index("idx_quiz_attempts_question_id", "quiz_question_id"),
-    )
-
-
-class SkillScore(Base):
-    """
-    技術別理解度スコア
-    クイズ結果から集計される技術別のスコア
-    """
-
-    __tablename__ = "skill_scores"
-
-    id = Column(String(36), primary_key=True, default=generate_uuid)
-    user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    technology = Column(String(100), nullable=False)
-    score = Column(Float, nullable=False, default=0.0)
-    total_questions = Column(Integer, nullable=False, default=0)
-    correct_answers = Column(Integer, nullable=False, default=0)
-    last_assessed_at = Column(DateTime(timezone=True), nullable=True)
-    updated_at = Column(DateTime(timezone=True), default=utc_now, onupdate=utc_now)
-
-    __table_args__ = (
-        Index("idx_skill_scores_user_id", "user_id"),
-        Index("idx_skill_scores_technology", "technology"),
-        Index("uq_skill_scores_user_tech", "user_id", "technology", unique=True),
     )
 
 

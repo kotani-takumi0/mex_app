@@ -102,30 +102,6 @@
   border-color: var(--color-primary-200);
 }
 
-.quiz-link {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: 10px 16px;
-  border-radius: var(--radius-lg);
-  background: var(--color-gray-900);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
-}
-
-.quiz-link:hover:not(.quiz-link--disabled) {
-  box-shadow: var(--shadow-md);
-  filter: brightness(1.1);
-}
-
-.quiz-link--disabled {
-  background: var(--color-gray-300);
-  cursor: default;
-  font-size: var(--font-size-sm);
-}
-
 .toggle-public {
   display: inline-flex;
   align-items: center;
@@ -391,6 +367,90 @@
 
 .delete-btn:hover:not(:disabled) {
   background: var(--color-error-light);
+}
+
+/* 学習ハブ */
+.learning-section {
+  margin-bottom: var(--space-8);
+}
+
+.learning-section .section-header h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.notebook-list {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.notebook-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-xs);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.notebook-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.notebook-header h3 {
+  margin: 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.notebook-type {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--font-size-xs);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-semibold);
+  background: #ede9fe;
+  color: #5b21b6;
+  white-space: nowrap;
+}
+
+.notebook-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--border-color-light);
+}
+
+.notebook-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  color: var(--color-primary-700);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  transition: color var(--transition-fast);
+}
+
+.notebook-link:hover {
+  color: var(--color-primary-900);
+  text-decoration: underline;
+}
+
+.notebook-link--public {
+  color: #5b21b6;
+}
+
+.notebook-link--public:hover {
+  color: #3b0764;
 }
 
 @media (max-width: 768px) {

@@ -14,7 +14,6 @@ import { AuthPage } from './components/Auth/AuthPage';
 import { DashboardPage } from './components/Dashboard/DashboardPage';
 import { ProjectFormPage } from './components/Projects/ProjectFormPage';
 import { ProjectDetailPage } from './components/Projects/ProjectDetailPage';
-import { QuizPage } from './components/Quiz/QuizPage';
 import { PublicPortfolioPage } from './components/Portfolio/PublicPortfolioPage';
 import { PublicProjectDetailPage } from './components/Portfolio/PublicProjectDetailPage';
 import { SettingsPage } from './components/Settings/SettingsPage';
@@ -124,16 +123,6 @@ function AppRoutes() {
           <ProtectedRoute>
             <AuthenticatedLayout>
               <ProjectDetailPage />
-            </AuthenticatedLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/projects/:id/quiz"
-        element={
-          <ProtectedRoute>
-            <AuthenticatedLayout>
-              <QuizPage />
             </AuthenticatedLayout>
           </ProtectedRoute>
         }
