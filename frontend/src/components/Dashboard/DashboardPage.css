@@ -294,6 +294,96 @@
   box-shadow: none;
 }
 
+/* ===== MCP CTA バナー ===== */
+.mcp-cta-banner {
+  position: relative;
+  background: var(--dashboard-card-bg);
+  border: 1px solid rgba(255, 161, 22, 0.25);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  margin-bottom: var(--space-8);
+}
+
+.mcp-cta-banner-dismiss {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  background: transparent;
+  border: 1px solid var(--dashboard-border);
+  color: var(--dashboard-muted);
+  cursor: pointer;
+  transition: border-color var(--transition-base), color var(--transition-base);
+}
+
+.mcp-cta-banner-dismiss:hover {
+  border-color: var(--dashboard-accent);
+  color: var(--dashboard-text);
+}
+
+.mcp-cta-banner-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.mcp-cta-banner-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 161, 22, 0.1);
+  border: 1px solid rgba(255, 161, 22, 0.15);
+  color: var(--dashboard-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mcp-cta-banner-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.mcp-cta-banner-text strong {
+  display: block;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--dashboard-text);
+  margin-bottom: var(--space-1);
+}
+
+.mcp-cta-banner-text p {
+  font-size: var(--font-size-sm);
+  color: var(--dashboard-muted);
+  line-height: 1.5;
+}
+
+.mcp-cta-banner-action {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  background: var(--dashboard-accent);
+  color: #1a1a1a;
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--dashboard-accent-border);
+  box-shadow: var(--dashboard-shadow);
+  text-decoration: none;
+  transition: background-color var(--transition-base);
+}
+
+.mcp-cta-banner-action:hover {
+  background: var(--dashboard-accent-hover);
+}
+
 @media (max-width: 1024px) {
   .dashboard-stats {
     grid-template-columns: repeat(2, 1fr);
@@ -312,5 +402,10 @@
 
   .dashboard-page {
     padding: var(--space-4);
+  }
+
+  .mcp-cta-banner-content {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

@@ -29,6 +29,7 @@ class DashboardStatsResponse(BaseModel):
     total_projects: int
     total_devlog_entries: int
     total_notebooks: int
+    has_mcp_tokens: bool
 
 
 class DashboardProjectResponse(BaseModel):
@@ -77,6 +78,7 @@ def _to_response(data: DashboardData) -> DashboardResponse:
             total_projects=data.stats.total_projects,
             total_devlog_entries=data.stats.total_devlog_entries,
             total_notebooks=data.stats.total_notebooks,
+            has_mcp_tokens=data.stats.has_mcp_tokens,
         ),
         recent_projects=[
             DashboardProjectResponse(

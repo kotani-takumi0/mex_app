@@ -118,6 +118,7 @@ export interface DashboardData {
     total_projects: number;
     total_devlog_entries: number;
     total_notebooks: number;
+    has_mcp_tokens: boolean;
   };
   recent_projects: Project[];
 }

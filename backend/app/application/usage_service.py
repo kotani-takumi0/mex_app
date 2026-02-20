@@ -6,6 +6,7 @@ from sqlalchemy import String, cast
 
 from app.infrastructure.database.models import (
     DevLogEntry,
+    MCPToken,
     Project,
     User,
 )
@@ -25,6 +26,7 @@ class DashboardStats:
     total_projects: int
     total_devlog_entries: int
     total_notebooks: int
+    has_mcp_tokens: bool
 
 
 @dataclass
@@ -62,6 +64,17 @@ class DashboardService:
             total_projects = db.query(Project).filter(Project.user_id == user_id).count()
             total_devlog_entries = (
                 db.query(DevLogEntry).filter(DevLogEntry.user_id == user_id).count()
+            )
+
+            # 有効な（未失効の）MCPトークンが存在するか確認
+            has_mcp_tokens = (
+                db.query(MCPToken)
+                .filter(
+                    MCPToken.user_id == user_id,
+                    MCPToken.revoked_at.is_(None),
+                )
+                .first()
+                is not None
             )
 
             # notebook_id を持つ DevLogEntry をカウント
@@ -113,6 +126,7 @@ class DashboardService:
                     total_projects=total_projects,
                     total_devlog_entries=total_devlog_entries,
                     total_notebooks=total_notebooks,
+                    has_mcp_tokens=has_mcp_tokens,
                 ),
                 recent_projects=recent_project_summaries,
             )

@@ -3,13 +3,15 @@
  * ポートフォリオ概要と最近のプロジェクトを表示
  */
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {
   LuBookOpen,
+  LuCable,
   LuNotebook,
   LuPlus,
   LuFolderKanban,
+  LuX,
 } from 'react-icons/lu';
 import { getDashboard } from '../../api/dashboard';
 import { PageHeader } from '../common/PageHeader';
@@ -22,6 +24,14 @@ export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [mcpBannerDismissed, setMcpBannerDismissed] = useState(
+    () => localStorage.getItem('mex_mcp_banner_dismissed') === 'true',
+  );
+
+  const dismissMcpBanner = () => {
+    setMcpBannerDismissed(true);
+    localStorage.setItem('mex_mcp_banner_dismissed', 'true');
+  };
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -85,6 +95,31 @@ export const DashboardPage: React.FC = () => {
               <div className="stat-value">{data.stats.total_notebooks}</div>
             </div>
           </section>
+
+          {!mcpBannerDismissed && !data.stats.has_mcp_tokens && (
+            <section className="mcp-cta-banner fadeInUp">
+              <button
+                type="button"
+                className="mcp-cta-banner-dismiss"
+                onClick={dismissMcpBanner}
+                aria-label="閉じる"
+              >
+                <LuX size={16} />
+              </button>
+              <div className="mcp-cta-banner-content">
+                <div className="mcp-cta-banner-icon">
+                  <LuCable size={22} />
+                </div>
+                <div className="mcp-cta-banner-text">
+                  <strong>MCPを接続して開発ログを自動記録</strong>
+                  <p>Claude Code と連携すると、開発中の活動がポートフォリオに自動で記録されます。</p>
+                </div>
+                <Link to="/settings#mcp-setup" className="mcp-cta-banner-action">
+                  セットアップする
+                </Link>
+              </div>
+            </section>
+          )}
 
           <section className="dashboard-section">
             <div className="section-header">

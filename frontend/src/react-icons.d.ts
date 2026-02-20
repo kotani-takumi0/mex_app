@@ -53,6 +53,8 @@ declare module 'react-icons/lu' {
   export const LuGraduationCap: IconType;
   export const LuGlobe: IconType;
   export const LuHeadphones: IconType;
+  export const LuCable: IconType;
+  export const LuTerminal: IconType;
 }
 
 declare module 'react-icons' {

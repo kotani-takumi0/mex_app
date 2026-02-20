@@ -2,7 +2,8 @@
  * 設定ページ
  * プロフィール編集とMCPトークン管理を提供
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {
   LuUser,
@@ -14,6 +15,9 @@ import {
   LuCheck,
   LuCrown,
   LuSparkles,
+  LuCable,
+  LuCircleCheck,
+  LuTerminal,
 } from 'react-icons/lu';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -56,8 +60,40 @@ const copyToClipboard = async (text: string) => {
   }
 };
 
+const CommandBlock: React.FC<{ command: string }> = ({ command }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await copyToClipboard(command);
+      setCopied(true);
+      toast.success('コマンドをコピーしました');
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error('コピーに失敗しました');
+    }
+  };
+
+  return (
+    <div className="command-block">
+      <code className="command-block-text">{command}</code>
+      <button type="button" className="command-block-copy" onClick={handleCopy}>
+        {copied ? <LuCheck size={14} /> : <LuCopy size={14} />}
+      </button>
+    </div>
+  );
+};
+
 export const SettingsPage: React.FC = () => {
   const { user, setUser } = useAuth();
+  const location = useLocation();
+  const mcpSetupRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (location.hash === '#mcp-setup' && mcpSetupRef.current) {
+      mcpSetupRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [location.hash]);
 
   const [displayName, setDisplayName] = useState('');
   const [username, setUsername] = useState('');
@@ -420,7 +456,78 @@ export const SettingsPage: React.FC = () => {
         </form>
       </section>
 
-      <section className="settings-section">
+      <section className="settings-section" id="mcp-setup" ref={mcpSetupRef}>
+        <div className="settings-section-header">
+          <div>
+            <h2 className="settings-section-title">
+              <LuCable size={18} />
+              MCPセットアップガイド
+            </h2>
+            <p className="settings-section-description">
+              MCPを設定すると、開発ログが自動的にポートフォリオに記録されます。
+            </p>
+          </div>
+        </div>
+
+        <div className="mcp-setup-steps">
+          <div className="mcp-setup-step">
+            <div className="mcp-setup-step-number">1</div>
+            <div className="mcp-setup-step-content">
+              <h3 className="mcp-setup-step-title">MCPとは？</h3>
+              <p className="mcp-setup-step-description">
+                MCP（Model Context Protocol）は、AIツール（Claude Code など）と外部サービスをつなぐ仕組みです。
+                設定すると、開発中の活動が自動で記録されポートフォリオに反映されます。
+              </p>
+            </div>
+          </div>
+
+          <div className={`mcp-setup-step ${tokens.some((t) => !t.revoked_at) ? 'mcp-setup-step--done' : ''}`}>
+            <div className="mcp-setup-step-number">
+              {tokens.some((t) => !t.revoked_at) ? <LuCircleCheck size={16} /> : '2'}
+            </div>
+            <div className="mcp-setup-step-content">
+              <h3 className="mcp-setup-step-title">トークンを発行する</h3>
+              <p className="mcp-setup-step-description">
+                {tokens.some((t) => !t.revoked_at)
+                  ? '有効なトークンがあります。次のステップに進みましょう。'
+                  : '下のMCPトークンセクションで「新しいトークンを発行」してください。発行後にトークン文字列をコピーしておきます。'}
+              </p>
+              {!tokens.some((t) => !t.revoked_at) && (
+                <a href="#mcp-tokens" className="mcp-setup-step-link">
+                  トークンを発行する ↓
+                </a>
+              )}
+            </div>
+          </div>
+
+          <div className="mcp-setup-step">
+            <div className="mcp-setup-step-number">3</div>
+            <div className="mcp-setup-step-content">
+              <h3 className="mcp-setup-step-title">CLIでセットアップ</h3>
+              <p className="mcp-setup-step-description">
+                ターミナルで以下のコマンドを実行し、ガイドに従ってトークンを設定します。
+              </p>
+              <CommandBlock command="npx -p mex-mcp-server mex-setup" />
+            </div>
+          </div>
+
+          <div className="mcp-setup-step">
+            <div className="mcp-setup-step-number">4</div>
+            <div className="mcp-setup-step-content">
+              <h3 className="mcp-setup-step-title">
+                <LuTerminal size={14} />
+                Claude Codeに登録
+              </h3>
+              <p className="mcp-setup-step-description">
+                Claude Code を使っている場合は、以下のコマンドでMCPサーバーを登録します。
+              </p>
+              <CommandBlock command="claude mcp add mex -- npx mex-mcp-server" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="settings-section" id="mcp-tokens">
         <div className="settings-section-header">
           <div>
             <h2 className="settings-section-title">
