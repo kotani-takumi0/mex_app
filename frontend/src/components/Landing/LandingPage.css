@@ -1,8 +1,12 @@
 /**
  * ランディングページスタイル
  *
- * 変更理由: LeetCode風ダークテーマに統一。
- * ヒーロー・カード・フッター全てをダーク背景 + オレンジアクセントに変更。
+ * 変更理由:
+ * - 痛み共感型ヒーローの新コピー用スタイル追加
+ * - CSS-onlyブラウザモックアップでプロダクトを視覚化
+ * - ペインポイントセクションでターゲットの共感導線を構築
+ * - 中間CTAセクション追加で離脱防止
+ * - 既存のダークテーマ + オレンジアクセントを維持
  */
 .landing-page {
   --landing-ink: #eff1f6;
@@ -100,14 +104,13 @@
 /* ===== ヒーロー ===== */
 .landing-hero {
   background: var(--gradient-hero);
-  padding: 160px var(--space-6) 100px;
+  padding: 160px var(--space-6) 80px;
   text-align: center;
   color: var(--text-primary);
   position: relative;
   overflow: hidden;
 }
 
-/* 装飾パターン: 放射状のオレンジグロー */
 .landing-hero::before {
   content: '';
   position: absolute;
@@ -120,23 +123,26 @@
   pointer-events: none;
 }
 
-/* 底部のフェード */
-.landing-hero::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 120px;
-  background: linear-gradient(to top, var(--landing-paper) 0%, transparent 100%);
-  pointer-events: none;
-}
-
 .landing-hero-inner {
   max-width: 760px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
+}
+
+/**
+ * 痛み共感フック
+ * 面接での実際の質問を引用して、ターゲットの不安を刺激する。
+ * イタリック + 大きめフォントで「誰かに言われた言葉」感を演出。
+ */
+.hero-pain-hook {
+  font-size: var(--font-size-lg);
+  font-style: italic;
+  color: var(--landing-accent);
+  opacity: 0.9;
+  margin-bottom: var(--space-5);
+  letter-spacing: 0.02em;
+  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-title {
@@ -146,7 +152,7 @@
   margin-bottom: var(--space-6);
   letter-spacing: -0.01em;
   font-family: var(--landing-font-display);
-  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
 }
 
 .hero-description {
@@ -157,21 +163,9 @@
   max-width: 560px;
   margin-left: auto;
   margin-right: auto;
-  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
 }
 
-/* ヒーロー タグライン */
-.hero-tagline {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--landing-accent);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: var(--space-4);
-  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* ヒーロー CTA 周辺 */
 .hero-actions {
   display: flex;
   flex-direction: column;
@@ -182,9 +176,10 @@
 .hero-note {
   font-size: var(--font-size-sm);
   color: var(--text-tertiary);
-  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.32s both;
 }
 
+/* ===== CTA ボタン（共通） ===== */
 .cta-button {
   display: inline-flex;
   align-items: center;
@@ -200,7 +195,7 @@
   cursor: pointer;
   transition: all var(--transition-base);
   box-shadow: 0 12px 26px rgba(255, 161, 22, 0.2);
-  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+  animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both;
 }
 
 .cta-button:hover {
@@ -234,6 +229,460 @@
   transform: none;
 }
 
+/* ========================================================
+   プロダクトプレビュー — CSS-onlyブラウザモックアップ
+
+   実際のスクリーンショットがなくても、プロダクトの
+   見た目と価値を伝えるために CSS で疑似ポートフォリオを構築。
+   「学んだこと」セクションをハイライトしてMEXの核心を可視化。
+   ======================================================== */
+.landing-preview {
+  padding: 0 var(--space-6) var(--space-20);
+  max-width: 860px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  animation: previewFloat 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+@keyframes previewFloat {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.preview-browser {
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 80px rgba(255, 161, 22, 0.06);
+  background: #1e1e1e;
+}
+
+/* ブラウザバー */
+.preview-browser-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: #2a2a2a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.preview-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+}
+
+.dot-red {
+  background: #ff5f57;
+}
+
+.dot-yellow {
+  background: #febc2e;
+}
+
+.dot-green {
+  background: #28c840;
+}
+
+.preview-url {
+  flex: 1;
+  text-align: center;
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  font-family: var(--font-family-mono);
+  background: rgba(255, 255, 255, 0.04);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
+}
+
+.preview-lock {
+  font-size: 10px;
+  margin-right: 4px;
+}
+
+/* モックアップコンテンツ */
+.preview-content {
+  padding: var(--space-6) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ポートフォリオヘッダー */
+.mock-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.mock-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(145deg, rgba(255, 161, 22, 0.3), rgba(255, 161, 22, 0.1));
+  border: 2px solid rgba(255, 161, 22, 0.25);
+  flex-shrink: 0;
+}
+
+.mock-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mock-name {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  font-family: var(--landing-font-display);
+}
+
+.mock-bio-line {
+  width: 180px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-full);
+}
+
+/* プロジェクトカード群 */
+.mock-projects {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.mock-project-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.mock-project-card.mock-project-featured {
+  border-color: rgba(255, 161, 22, 0.15);
+}
+
+.mock-project-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.mock-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.mock-tag {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-medium);
+}
+
+.tag-react {
+  background: rgba(97, 218, 251, 0.12);
+  color: #61dafb;
+}
+
+.tag-python {
+  background: rgba(52, 211, 153, 0.12);
+  color: #34d399;
+}
+
+.tag-ts {
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+}
+
+.tag-next {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+}
+
+.tag-prisma {
+  background: rgba(168, 85, 247, 0.12);
+  color: #a855f7;
+}
+
+.mock-stat {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.mock-stat-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--landing-accent);
+  opacity: 0.7;
+}
+
+/* 開発記録 */
+.mock-devlog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/**
+ * セクションヘッダー（ラベル + サービスバッジ）
+ * 開発記録と学習ハブのヘッダー行。サービス名バッジで
+ * Notion / NotebookLM 連携を視覚的にアピール。
+ */
+.mock-devlog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mock-devlog-label {
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.mock-service-badge {
+  font-size: 9px;
+  font-weight: var(--font-weight-bold);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.02em;
+}
+
+.mock-service-badge.badge-notion {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.mock-service-badge.badge-notebooklm {
+  background: rgba(138, 180, 248, 0.1);
+  color: #8ab4f8;
+}
+
+.mock-devlog-entry {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.mock-entry-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.mock-entry-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--landing-accent);
+  flex-shrink: 0;
+}
+
+.mock-entry-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+}
+
+.mock-entry-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: var(--space-5);
+}
+
+.mock-text-line {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-full);
+}
+
+.mock-text-line.w80 {
+  width: 80%;
+}
+
+.mock-text-line.w60 {
+  width: 60%;
+}
+
+/**
+ * 「学んだこと」ハイライト
+ * モックアップ内でMEXの核心価値をオレンジボーダーで強調。
+ * 訪問者が「ここが他と違う」とすぐに分かるようにする。
+ */
+.mock-learned {
+  margin-left: var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(255, 161, 22, 0.06);
+  border-left: 3px solid var(--landing-accent);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+}
+
+.mock-learned-label {
+  display: block;
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  color: var(--landing-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: var(--space-1);
+}
+
+.mock-learned-text {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  line-height: var(--line-height-relaxed);
+  font-style: italic;
+}
+
+/**
+ * 学習ハブ — NotebookLM連携の可視化
+ * モックアップ内で NotebookLM が生成する学習コンテンツを表示。
+ * 音声・フラッシュカード・ノートの3アイテムで具体性を持たせる。
+ */
+.mock-learning-hub {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.mock-learning-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(138, 180, 248, 0.1);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.mock-learning-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2-5) var(--space-4);
+  background: rgba(255, 255, 255, 0.02);
+  transition: background var(--transition-fast);
+}
+
+.mock-learning-item:hover {
+  background: rgba(138, 180, 248, 0.04);
+}
+
+.mock-learning-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+
+.mock-learning-name {
+  font-size: var(--font-size-xs);
+  color: var(--text-primary);
+  font-weight: var(--font-weight-medium);
+  flex: 1;
+}
+
+.mock-learning-meta {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  font-family: var(--font-family-mono);
+}
+
+/* ========================================================
+   ペインポイントセクション
+
+   ターゲットが実際に経験する場面を引用形式で提示し、
+   「これは自分の話だ」と感じさせる共感導線。
+   ======================================================== */
+.landing-pain {
+  padding: var(--space-20) var(--space-6);
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  width: 100%;
+}
+
+.pain-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+.pain-card {
+  background: var(--bg-primary);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8) var(--space-6);
+  border: 1px solid var(--border-color-light);
+  transition: all var(--transition-slow);
+  position: relative;
+}
+
+.pain-card::before {
+  content: '\201C';
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-5);
+  font-size: 3rem;
+  font-family: Georgia, serif;
+  color: rgba(255, 161, 22, 0.15);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.pain-card:hover {
+  border-color: rgba(255, 161, 22, 0.15);
+  box-shadow: var(--shadow-lg);
+}
+
+.pain-quote {
+  display: block;
+  font-size: var(--font-size-base);
+  font-style: italic;
+  color: var(--text-primary);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--space-4);
+  padding-top: var(--space-4);
+}
+
+.pain-desc {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  line-height: var(--line-height-relaxed);
+}
+
 /* ===== セクションタイトル ===== */
 .section-title {
   font-size: var(--font-size-2xl);
@@ -253,10 +702,16 @@
   width: 100%;
 }
 
+/**
+ * 2x2グリッド: 4枚のカードで
+ * Record → Document → Learn → Prove のフローを表現。
+ */
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-8);
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .feature-card {
@@ -290,6 +745,11 @@
   opacity: 1;
 }
 
+/**
+ * アイコン円: ブランドカラー別に背景と色を切り替え。
+ * デフォルトはオレンジ（Claude/MEX）、Notionはモノクロ、
+ * NotebookLMはGoogleブルー系。
+ */
 .feature-icon-circle {
   width: 72px;
   height: 72px;
@@ -302,6 +762,62 @@
   margin: 0 auto var(--space-6);
   position: relative;
   z-index: 1;
+}
+
+.feature-icon-circle.icon-claude {
+  background: rgba(255, 161, 22, 0.1);
+  color: var(--landing-accent);
+}
+
+.feature-icon-circle.icon-notion {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-primary);
+}
+
+.feature-icon-circle.icon-notebooklm {
+  background: rgba(138, 180, 248, 0.1);
+  color: #8ab4f8;
+}
+
+.feature-icon-circle.icon-mex {
+  background: rgba(255, 161, 22, 0.1);
+  color: var(--landing-accent);
+}
+
+/**
+ * 特徴カード連携サービスバッジ
+ * 各カードの右上に表示して、どのサービスが動力源かを一目で伝える。
+ */
+.feature-badge {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.03em;
+  z-index: 1;
+}
+
+.feature-badge.badge-claude {
+  background: rgba(255, 161, 22, 0.12);
+  color: var(--landing-accent);
+}
+
+.feature-badge.badge-notion {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+}
+
+.feature-badge.badge-notebooklm {
+  background: rgba(138, 180, 248, 0.12);
+  color: #8ab4f8;
+}
+
+.feature-badge.badge-mex {
+  background: rgba(255, 161, 22, 0.12);
+  color: var(--landing-accent);
 }
 
 .feature-card h3 {
@@ -368,6 +884,60 @@
   font-size: var(--font-size-base);
   color: var(--text-secondary);
   line-height: var(--line-height-relaxed);
+}
+
+/* ========================================================
+   中間CTAセクション
+
+   Features/Steps後、Pricing前に配置。
+   スクロール途中で離脱を防ぎ、コンバージョンを促す。
+   ======================================================== */
+.landing-midcta {
+  padding: var(--space-20) var(--space-6);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.landing-midcta::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(ellipse, rgba(255, 161, 22, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.midcta-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.midcta-icon {
+  color: var(--landing-accent);
+  opacity: 0.7;
+  margin-bottom: var(--space-2);
+}
+
+.midcta-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--landing-font-display);
+  letter-spacing: -0.01em;
+}
+
+.midcta-description {
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-4);
 }
 
 /* ===== 価格セクション ===== */
@@ -525,7 +1095,11 @@
 /* ===== レスポンシブ ===== */
 @media (max-width: 768px) {
   .landing-hero {
-    padding: 120px var(--space-4) 80px;
+    padding: 120px var(--space-4) 60px;
+  }
+
+  .hero-pain-hook {
+    font-size: var(--font-size-base);
   }
 
   .hero-title {
@@ -540,20 +1114,53 @@
     padding: var(--space-3) var(--space-8);
   }
 
+  /* プレビュー */
+  .landing-preview {
+    padding: 0 var(--space-4) var(--space-16);
+  }
+
+  .preview-content {
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .mock-projects {
+    grid-template-columns: 1fr;
+  }
+
+  /* ペインポイント */
+  .pain-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  /* 特徴 */
   .features-grid {
     grid-template-columns: 1fr;
     gap: var(--space-5);
+    max-width: 100%;
   }
 
   .feature-card {
     padding: var(--space-8) var(--space-6);
   }
 
+  .feature-badge {
+    top: var(--space-3);
+    right: var(--space-3);
+  }
+
+  /* 価格 */
   .pricing-cards {
     grid-template-columns: 1fr;
     max-width: 400px;
   }
 
+  /* 中間CTA */
+  .midcta-title {
+    font-size: var(--font-size-xl);
+  }
+
+  /* フッター */
   .landing-footer-inner {
     flex-direction: column;
     gap: var(--space-2);
