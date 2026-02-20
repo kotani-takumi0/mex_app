@@ -40,7 +40,9 @@ def downgrade() -> None:
     op.create_table(
         "skill_scores",
         sa.Column("id", sa.String(36), primary_key=True),
-        sa.Column("user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        ),
         sa.Column("technology", sa.String(100), nullable=False),
         sa.Column("score", sa.Float, nullable=False, server_default="0.0"),
         sa.Column("total_questions", sa.Integer, nullable=False, server_default="0"),
@@ -50,14 +52,28 @@ def downgrade() -> None:
     )
     op.create_index("idx_skill_scores_user_id", "skill_scores", ["user_id"])
     op.create_index("idx_skill_scores_technology", "skill_scores", ["technology"])
-    op.create_index("uq_skill_scores_user_tech", "skill_scores", ["user_id", "technology"], unique=True)
+    op.create_index(
+        "uq_skill_scores_user_tech", "skill_scores", ["user_id", "technology"], unique=True
+    )
 
     op.create_table(
         "quiz_questions",
         sa.Column("id", sa.String(36), primary_key=True),
-        sa.Column("project_id", sa.String(36), sa.ForeignKey("projects.id", ondelete="CASCADE"), nullable=False),
-        sa.Column("user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
-        sa.Column("devlog_entry_id", sa.String(36), sa.ForeignKey("devlog_entries.id", ondelete="SET NULL"), nullable=True),
+        sa.Column(
+            "project_id",
+            sa.String(36),
+            sa.ForeignKey("projects.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
+        sa.Column(
+            "user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        ),
+        sa.Column(
+            "devlog_entry_id",
+            sa.String(36),
+            sa.ForeignKey("devlog_entries.id", ondelete="SET NULL"),
+            nullable=True,
+        ),
         sa.Column("technology", sa.String(100), nullable=False),
         sa.Column("question", sa.Text, nullable=False),
         sa.Column("options", sa.JSON, nullable=False),
@@ -73,8 +89,15 @@ def downgrade() -> None:
     op.create_table(
         "quiz_attempts",
         sa.Column("id", sa.String(36), primary_key=True),
-        sa.Column("quiz_question_id", sa.String(36), sa.ForeignKey("quiz_questions.id", ondelete="CASCADE"), nullable=False),
-        sa.Column("user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "quiz_question_id",
+            sa.String(36),
+            sa.ForeignKey("quiz_questions.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
+        sa.Column(
+            "user_id", sa.String(36), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        ),
         sa.Column("selected_answer", sa.Integer, nullable=False),
         sa.Column("is_correct", sa.Boolean, nullable=False),
         sa.Column("time_spent_seconds", sa.Integer, nullable=True),
