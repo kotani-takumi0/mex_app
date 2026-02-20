@@ -56,7 +56,8 @@
       "mcp__mex__save_document",
       "mcp__notion__notion-fetch",
       "mcp__notion__notion-search",
-      "mcp__notebooklm-mcp__source_add"
+      "mcp__notebooklm-mcp__source_add",
+      "Bash(npx vite build:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

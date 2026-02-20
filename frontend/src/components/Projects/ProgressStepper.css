@@ -1,0 +1,96 @@
+/* 進行ステッパー — MEXコアフローの3段階を可視化 */
+
+.progress-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: var(--space-4) var(--space-5);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xs);
+  margin-bottom: var(--space-6);
+  overflow-x: auto;
+}
+
+.stepper-step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2-5);
+  flex-shrink: 0;
+}
+
+.stepper-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  transition: background var(--transition-base), color var(--transition-base), border-color var(--transition-base);
+}
+
+.stepper-step--done .stepper-icon {
+  background: rgba(255, 161, 22, 0.12);
+  border-color: rgba(255, 161, 22, 0.3);
+  color: var(--color-primary-500);
+}
+
+.stepper-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.stepper-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-tertiary);
+  transition: color var(--transition-base);
+}
+
+.stepper-step--done .stepper-label {
+  color: var(--text-primary);
+}
+
+.stepper-desc {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.stepper-connector {
+  flex: 1;
+  min-width: 24px;
+  height: 1px;
+  background: var(--border-color-light);
+  margin: 0 var(--space-3);
+  transition: background var(--transition-base);
+}
+
+.stepper-connector--done {
+  background: rgba(255, 161, 22, 0.3);
+}
+
+@media (max-width: 768px) {
+  .progress-stepper {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .stepper-text {
+    display: none;
+  }
+
+  .stepper-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .stepper-connector {
+    min-width: 16px;
+    margin: 0 var(--space-2);
+  }
+}

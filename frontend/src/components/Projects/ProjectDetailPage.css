@@ -1,45 +1,64 @@
-.project-summary {
+/* === Phase 2: メイン + サイドバーレイアウト === */
+
+.project-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--space-4);
-  margin-bottom: var(--space-8);
+  grid-template-columns: 1fr 300px;
+  gap: var(--space-6);
+  align-items: start;
 }
 
-.summary-card {
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color-light);
-  border-radius: var(--radius-xl);
-  padding: var(--space-5);
-  box-shadow: var(--shadow-xs);
-  display: grid;
-  gap: var(--space-3);
+.project-main {
+  min-width: 0;
 }
 
-.summary-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-2);
+.tab-content {
+  animation: fadeIn 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* Overview タブ */
+.overview-recent {
+  margin-top: var(--space-2);
+}
+
+.overview-section-title {
   font-size: var(--font-size-sm);
-  color: var(--text-secondary);
-}
-
-.summary-row a {
-  color: var(--color-primary-500);
-  text-decoration: none;
-  word-break: break-all;
-}
-
-.summary-label {
   font-weight: var(--font-weight-semibold);
-  color: var(--text-primary);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-4);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-.summary-tech {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  justify-content: flex-end;
+.overview-empty {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  padding: var(--space-6) 0;
+}
+
+.overview-show-all {
+  display: block;
+  width: 100%;
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  background: none;
+  border: 1px dashed var(--border-color-light);
+  border-radius: var(--radius-lg);
+  color: var(--color-primary-500);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.overview-show-all:hover {
+  border-color: rgba(255, 161, 22, 0.3);
+  background: rgba(255, 161, 22, 0.04);
+}
+
+@media (max-width: 768px) {
+  .project-layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 .tech-pill {
@@ -115,11 +134,6 @@
   font-size: var(--font-size-xs);
 }
 
-.devlog-section,
-.devlog-form-section {
-  margin-bottom: var(--space-8);
-}
-
 .section-header h2 {
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
@@ -176,6 +190,27 @@
   border-radius: var(--radius-full);
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0.02em;
+}
+
+.source-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.source-badge--mcp {
+  background: rgba(0, 136, 204, 0.12);
+  color: #4db8e8;
+}
+
+.source-badge--manual {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-tertiary);
 }
 
 .doc-category-tutorial {
@@ -254,13 +289,17 @@
 }
 
 .devlog-form {
+  display: grid;
+  gap: var(--space-5);
+}
+
+/* カード内（モーダル内）のフォームにはカードスタイルを適用 */
+.devlog-edit-form .devlog-form {
   background: var(--bg-primary);
   border: 1px solid var(--border-color-light);
   border-radius: var(--radius-xl);
   padding: var(--space-6);
   box-shadow: var(--shadow-xs);
-  display: grid;
-  gap: var(--space-5);
 }
 
 .devlog-form .submit-btn {

@@ -1,0 +1,41 @@
+/* カテゴリ分布バー */
+
+.category-distribution {
+  margin-bottom: var(--space-5);
+}
+
+.distribution-bar {
+  display: flex;
+  height: 8px;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  gap: 2px;
+  margin-bottom: var(--space-2);
+}
+
+.distribution-segment {
+  min-width: 4px;
+  border-radius: var(--radius-full);
+  transition: width var(--transition-base);
+}
+
+.distribution-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.distribution-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.distribution-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}

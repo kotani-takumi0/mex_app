@@ -49,6 +49,9 @@ declare module 'react-icons/lu' {
   export const LuCrown: IconType;
   export const LuArrowLeft: IconType;
   export const LuNotebook: IconType;
+  export const LuFileText: IconType;
+  export const LuGraduationCap: IconType;
+  export const LuGlobe: IconType;
 }
 
 declare module 'react-icons' {

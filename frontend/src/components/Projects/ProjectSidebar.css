@@ -1,0 +1,113 @@
+/* プロジェクトサイドバー — Linear/GitHub の右サイドバーパターン */
+
+.project-sidebar {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-xs);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  position: sticky;
+  top: calc(var(--nav-height) + var(--space-6));
+  align-self: start;
+}
+
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+}
+
+.sidebar-label {
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.sidebar-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-primary-500);
+  text-decoration: none;
+  font-size: var(--font-size-xs);
+  word-break: break-all;
+}
+
+.sidebar-link:hover {
+  text-decoration: underline;
+}
+
+.sidebar-empty {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+}
+
+.sidebar-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1-5);
+}
+
+.sidebar-tech .tech-pill {
+  font-size: 11px;
+  padding: 2px 8px;
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: var(--border-color-light);
+  margin: var(--space-1) 0;
+}
+
+.sidebar-stats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.sidebar-stat-total {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+}
+
+.sidebar-stat-breakdown {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+}
+
+.sidebar-copy-url {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--radius-md);
+  color: var(--text-tertiary);
+  font-size: 11px;
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.sidebar-copy-url:hover {
+  color: var(--text-secondary);
+  border-color: rgba(255, 161, 22, 0.2);
+}
+
+.sidebar-url-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
