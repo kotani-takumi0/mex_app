@@ -54,6 +54,7 @@ declare module 'react-icons/lu' {
   export const LuGlobe: IconType;
   export const LuHeadphones: IconType;
   export const LuCable: IconType;
+  export const LuChevronDown: IconType;
   export const LuTerminal: IconType;
   export const LuInfo: IconType;
   export const LuMinus: IconType;

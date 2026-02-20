@@ -13,10 +13,13 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  LuCheck,
-  LuSparkles,
   LuArrowRight,
   LuBookOpen,
+  LuCheck,
+  LuFileText,
+  LuGraduationCap,
+  LuSparkles,
+  LuSquarePen,
 } from 'react-icons/lu';
 import { ClaudeIcon, NotionIcon, NotebookLMIcon, MexIcon } from './BrandIcons';
 import './LandingPage.css';
@@ -299,6 +302,67 @@ export const LandingPage: React.FC = () => {
             </div>
           </li>
         </ol>
+      </section>
+
+      {/* ===== 活用ワークフロー ===== */}
+      <section className="landing-workflow" aria-labelledby="workflow-title">
+        <h2 id="workflow-title" className="section-title">
+          MEX でできること
+        </h2>
+        <p className="workflow-lead">
+          Claude Code との対話を通じて、開発活動を自動で記録・活用できます。
+        </p>
+        <div className="workflow-grid">
+          <div className="workflow-card">
+            <div className="workflow-card-icon workflow-card-icon--analyze">
+              <LuFileText size={24} />
+            </div>
+            <h3>コード分析</h3>
+            <p>
+              既存のコードベースをモジュール単位で分析し、技術ドキュメントとして記録できます。
+            </p>
+            <div className="workflow-card-example">
+              「このプロジェクトの認証モジュールを分析して MEX に記録して」
+            </div>
+          </div>
+
+          <div className="workflow-arrow" aria-hidden="true">
+            <LuArrowRight size={20} />
+          </div>
+
+          <div className="workflow-card">
+            <div className="workflow-card-icon workflow-card-icon--document">
+              <LuSquarePen size={24} />
+            </div>
+            <h3>開発記録</h3>
+            <p>
+              実装した内容を技術ドキュメントとして自動生成し、プロジェクトに紐づけて保存します。
+            </p>
+            <div className="workflow-card-example">
+              「今の実装内容をドキュメントにまとめて MEX に保存して」
+            </div>
+          </div>
+
+          <div className="workflow-arrow" aria-hidden="true">
+            <LuArrowRight size={20} />
+          </div>
+
+          <div className="workflow-card">
+            <div className="workflow-card-icon workflow-card-icon--learn">
+              <LuGraduationCap size={24} />
+            </div>
+            <h3>学習コンテンツ</h3>
+            <p>
+              記録したドキュメントから NotebookLM で音声や要約などの学習素材を生成できます。
+            </p>
+            <div className="workflow-card-example">
+              「記録したドキュメントから学習ノートブックを作って」
+            </div>
+          </div>
+        </div>
+        <div className="workflow-coming-soon">
+          これらのワークフローを自動化する Claude Code スキルを準備中です。公開までしばらくお待ちください。
+        </div>
       </section>
 
       {/* ===== 中間CTA ===== */}

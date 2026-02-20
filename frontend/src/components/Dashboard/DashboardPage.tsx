@@ -27,7 +27,6 @@ export const DashboardPage: React.FC = () => {
   const [mcpBannerDismissed, setMcpBannerDismissed] = useState(
     () => localStorage.getItem('mex_mcp_banner_dismissed') === 'true',
   );
-
   const dismissMcpBanner = () => {
     setMcpBannerDismissed(true);
     localStorage.setItem('mex_mcp_banner_dismissed', 'true');
