@@ -255,6 +255,133 @@
   filter: brightness(1.06);
 }
 
+/* ===== プロジェクトタイプ選択 ===== */
+.onboarding-gate-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+  width: 100%;
+  animation: cardReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+}
+
+.onboarding-gate-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-5);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--radius-2xl);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    background var(--transition-base);
+}
+
+.onboarding-gate-card:hover {
+  border-color: var(--color-primary-500);
+  box-shadow:
+    0 16px 40px rgba(85, 54, 38, 0.15),
+    0 0 0 1px rgba(255, 161, 22, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.onboarding-gate-card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.onboarding-gate-card-icon--existing {
+  background: rgba(255, 161, 22, 0.1);
+  color: var(--color-primary-400);
+}
+
+.onboarding-gate-card-icon--new {
+  background: rgba(44, 187, 93, 0.1);
+  color: var(--color-success);
+}
+
+.onboarding-gate-card h3 {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.onboarding-gate-card p {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  line-height: 1.6;
+}
+
+.onboarding-gate-card-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary-400);
+  margin-top: auto;
+  padding-top: var(--space-2);
+}
+
+/* ===== 事前準備チェックリスト ===== */
+.onboarding-prereqs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-5);
+}
+
+.onboarding-prereqs-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.onboarding-prereqs-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 161, 22, 0.08);
+  color: var(--color-primary-400);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.onboarding-prereqs-list li strong {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-1);
+}
+
+.onboarding-prereqs-list li p {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.onboarding-prereqs-list li code {
+  background: var(--color-gray-900);
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+}
+
 /* ===== レスポンシブ ===== */
 @media (max-width: 640px) {
   .onboarding-header {
@@ -278,5 +405,14 @@
   .onboarding-nav-btn {
     padding: 8px 14px;
     font-size: var(--font-size-xs);
+  }
+
+  .onboarding-gate-choices {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .onboarding-gate-card {
+    padding: var(--space-4) var(--space-4);
   }
 }

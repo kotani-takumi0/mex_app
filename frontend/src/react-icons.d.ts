@@ -58,6 +58,11 @@ declare module 'react-icons/lu' {
   export const LuTerminal: IconType;
   export const LuInfo: IconType;
   export const LuMinus: IconType;
+  export const LuFolderGit2: IconType;
+  export const LuRocket: IconType;
+  export const LuSquareTerminal: IconType;
+  export const LuGitBranch: IconType;
+  export const LuFileCode2: IconType;
 }
 
 declare module 'react-icons' {
