@@ -25,7 +25,7 @@
 }
 
 .summary-row a {
-  color: var(--color-primary-600);
+  color: var(--color-primary-500);
   text-decoration: none;
   word-break: break-all;
 }
@@ -46,8 +46,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--color-primary-50);
-  color: var(--color-primary-700);
+  background: rgba(255, 161, 22, 0.1);
+  color: var(--color-primary-400);
   padding: 4px 10px;
   border-radius: var(--radius-full);
   font-size: var(--font-size-xs);
@@ -61,17 +61,17 @@
 }
 
 .status-badge.in_progress {
-  background: var(--color-warning-light);
-  color: var(--color-warning-dark);
+  background: rgba(255, 192, 30, 0.15);
+  color: #ffc01e;
 }
 
 .status-badge.completed {
-  background: var(--color-success-light);
-  color: var(--color-success-dark);
+  background: rgba(44, 187, 93, 0.15);
+  color: #2cbb5d;
 }
 
 .status-badge.archived {
-  background: var(--color-gray-200);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-secondary);
 }
 
@@ -99,7 +99,7 @@
 
 .edit-link:hover {
   box-shadow: var(--shadow-md);
-  border-color: var(--color-primary-200);
+  border-color: rgba(255, 161, 22, 0.2);
 }
 
 .toggle-public {
@@ -109,7 +109,8 @@
   padding: 6px 12px;
   border-radius: var(--radius-full);
   border: 1px solid var(--border-color-light);
-  background: var(--bg-secondary);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
   cursor: pointer;
   font-size: var(--font-size-xs);
 }
@@ -145,11 +146,11 @@
 
 .devlog-card--clickable:hover {
   box-shadow: var(--shadow-md);
-  border-color: var(--color-primary-200);
+  border-color: rgba(255, 161, 22, 0.2);
 }
 
 .devlog-card--clickable:focus-visible {
-  outline: 2px solid var(--color-primary-400);
+  outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;
 }
 
@@ -178,27 +179,27 @@
 }
 
 .doc-category-tutorial {
-  background: var(--color-primary-100);
-  color: var(--color-primary-700);
+  background: rgba(255, 161, 22, 0.12);
+  color: var(--color-primary-400);
 }
 
 .doc-category-design {
-  background: #e6f4ea;
-  color: #166534;
+  background: rgba(44, 187, 93, 0.12);
+  color: #2cbb5d;
 }
 
 .doc-category-debug {
-  background: #fef3c7;
-  color: #92400e;
+  background: rgba(255, 192, 30, 0.12);
+  color: #ffc01e;
 }
 
 .doc-category-learning {
-  background: #fce7f3;
-  color: #9d174d;
+  background: rgba(168, 85, 247, 0.12);
+  color: #a855f7;
 }
 
 .doc-category-reference {
-  background: var(--color-gray-200);
+  background: rgba(255, 255, 255, 0.06);
   color: var(--text-secondary);
 }
 
@@ -241,7 +242,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-1-5);
-  color: var(--color-primary-700);
+  color: var(--color-primary-500);
   text-decoration: none;
   width: fit-content;
   font-size: var(--font-size-sm);
@@ -271,7 +272,7 @@
   border-radius: var(--radius-lg);
   border: none;
   background: var(--gradient-primary);
-  color: #fff;
+  color: #1a1a1a;
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
   transition: transform var(--transition-base), box-shadow var(--transition-base);
@@ -294,7 +295,7 @@
 .devlog-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.6);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -330,7 +331,7 @@
   height: 36px;
   border-radius: var(--radius-full);
   border: 1px solid var(--border-color-light);
-  background: var(--bg-secondary);
+  background: var(--bg-tertiary);
   color: var(--text-secondary);
   display: inline-flex;
   align-items: center;
@@ -339,7 +340,7 @@
 
 .modal-icon-btn:hover:not(:disabled) {
   color: var(--text-primary);
-  background: var(--bg-tertiary);
+  background: var(--color-gray-600);
 }
 
 .devlog-edit-form {
@@ -359,9 +360,9 @@
   gap: var(--space-2);
   padding: 12px 18px;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-error-dark);
-  background: #fff;
-  color: var(--color-error-dark);
+  border: 1px solid var(--color-error);
+  background: transparent;
+  color: var(--color-error);
   font-weight: var(--font-weight-semibold);
 }
 
@@ -416,8 +417,8 @@
   padding: 4px 10px;
   border-radius: var(--radius-full);
   font-weight: var(--font-weight-semibold);
-  background: #ede9fe;
-  color: #5b21b6;
+  background: rgba(168, 85, 247, 0.12);
+  color: #a855f7;
   white-space: nowrap;
 }
 
@@ -433,7 +434,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-1-5);
-  color: var(--color-primary-700);
+  color: var(--color-primary-500);
   text-decoration: none;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
@@ -441,16 +442,16 @@
 }
 
 .notebook-link:hover {
-  color: var(--color-primary-900);
+  color: var(--color-primary-400);
   text-decoration: underline;
 }
 
 .notebook-link--public {
-  color: #5b21b6;
+  color: #a855f7;
 }
 
 .notebook-link--public:hover {
-  color: #3b0764;
+  color: #c084fc;
 }
 
 @media (max-width: 768px) {

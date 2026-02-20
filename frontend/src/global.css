@@ -2,11 +2,9 @@
  * グローバルスタイル
  * リセット・アニメーション定義・ユーティリティ
  *
- * 変更理由: AIスロップ脱却
- * - body背景にグレインテクスチャ（和紙のような質感）
- * - 見出しに--font-family-heading適用
- * - カードホバーからtranslateY(-2px)を排除
- * - アニメーションにカスタムカーブ導入
+ * 変更理由: LeetCode風ダークテーマ対応。
+ * グレインテクスチャを除去し、ダーク背景に適した配色に変更。
+ * フォーム・カード・スクロールバー等をダークテーマに統一。
  */
 
 /* ===== リセット ===== */
@@ -34,17 +32,6 @@ body {
   letter-spacing: var(--letter-spacing-normal);
 }
 
-/* グレインテクスチャ — 和紙のような微細なノイズで立体感を出す */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.3;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-}
-
 /* 見出し要素にSoraフォントを適用 */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-family-heading);
@@ -58,12 +45,12 @@ svg {
 }
 
 a {
-  color: var(--color-primary-700);
+  color: var(--color-primary-500);
   text-decoration: none;
 }
 
 a:hover {
-  color: var(--color-primary-900);
+  color: var(--color-primary-400);
 }
 
 ul,
@@ -74,11 +61,11 @@ ol {
 /* ===== フォーカスリング ===== */
 :focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px var(--color-primary-100);
+  box-shadow: 0 0 0 3px rgba(255, 161, 22, 0.3);
   border-radius: var(--radius-sm);
 }
 
-/* ===== キーフレームアニメーション（カスタムカーブで有機的な動き） ===== */
+/* ===== キーフレームアニメーション ===== */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -186,13 +173,13 @@ ol {
   }
 }
 
-/* ===== セレクション ===== */
+/* ===== セレクション（ダークテーマ: オレンジ選択） ===== */
 ::selection {
-  background-color: var(--color-primary-200);
-  color: var(--color-primary-900);
+  background-color: rgba(255, 161, 22, 0.3);
+  color: #ffffff;
 }
 
-/* ===== 共通カードベース（translateY(-2px)ホバーを排除 → ボーダー＋影の変化で品良く） ===== */
+/* ===== 共通カードベース（ダークテーマ） ===== */
 .card {
   background: var(--bg-primary);
   border-radius: var(--radius-xl);
@@ -203,10 +190,10 @@ ol {
 
 .card:hover {
   box-shadow: var(--shadow-md);
-  border-color: var(--color-primary-200);
+  border-color: rgba(255, 161, 22, 0.2);
 }
 
-/* ===== 共通フォームスタイル ===== */
+/* ===== 共通フォームスタイル（ダークテーマ） ===== */
 .form-group {
   margin-bottom: var(--space-5);
 }
@@ -233,7 +220,7 @@ ol {
   font-size: var(--font-size-base);
   font-family: var(--font-family-base);
   color: var(--text-primary);
-  background-color: var(--bg-primary);
+  background-color: var(--bg-tertiary);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
   min-height: 44px;
 }
@@ -242,8 +229,8 @@ ol {
 .form-group textarea:focus,
 .form-group select:focus {
   outline: none;
-  border-color: var(--color-primary-400);
-  box-shadow: 0 0 0 3px var(--color-primary-50);
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px rgba(255, 161, 22, 0.15);
 }
 
 .form-group input::placeholder,
@@ -254,7 +241,7 @@ ol {
 .form-group input:disabled,
 .form-group textarea:disabled,
 .form-group select:disabled {
-  background-color: var(--bg-tertiary);
+  background-color: var(--color-gray-800);
   cursor: not-allowed;
   opacity: 0.7;
 }
@@ -272,10 +259,10 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* ===== 共通エラーメッセージ ===== */
+/* ===== 共通エラーメッセージ（ダークテーマ） ===== */
 .error-message {
   background-color: var(--color-error-light);
-  border: 1px solid rgba(244, 67, 54, 0.3);
+  border: 1px solid rgba(255, 55, 95, 0.3);
   border-radius: var(--radius-lg);
   padding: var(--space-3) var(--space-4);
   margin-bottom: var(--space-4);
@@ -286,24 +273,24 @@ button:disabled {
 }
 
 .error-message p {
-  color: var(--color-error-dark);
+  color: var(--color-error);
   margin: 0;
   font-size: var(--font-size-sm);
 }
 
 .error-message button {
   background: transparent;
-  color: var(--color-error-dark);
+  color: var(--color-error);
   padding: var(--space-1) var(--space-2);
   font-size: var(--font-size-sm);
   border-radius: var(--radius-sm);
 }
 
 .error-message button:hover {
-  background: rgba(244, 67, 54, 0.1);
+  background: rgba(255, 55, 95, 0.15);
 }
 
-/* ===== スクロールバー ===== */
+/* ===== スクロールバー（ダークテーマ） ===== */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -314,7 +301,7 @@ button:disabled {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-gray-300);
+  background: var(--color-gray-500);
   border-radius: var(--radius-full);
 }
 

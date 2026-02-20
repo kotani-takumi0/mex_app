@@ -1,19 +1,21 @@
 /**
  * ダッシュボードページスタイル
- * GitHub風の中立配色 + 漢字寄りの表記
+ *
+ * 変更理由: LeetCode風ダークテーマに統一。
+ * ローカル変数をダーク背景 + オレンジアクセントに変更。
  */
 
 .dashboard-page {
-  --dashboard-bg: #f7f1e7;
-  --dashboard-card-bg: #fffaf2;
-  --dashboard-border: #d8c9ba;
-  --dashboard-border-subtle: #e8ddcf;
-  --dashboard-text: #332820;
-  --dashboard-muted: #6f5c4d;
-  --dashboard-accent: #b07b52;
-  --dashboard-accent-hover: #9b6a45;
-  --dashboard-accent-border: #8a5f3f;
-  --dashboard-shadow: 0 1px 0 rgba(51, 40, 32, 0.08);
+  --dashboard-bg: #1e1e1e;
+  --dashboard-card-bg: #282828;
+  --dashboard-border: rgba(255, 255, 255, 0.1);
+  --dashboard-border-subtle: rgba(255, 255, 255, 0.06);
+  --dashboard-text: #eff1f6;
+  --dashboard-muted: rgba(239, 241, 246, 0.5);
+  --dashboard-accent: #ffa116;
+  --dashboard-accent-hover: #e08c0e;
+  --dashboard-accent-border: #b86e0a;
+  --dashboard-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
 
   font-family: var(--font-family-base);
   color: var(--dashboard-text);
@@ -40,7 +42,7 @@
   padding: 8px 14px;
   border-radius: var(--radius-md);
   background: var(--dashboard-accent);
-  color: #fff;
+  color: #1a1a1a;
   font-weight: var(--font-weight-medium);
   border: 1px solid var(--dashboard-accent-border);
   box-shadow: var(--dashboard-shadow);
@@ -72,7 +74,7 @@
 }
 
 .stat-card.highlight {
-  border-color: var(--dashboard-border);
+  border-color: rgba(255, 161, 22, 0.2);
   background: var(--dashboard-card-bg);
 }
 
@@ -80,8 +82,8 @@
   width: 32px;
   height: 32px;
   border-radius: var(--radius-md);
-  background: var(--dashboard-card-bg);
-  color: var(--dashboard-muted);
+  background: rgba(255, 161, 22, 0.1);
+  color: var(--dashboard-accent);
   border: 1px solid var(--dashboard-border-subtle);
   display: flex;
   align-items: center;
@@ -143,8 +145,8 @@
 }
 
 .project-card:hover {
-  border-color: #c9b8a6;
-  background: #f9f2e8;
+  border-color: rgba(255, 161, 22, 0.25);
+  background: #2e2e2e;
 }
 
 .project-card-header {
@@ -167,24 +169,24 @@
   border-radius: var(--radius-full);
   font-weight: var(--font-weight-medium);
   border: 1px solid var(--dashboard-border);
-  background: var(--dashboard-bg);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--dashboard-muted);
 }
 
 .status-badge.in_progress {
-  background: #f3e5c4;
-  border-color: #c8a062;
-  color: #8a6a2b;
+  background: rgba(255, 192, 30, 0.15);
+  border-color: rgba(255, 192, 30, 0.3);
+  color: #ffc01e;
 }
 
 .status-badge.completed {
-  background: #e6f1e6;
-  border-color: #8fb28b;
-  color: #3f6b45;
+  background: rgba(44, 187, 93, 0.15);
+  border-color: rgba(44, 187, 93, 0.3);
+  color: #2cbb5d;
 }
 
 .status-badge.archived {
-  background: var(--dashboard-bg);
+  background: rgba(255, 255, 255, 0.05);
   border-color: var(--dashboard-border);
   color: var(--dashboard-muted);
 }
@@ -205,11 +207,11 @@
 }
 
 .tech-pill {
-  background: var(--dashboard-bg);
-  color: var(--dashboard-muted);
+  background: rgba(255, 161, 22, 0.1);
+  color: var(--color-primary-400);
   padding: 2px 8px;
   border-radius: var(--radius-full);
-  border: 1px solid var(--dashboard-border-subtle);
+  border: 1px solid rgba(255, 161, 22, 0.15);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
 }
@@ -241,7 +243,7 @@
 
 .skill-bar {
   height: 8px;
-  background: var(--dashboard-border-subtle);
+  background: rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-full);
   overflow: hidden;
 }
@@ -270,8 +272,8 @@
 .dashboard-page .empty-state-icon {
   width: 64px;
   height: 64px;
-  background-color: var(--dashboard-bg);
-  color: var(--dashboard-muted);
+  background-color: rgba(255, 161, 22, 0.1);
+  color: var(--dashboard-accent);
   border: 1px solid var(--dashboard-border);
 }
 
@@ -281,6 +283,7 @@
 
 .dashboard-page .empty-state-action {
   background: var(--dashboard-accent);
+  color: #1a1a1a;
   border: 1px solid var(--dashboard-accent-border);
   border-radius: var(--radius-md);
   box-shadow: var(--dashboard-shadow);

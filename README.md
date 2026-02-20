@@ -32,8 +32,6 @@ MCPサーバーで開発過程を自動記録し、コミットごとにNotion�
 - フロントエンド: React 19, TypeScript, React Router 7
 - バックエンド: FastAPI, SQLAlchemy 2, Alembic
 - データベース: PostgreSQL
-- ベクトル検索: pgvector（PostgreSQL拡張）
-- AI: OpenAI API
 - MCPサーバー: Node.js + Model Context Protocol SDK
 - 決済: Stripe（バックエンドのみ）
 
@@ -42,7 +40,6 @@ Step 1: `.env` を用意します。
 ```bash
 cp .env.example .env
 ```
-`OPENAI_API_KEY` を設定してください。
 
 Step 2: PostgreSQL を起動します。
 ```bash

@@ -1,22 +1,22 @@
 /**
  * 認証ページスタイル
  *
- * 変更理由: CSSが完全に欠落していたため新規作成。
- * フルスクリーンのグラデーション背景＋中央配置カード、
- * フォーカスリング付きインプット、ローディングスピナー。
+ * 変更理由: LeetCode風ダークテーマに統一。
+ * グラデーション背景 → ダーク背景に変更、
+ * カード・フォーム・ボタンをダークテーマに統一。
  */
 .auth-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--gradient-hero);
+  background: linear-gradient(168deg, #1a1a1a 0%, #1e1e2e 50%, #1a1a1a 100%);
   padding: var(--space-6);
   position: relative;
   overflow: hidden;
 }
 
-/* 装飾: 有機的な楕円グロー（紫ではなくブランドカラーの暖色系） */
+/* 装飾: オレンジの楕円グロー */
 .auth-page::before {
   content: '';
   position: absolute;
@@ -25,14 +25,15 @@
   width: 700px;
   height: 500px;
   background:
-    radial-gradient(ellipse at 30% 40%, rgba(196, 138, 94, 0.15) 0%, transparent 65%),
-    radial-gradient(ellipse at 70% 60%, rgba(138, 95, 63, 0.1) 0%, transparent 55%);
+    radial-gradient(ellipse at 30% 40%, rgba(255, 161, 22, 0.06) 0%, transparent 65%),
+    radial-gradient(ellipse at 70% 60%, rgba(224, 140, 14, 0.04) 0%, transparent 55%);
   transform: translateX(-50%) rotate(-8deg);
   pointer-events: none;
 }
 
 .auth-container {
   background: var(--bg-primary);
+  border: 1px solid var(--border-color-light);
   border-radius: var(--radius-2xl);
   padding: var(--space-10) var(--space-8);
   width: 100%;
@@ -53,7 +54,7 @@
   font-family: var(--font-family-heading);
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
-  color: var(--color-primary-900);
+  color: var(--color-primary-500);
   margin-bottom: var(--space-1);
   letter-spacing: var(--letter-spacing-tight);
 }
@@ -67,7 +68,7 @@
 /* タブ */
 .auth-tabs {
   display: flex;
-  background-color: var(--bg-secondary);
+  background-color: var(--color-gray-800);
   border-radius: var(--radius-lg);
   padding: var(--space-1);
   margin-bottom: var(--space-6);
@@ -92,8 +93,8 @@
 }
 
 .auth-tab.active {
-  background-color: var(--bg-primary);
-  color: var(--color-primary-800);
+  background-color: var(--color-gray-600);
+  color: var(--color-primary-500);
   box-shadow: var(--shadow-sm);
   font-weight: var(--font-weight-semibold);
 }
@@ -117,11 +118,11 @@
 /* エラー */
 .auth-error {
   background-color: var(--color-error-light);
-  border: 1px solid rgba(244, 67, 54, 0.2);
+  border: 1px solid rgba(255, 55, 95, 0.2);
   border-radius: var(--radius-lg);
   padding: var(--space-3) var(--space-4);
   margin-bottom: var(--space-4);
-  color: var(--color-error-dark);
+  color: var(--color-error);
   font-size: var(--font-size-sm);
   text-align: left;
   animation: fadeInDown 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -147,7 +148,7 @@
 }
 
 .auth-submit:hover:not(:disabled) {
-  box-shadow: 0 6px 20px rgba(138, 95, 63, 0.3);
+  box-shadow: 0 6px 20px rgba(255, 161, 22, 0.25);
   filter: brightness(1.06);
 }
 
@@ -174,7 +175,7 @@
 }
 
 .auth-back-link:hover {
-  color: var(--color-primary-700);
+  color: var(--color-primary-500);
 }
 
 /* レスポンシブ */

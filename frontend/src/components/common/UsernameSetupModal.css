@@ -1,7 +1,7 @@
 .username-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,8 +12,9 @@
 
 .username-modal {
   background: var(--bg-primary);
+  border: 1px solid var(--border-color-light);
   border-radius: var(--radius-xl, 12px);
-  box-shadow: var(--shadow-xl, 0 20px 60px rgba(0, 0, 0, 0.15));
+  box-shadow: var(--shadow-xl, 0 20px 60px rgba(0, 0, 0, 0.4));
   max-width: 460px;
   width: 100%;
   padding: var(--space-12, 48px) var(--space-10, 40px);
@@ -53,15 +54,15 @@
   border-radius: var(--radius-md, 8px);
   font-size: var(--font-size-base, 14px);
   color: var(--text-primary);
-  background-color: var(--bg-primary);
+  background-color: var(--bg-tertiary);
   transition: border-color var(--transition-fast, 150ms);
   box-sizing: border-box;
 }
 
 .username-modal input:focus {
   outline: none;
-  border-color: var(--color-primary-400);
-  box-shadow: 0 0 0 3px var(--color-primary-100);
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px rgba(255, 161, 22, 0.15);
 }
 
 .username-preview {
@@ -71,7 +72,7 @@
 }
 
 .username-preview strong {
-  color: var(--color-primary-600);
+  color: var(--color-primary-500);
 }
 
 .username-modal .hint {
@@ -95,8 +96,8 @@
 .username-modal-actions .btn-primary {
   flex: 1;
   padding: var(--space-4, 8px) var(--space-6, 12px);
-  background: var(--color-primary-600);
-  color: #fff;
+  background: var(--color-primary-500);
+  color: #1a1a1a;
   border: none;
   border-radius: var(--radius-md, 8px);
   font-size: var(--font-size-base, 14px);
@@ -106,7 +107,7 @@
 }
 
 .username-modal-actions .btn-primary:hover:not(:disabled) {
-  background: var(--color-primary-700);
+  background: var(--color-primary-600);
 }
 
 .username-modal-actions .btn-primary:disabled {

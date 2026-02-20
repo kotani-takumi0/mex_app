@@ -1,5 +1,7 @@
 /**
  * 空状態スタイル
+ *
+ * 変更理由: LeetCode風ダークテーマに統一。
  */
 .empty-state {
   display: flex;
@@ -16,7 +18,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-primary-50);
+  background-color: rgba(255, 161, 22, 0.1);
   color: var(--color-primary-500);
   border-radius: var(--radius-full);
   margin-bottom: var(--space-5);
@@ -38,7 +40,7 @@
 
 .empty-state-action {
   background: var(--gradient-primary);
-  color: var(--text-inverse);
+  color: #1a1a1a;
   border: none;
   padding: var(--space-3) var(--space-6);
   border-radius: var(--radius-lg);

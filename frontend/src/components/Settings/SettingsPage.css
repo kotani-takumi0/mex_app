@@ -54,8 +54,8 @@
 
 .settings-error {
   background: var(--color-error-light);
-  border: 1px solid rgba(244, 67, 54, 0.2);
-  color: var(--color-error-dark);
+  border: 1px solid rgba(255, 55, 95, 0.2);
+  color: var(--color-error);
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-lg);
   font-size: var(--font-size-sm);
@@ -75,7 +75,7 @@
 
 .settings-primary-btn {
   background: var(--gradient-primary);
-  color: #fff;
+  color: #1a1a1a;
   box-shadow: var(--shadow-sm);
 }
 
@@ -85,7 +85,7 @@
 }
 
 .settings-secondary-btn {
-  background: var(--bg-secondary);
+  background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
 }
@@ -98,8 +98,8 @@
 
 .settings-danger-btn {
   background: var(--color-error-light);
-  color: var(--color-error-dark);
-  border: 1px solid rgba(244, 67, 54, 0.25);
+  color: var(--color-error);
+  border: 1px solid rgba(255, 55, 95, 0.25);
 }
 
 .settings-danger-btn:disabled {
@@ -118,7 +118,7 @@
 }
 
 .token-result {
-  background: var(--bg-secondary);
+  background: var(--bg-tertiary);
   border: 1px dashed var(--border-color);
   border-radius: var(--radius-xl);
   padding: var(--space-4);
@@ -141,13 +141,14 @@
 }
 
 .token-value {
-  background: #fff;
+  background: var(--color-gray-900);
   border: 1px solid var(--border-color-light);
   border-radius: var(--radius-lg);
   padding: var(--space-3);
   font-family: var(--font-family-mono);
   font-size: var(--font-size-sm);
   word-break: break-all;
+  color: var(--text-primary);
 }
 
 .token-actions {
@@ -182,7 +183,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  background: var(--bg-secondary);
+  background: var(--bg-tertiary);
   border: 1px solid var(--border-color-light);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
@@ -211,7 +212,7 @@
 }
 
 .token-active {
-  color: var(--color-success-dark);
+  color: var(--color-success);
   font-weight: var(--font-weight-medium);
 }
 
@@ -250,13 +251,13 @@
 }
 
 .plan-badge-free {
-  background: var(--color-gray-100);
-  color: var(--color-gray-700);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
 }
 
 .plan-badge-pro {
   background: linear-gradient(145deg, #ffd700, #ffab00);
-  color: var(--color-gray-900);
+  color: #1a1a1a;
 }
 
 .plan-usage-row {
@@ -264,7 +265,7 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-3) var(--space-4);
-  background: var(--bg-secondary);
+  background: var(--bg-tertiary);
   border-radius: var(--radius-lg);
 }
 

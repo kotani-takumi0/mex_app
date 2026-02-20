@@ -1,12 +1,14 @@
 /**
  * アプリ初期ローディング画面
+ *
+ * 変更理由: LeetCode風ダークテーマに統一。
  */
 .app-loading-screen {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--gradient-hero);
+  background: linear-gradient(168deg, #1a1a1a 0%, #282828 55%, #1e1e2e 100%);
 }
 
 .app-loading-content {
@@ -16,7 +18,7 @@
 .app-loading-brand {
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-bold);
-  color: var(--color-primary-700);
+  color: var(--color-primary-500);
   margin-bottom: var(--space-6);
   animation: pulse 2s ease-in-out infinite;
 }

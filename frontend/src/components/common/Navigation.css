@@ -1,19 +1,19 @@
 /**
  * ナビゲーションスタイル
  *
- * 変更理由: sticky nav、アイコン付きNavLink、
- * ハンバーガーメニュー(モバイル対応)、plan-badge色分け
+ * 変更理由: LeetCode風ダークテーマに統一。
+ * ナビバーをダーク背景(#1a1a1a) + オレンジアクセントに変更。
  */
 .main-navigation {
-  background-color: rgba(85, 54, 38, 0.95);
+  background-color: rgba(26, 26, 26, 0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  color: var(--text-inverse);
+  color: var(--text-primary);
   padding: 0 var(--space-6);
   display: flex;
   align-items: center;
   height: var(--nav-height);
-  box-shadow: 0 1px 0 rgba(85, 54, 38, 0.15);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
@@ -24,7 +24,7 @@
   font-family: var(--font-family-heading);
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
-  color: var(--text-inverse);
+  color: var(--color-primary-500);
   text-decoration: none;
   margin-right: var(--space-10);
   white-space: nowrap;
@@ -32,8 +32,8 @@
 }
 
 .nav-brand-link:hover {
-  color: var(--text-inverse);
-  opacity: 0.9;
+  color: var(--color-primary-400);
+  opacity: 1;
 }
 
 /* ハンバーガー */
@@ -41,7 +41,7 @@
   display: none;
   background: transparent;
   border: none;
-  color: var(--text-inverse);
+  color: var(--text-primary);
   padding: var(--space-2);
   cursor: pointer;
   margin-left: auto;
@@ -64,7 +64,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(239, 241, 246, 0.6);
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-md);
   font-size: var(--font-size-base);
@@ -75,13 +75,13 @@
 }
 
 .nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: var(--text-inverse);
+  background-color: rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
 }
 
 .nav-link.active {
-  color: var(--text-inverse);
-  background-color: rgba(255, 255, 255, 0.15);
+  color: var(--color-primary-500);
+  background-color: rgba(255, 161, 22, 0.08);
 }
 
 .nav-link.active::after {
@@ -91,7 +91,7 @@
   left: var(--space-4);
   right: var(--space-4);
   height: 2px;
-  background-color: var(--text-inverse);
+  background-color: var(--color-primary-500);
   border-radius: var(--radius-full);
 }
 
@@ -109,7 +109,7 @@
 
 .user-name {
   font-size: var(--font-size-sm);
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(239, 241, 246, 0.75);
   white-space: nowrap;
 }
 
@@ -122,8 +122,8 @@
 }
 
 .plan-badge.free {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: var(--text-inverse);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
 }
 
 .plan-badge.pro {
@@ -136,8 +136,8 @@
   align-items: center;
   gap: var(--space-1);
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(239, 241, 246, 0.7);
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
@@ -147,9 +147,9 @@
 }
 
 .logout-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.5);
-  color: var(--text-inverse);
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--text-primary);
 }
 
 /* レスポンシブ: 768px以下 */
@@ -169,7 +169,7 @@
     flex-direction: column;
     width: 100%;
     padding-top: var(--space-3);
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
     margin-top: var(--space-3);
   }
 
@@ -198,7 +198,7 @@
     margin-left: 0;
     margin-top: var(--space-3);
     padding-top: var(--space-3);
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
     justify-content: space-between;
   }
 

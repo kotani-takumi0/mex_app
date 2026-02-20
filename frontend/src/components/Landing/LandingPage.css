@@ -1,47 +1,46 @@
 /**
  * ランディングページスタイル
  *
- * 変更理由: CSSが完全に欠落していたため新規作成。
- * ヒーローに装飾パターン・パーティクル効果を追加し
- * SaaSらしい信頼感のあるデザインを実現。
+ * 変更理由: LeetCode風ダークテーマに統一。
+ * ヒーロー・カード・フッター全てをダーク背景 + オレンジアクセントに変更。
  */
 .landing-page {
-  --landing-ink: #3b2f24;
-  --landing-ink-soft: #5a4a3d;
-  --landing-muted: #7a6859;
-  --landing-paper: #fff9f1;
-  --landing-paper-2: #f4e8d8;
-  --landing-paper-3: #ead8c5;
-  --landing-accent: #8a5f3f;
-  --landing-accent-strong: #6f4630;
-  --landing-warm: #c48a5e;
-  --landing-warm-dark: #ad744b;
-  --landing-border: #e3d3c1;
+  --landing-ink: #eff1f6;
+  --landing-ink-soft: rgba(239, 241, 246, 0.75);
+  --landing-muted: rgba(239, 241, 246, 0.5);
+  --landing-paper: #1a1a1a;
+  --landing-paper-2: #282828;
+  --landing-paper-3: #333333;
+  --landing-accent: #ffa116;
+  --landing-accent-strong: #e08c0e;
+  --landing-warm: #ffa116;
+  --landing-warm-dark: #e08c0e;
+  --landing-border: rgba(255, 255, 255, 0.1);
 
-  --bg-primary: var(--landing-paper);
-  --bg-secondary: #f6ecdf;
-  --text-primary: var(--landing-ink);
-  --text-secondary: var(--landing-ink-soft);
-  --text-tertiary: var(--landing-muted);
-  --text-inverse: #fffaf2;
-  --border-color: #d9c8b6;
-  --border-color-light: var(--landing-border);
+  --bg-primary: #282828;
+  --bg-secondary: #1e1e1e;
+  --text-primary: #eff1f6;
+  --text-secondary: rgba(239, 241, 246, 0.75);
+  --text-tertiary: rgba(239, 241, 246, 0.5);
+  --text-inverse: #1a1a1a;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-color-light: rgba(255, 255, 255, 0.06);
 
-  --color-primary-50: #fbf6ee;
-  --color-primary-100: #f5eadb;
-  --color-primary-200: #ead7c0;
-  --color-primary-300: #ddc2a2;
-  --color-primary-400: #cfab86;
-  --color-primary-500: #bf936b;
-  --color-primary-600: #a87a53;
-  --color-primary-700: #8a5f3f;
-  --color-primary-800: #6d4830;
-  --color-primary-900: #553626;
+  --color-primary-50: rgba(255, 161, 22, 0.08);
+  --color-primary-100: rgba(255, 161, 22, 0.12);
+  --color-primary-200: rgba(255, 161, 22, 0.2);
+  --color-primary-300: rgba(255, 161, 22, 0.3);
+  --color-primary-400: #ffab2e;
+  --color-primary-500: #ffa116;
+  --color-primary-600: #e08c0e;
+  --color-primary-700: #b86e0a;
+  --color-primary-800: #8f5508;
+  --color-primary-900: #6b3f06;
 
-  --gradient-primary: linear-gradient(152deg, var(--landing-accent) 0%, var(--landing-accent-strong) 100%);
-  --gradient-hero: linear-gradient(168deg, #fff9f1 0%, #f4e8d8 50%, #ffffff 100%);
-  --gradient-card: linear-gradient(176deg, rgba(255, 255, 255, 0) 0%, rgba(255, 249, 241, 1) 100%);
-  --shadow-colored: 0 10px 24px rgba(138, 95, 63, 0.18);
+  --gradient-primary: linear-gradient(152deg, #ffa116 0%, #e08c0e 100%);
+  --gradient-hero: linear-gradient(168deg, #1a1a1a 0%, #1e1e2e 50%, #1a1a1a 100%);
+  --gradient-card: linear-gradient(176deg, rgba(48, 48, 48, 0) 0%, rgba(40, 40, 40, 1) 100%);
+  --shadow-colored: 0 10px 24px rgba(255, 161, 22, 0.15);
 
   --landing-font-body: var(--font-family-base);
   --landing-font-display: var(--font-family-heading);
@@ -49,7 +48,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-primary);
+  background-color: var(--landing-paper);
   color: var(--text-primary);
   font-family: var(--landing-font-body);
 }
@@ -75,7 +74,7 @@
 .landing-brand {
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
-  color: var(--text-primary);
+  color: var(--color-primary-500);
   letter-spacing: -0.01em;
   font-family: var(--landing-font-display);
 }
@@ -88,12 +87,12 @@
   border: 1px solid var(--border-color);
   border-radius: var(--radius-full);
   transition: all var(--transition-base);
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .landing-login-link:hover {
-  background-color: var(--bg-secondary);
-  border-color: var(--color-primary-300);
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
   color: var(--text-primary);
   box-shadow: var(--shadow-sm);
 }
@@ -108,7 +107,7 @@
   overflow: hidden;
 }
 
-/* 装飾パターン: 放射状のグロー */
+/* 装飾パターン: 放射状のオレンジグロー */
 .landing-hero::before {
   content: '';
   position: absolute;
@@ -116,12 +115,12 @@
   left: -25%;
   width: 150%;
   height: 150%;
-  background: radial-gradient(ellipse at 20% 30%, rgba(196, 138, 94, 0.18) 0%, transparent 60%),
-              radial-gradient(ellipse at 80% 20%, rgba(138, 95, 63, 0.14) 0%, transparent 55%);
+  background: radial-gradient(ellipse at 20% 30%, rgba(255, 161, 22, 0.08) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 20%, rgba(224, 140, 14, 0.06) 0%, transparent 55%);
   pointer-events: none;
 }
 
-/* 装飾パターン: 底部のグリッド風ドット */
+/* 底部のフェード */
 .landing-hero::after {
   content: '';
   position: absolute;
@@ -129,7 +128,7 @@
   left: 0;
   right: 0;
   height: 120px;
-  background: linear-gradient(to top, var(--bg-primary) 0%, transparent 100%);
+  background: linear-gradient(to top, var(--landing-paper) 0%, transparent 100%);
   pointer-events: none;
 }
 
@@ -200,30 +199,30 @@
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
   transition: all var(--transition-base);
-  box-shadow: 0 12px 26px rgba(196, 138, 94, 0.25);
+  box-shadow: 0 12px 26px rgba(255, 161, 22, 0.2);
   animation: revealUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
 }
 
 .cta-button:hover {
   background-color: var(--landing-warm-dark);
-  box-shadow: 0 16px 32px rgba(196, 138, 94, 0.3);
+  box-shadow: 0 16px 32px rgba(255, 161, 22, 0.25);
   filter: brightness(1.06);
 }
 
 .cta-button:active {
   filter: brightness(0.96);
-  box-shadow: 0 8px 16px rgba(196, 138, 94, 0.2);
+  box-shadow: 0 8px 16px rgba(255, 161, 22, 0.15);
 }
 
 .cta-button.secondary {
   background-color: transparent;
   color: var(--landing-accent);
-  border: 2px solid var(--color-primary-300);
+  border: 2px solid rgba(255, 161, 22, 0.3);
   box-shadow: none;
 }
 
 .cta-button.secondary:hover {
-  background-color: var(--color-primary-50);
+  background-color: rgba(255, 161, 22, 0.08);
   border-color: var(--color-primary-500);
   box-shadow: var(--shadow-sm);
 }
@@ -284,7 +283,7 @@
 
 .feature-card:hover {
   box-shadow: var(--shadow-lg);
-  border-color: var(--color-primary-200);
+  border-color: rgba(255, 161, 22, 0.2);
 }
 
 .feature-card:hover::before {
@@ -297,8 +296,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(160deg, var(--landing-paper-2) 0%, var(--landing-paper-3) 100%);
-  color: var(--landing-accent-strong);
+  background: rgba(255, 161, 22, 0.1);
+  color: var(--landing-accent);
   border-radius: var(--radius-2xl);
   margin: 0 auto var(--space-6);
   position: relative;
@@ -350,8 +349,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(160deg, var(--landing-paper-2) 0%, var(--landing-paper-3) 100%);
-  color: var(--landing-accent-strong);
+  background: rgba(255, 161, 22, 0.1);
+  color: var(--landing-accent);
   font-weight: var(--font-weight-bold);
   font-size: var(--font-size-lg);
   border-radius: var(--radius-xl);
@@ -398,16 +397,16 @@
 
 .pricing-card:hover {
   box-shadow: var(--shadow-lg);
-  border-color: var(--color-primary-300);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .pricing-card.featured {
-  border-color: var(--color-primary-400);
+  border-color: rgba(255, 161, 22, 0.4);
   box-shadow: var(--shadow-colored);
 }
 
 .pricing-card.featured:hover {
-  box-shadow: 0 8px 30px rgba(138, 95, 63, 0.28);
+  box-shadow: 0 8px 30px rgba(255, 161, 22, 0.2);
 }
 
 .pricing-badge {
@@ -427,7 +426,8 @@
 }
 
 .pricing-badge.upcoming {
-  background: var(--landing-ink);
+  background: var(--color-gray-700);
+  color: var(--text-primary);
   text-transform: none;
   display: inline-flex;
   align-items: center;
@@ -498,8 +498,8 @@
 
 /* ===== フッター ===== */
 .landing-footer {
-  background-color: var(--landing-ink);
-  color: rgba(255, 255, 255, 0.6);
+  background-color: #111111;
+  color: rgba(239, 241, 246, 0.5);
   padding: var(--space-8) var(--space-6);
   margin-top: auto;
 }
@@ -514,7 +514,7 @@
 
 .footer-brand {
   font-weight: var(--font-weight-bold);
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(239, 241, 246, 0.8);
   letter-spacing: -0.01em;
 }
 

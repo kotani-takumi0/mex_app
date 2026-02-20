@@ -1,12 +1,15 @@
 /**
  * スケルトンローダースタイル
+ *
+ * 変更理由: LeetCode風ダークテーマに統一。
+ * shimmerグラデーションをダーク背景に合わせて調整。
  */
 .skeleton {
   background: linear-gradient(
     90deg,
-    var(--color-gray-200) 25%,
-    var(--color-gray-100) 50%,
-    var(--color-gray-200) 75%
+    var(--color-gray-700) 25%,
+    var(--color-gray-600) 50%,
+    var(--color-gray-700) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;

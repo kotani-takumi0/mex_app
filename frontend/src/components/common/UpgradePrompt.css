@@ -1,8 +1,8 @@
-/* UpgradePrompt モーダル */
+/* UpgradePrompt モーダル — LeetCode風ダークテーマ */
 .upgrade-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(51, 40, 32, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,6 +12,7 @@
 
 .upgrade-modal {
   background: var(--bg-primary);
+  border: 1px solid var(--border-color-light);
   border-radius: var(--radius-2xl);
   padding: var(--space-10) var(--space-8);
   max-width: 440px;
@@ -44,8 +45,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(160deg, var(--color-primary-100) 0%, var(--color-primary-200) 100%);
-  color: var(--color-primary-700);
+  background: rgba(255, 161, 22, 0.1);
+  color: var(--color-primary-500);
   border-radius: var(--radius-2xl);
   margin: 0 auto var(--space-5);
 }
@@ -90,7 +91,7 @@
 
 .upgrade-price-annual {
   font-size: var(--font-size-sm);
-  color: var(--color-primary-600);
+  color: var(--color-primary-500);
   margin-bottom: var(--space-6);
 }
 
@@ -117,7 +118,7 @@
   justify-content: center;
   gap: var(--space-2);
   background: var(--gradient-primary);
-  color: #fff;
+  color: #1a1a1a;
   border: none;
   padding: var(--space-4) var(--space-6);
   border-radius: var(--radius-lg);
@@ -130,7 +131,7 @@
 
 .upgrade-cta:hover:not(:disabled) {
   filter: brightness(1.06);
-  box-shadow: 0 8px 24px rgba(168, 122, 83, 0.3);
+  box-shadow: 0 8px 24px rgba(255, 161, 22, 0.25);
 }
 
 .upgrade-cta:disabled {

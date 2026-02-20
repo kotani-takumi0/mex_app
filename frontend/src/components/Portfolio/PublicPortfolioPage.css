@@ -62,7 +62,7 @@
 }
 
 .public-project-card:hover {
-  border-color: var(--color-primary-200);
+  border-color: rgba(255, 161, 22, 0.2);
   box-shadow: var(--shadow-md);
 }
 
@@ -82,17 +82,17 @@
 }
 
 .status-badge.in_progress {
-  background: var(--color-warning-light);
-  color: var(--color-warning-dark);
+  background: rgba(255, 192, 30, 0.15);
+  color: #ffc01e;
 }
 
 .status-badge.completed {
-  background: var(--color-success-light);
-  color: var(--color-success-dark);
+  background: rgba(44, 187, 93, 0.15);
+  color: #2cbb5d;
 }
 
 .status-badge.archived {
-  background: var(--color-gray-200);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-secondary);
 }
 
@@ -112,8 +112,8 @@
 }
 
 .tech-pill {
-  background: var(--color-primary-50);
-  color: var(--color-primary-700);
+  background: rgba(255, 161, 22, 0.1);
+  color: var(--color-primary-400);
   padding: 4px 10px;
   border-radius: var(--radius-full);
   font-size: var(--font-size-xs);
@@ -140,7 +140,7 @@
 
 .skill-bar {
   height: 8px;
-  background: var(--color-gray-200);
+  background: rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-full);
   overflow: hidden;
 }
@@ -179,7 +179,7 @@
   gap: var(--space-2);
   padding: 10px 20px;
   background: var(--gradient-primary);
-  color: #fff;
+  color: #1a1a1a;
   border: none;
   border-radius: var(--radius-lg);
   font-weight: var(--font-weight-semibold);

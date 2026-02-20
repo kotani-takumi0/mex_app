@@ -52,7 +52,11 @@
       "Bash(npm uninstall:*)",
       "Bash(npx react-scripts build:*)",
       "WebFetch(domain:skills.sh)",
-      "Bash(tmux -V:*)"
+      "Bash(tmux -V:*)",
+      "mcp__mex__save_document",
+      "mcp__notion__notion-fetch",
+      "mcp__notion__notion-search",
+      "mcp__notebooklm-mcp__source_add"
     ]
   },
   "enableAllProjectMcpServers": true,
