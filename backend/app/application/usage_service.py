@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 
-from sqlalchemy import cast, String
+from sqlalchemy import String, cast
 
 from app.infrastructure.database.models import (
     DevLogEntry,
