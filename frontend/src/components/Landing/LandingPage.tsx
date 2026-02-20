@@ -265,14 +265,23 @@ export const LandingPage: React.FC = () => {
           <li className="step-item">
             <span className="step-number">1</span>
             <div>
-              <h3>プロジェクトを作成</h3>
+              <h3>アカウント作成 &amp; MCPセットアップ</h3>
               <p>
-                開発中のプロジェクトを登録し、MCP Serverを接続。
+                無料登録後、セットアップウィザードが3つのMCPサーバー（MEX・Notion・NotebookLM）の接続をガイドします。コマンド数回で完了。
               </p>
             </div>
           </li>
           <li className="step-item">
             <span className="step-number">2</span>
+            <div>
+              <h3>プロジェクトを作成</h3>
+              <p>
+                開発中のプロジェクトを登録。技術スタックや目標を記録します。
+              </p>
+            </div>
+          </li>
+          <li className="step-item">
+            <span className="step-number">3</span>
             <div>
               <h3>開発しながら自動記録</h3>
               <p>
@@ -281,7 +290,7 @@ export const LandingPage: React.FC = () => {
             </div>
           </li>
           <li className="step-item">
-            <span className="step-number">3</span>
+            <span className="step-number">4</span>
             <div>
               <h3>学んで、理解を記録</h3>
               <p>

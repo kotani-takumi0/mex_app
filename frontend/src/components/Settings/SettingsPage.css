@@ -358,44 +358,42 @@
   text-decoration: underline;
 }
 
-/* ===== コマンドブロック ===== */
-.command-block {
+/* ===== セットアップ情報ノート ===== */
+.mcp-setup-note {
   display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  background: var(--color-gray-900);
-  border: 1px solid var(--border-color-light);
-  border-radius: var(--radius-md);
-  padding: var(--space-2) var(--space-3);
-  margin-top: var(--space-1);
+  gap: var(--space-3);
+  background: rgba(255, 161, 22, 0.06);
+  border: 1px solid rgba(255, 161, 22, 0.18);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
 }
 
-.command-block-text {
-  flex: 1;
-  font-family: var(--font-family-mono);
+.mcp-setup-note-icon {
+  flex-shrink: 0;
+  color: var(--color-primary-400);
+  margin-top: 2px;
+}
+
+.mcp-setup-note-content {
+  display: grid;
+  gap: var(--space-1-5);
   font-size: var(--font-size-sm);
   color: var(--text-primary);
-  word-break: break-all;
 }
 
-.command-block-copy {
-  flex-shrink: 0;
-  display: flex;
+.mcp-setup-note-content p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.mcp-setup-wizard-link {
+  padding-top: var(--space-2);
+}
+
+.mcp-setup-wizard-link .mcp-setup-step-link {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--radius-md);
-  background: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-tertiary);
-  cursor: pointer;
-  transition: border-color var(--transition-base), color var(--transition-base);
-}
-
-.command-block-copy:hover {
-  border-color: var(--color-primary-400);
-  color: var(--color-primary-400);
+  gap: var(--space-1-5);
 }
 
 @media (max-width: 900px) {

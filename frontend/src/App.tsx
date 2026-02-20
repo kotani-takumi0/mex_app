@@ -17,20 +17,35 @@ import { ProjectDetailPage } from './components/Projects/ProjectDetailPage';
 import { PublicPortfolioPage } from './components/Portfolio/PublicPortfolioPage';
 import { PublicProjectDetailPage } from './components/Portfolio/PublicProjectDetailPage';
 import { SettingsPage } from './components/Settings/SettingsPage';
+import { SetupWizardPage } from './components/Setup/SetupWizardPage';
 import { BillingSuccessPage } from './components/Billing/BillingSuccessPage';
 import { BillingCancelPage } from './components/Billing/BillingCancelPage';
 import { UsernameSetupModal } from './components/common/UsernameSetupModal';
 import './App.css';
 
+const POST_AUTH_REDIRECT_KEY = 'mex_post_auth_redirect';
+
 /**
  * PublicRoute: 未認証ユーザー専用ルート
- * 認証済みなら /dashboard にリダイレクト
+ * 認証済みならリダイレクト（デフォルト: /dashboard）
+ *
+ * 新規登録後は sessionStorage のフラグを優先して遷移。
+ * NOTE: フラグ削除は useEffect で実施し、レンダー中副作用を避ける。
  */
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
+  const redirect = sessionStorage.getItem(POST_AUTH_REDIRECT_KEY);
+
+  React.useEffect(() => {
+    if (isAuthenticated && redirect) {
+      sessionStorage.removeItem(POST_AUTH_REDIRECT_KEY);
+    }
+  }, [isAuthenticated, redirect]);
 
   if (isLoading) return <AppLoadingScreen />;
-  if (isAuthenticated) return <Navigate to="/dashboard" replace />;
+  if (isAuthenticated) {
+    return <Navigate to={redirect || '/dashboard'} replace />;
+  }
 
   return <>{children}</>;
 };
@@ -134,6 +149,14 @@ function AppRoutes() {
             <AuthenticatedLayout>
               <SettingsPage />
             </AuthenticatedLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/setup"
+        element={
+          <ProtectedRoute>
+            <SetupWizardPage />
           </ProtectedRoute>
         }
       />

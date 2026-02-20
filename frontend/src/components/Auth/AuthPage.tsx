@@ -45,9 +45,13 @@ export const AuthPage: React.FC = () => {
         }
         const result = await register({ email, password, display_name: displayName });
         if (result.data) {
+          // 新規ユーザー向けにウィザード状態をリセット
+          // localStorage はドメイン単位のため、以前のユーザーの完了状態が残っている可能性がある
+          localStorage.removeItem('mex_setup_wizard_state');
+          localStorage.removeItem('mex_mcp_banner_dismissed');
+          sessionStorage.setItem('mex_post_auth_redirect', '/setup');
           setUser(result.data.user);
           toast.success('アカウントを作成しました');
-          navigate('/dashboard');
         } else {
           setError(result.error || '登録に失敗しました');
         }

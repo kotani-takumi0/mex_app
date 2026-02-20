@@ -1,0 +1,334 @@
+/**
+ * 3ステップ共通CSS
+ *
+ * 変更理由: MexMcpStep / NotionMcpStep / NotebookLmMcpStep で
+ * 共通のレイアウト・ボタン・カード構造をスタイリングする。
+ */
+
+.setup-step {
+  display: grid;
+  gap: var(--space-5);
+}
+
+/* ===== ヘッダー ===== */
+.setup-step-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.setup-step-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.setup-step-icon--mex {
+  background: rgba(255, 161, 22, 0.12);
+  color: var(--color-primary-400);
+}
+
+.setup-step-icon--notion {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.setup-step-icon--nlm {
+  background: rgba(44, 187, 93, 0.12);
+  color: var(--color-success);
+}
+
+.setup-step-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.setup-step-subtitle {
+  margin-top: var(--space-1);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.setup-step-badge {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2-5);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.setup-step-badge--done {
+  background: rgba(44, 187, 93, 0.12);
+  color: var(--color-success);
+}
+
+/* ===== セクション ===== */
+.setup-step-section {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.setup-step-section h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.setup-step-section p {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.setup-step-section code {
+  background: var(--color-gray-900);
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+}
+
+/* ===== 外部リンク ===== */
+.setup-step-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  font-size: var(--font-size-sm);
+  color: var(--color-primary-400);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  margin-top: var(--space-1);
+}
+
+.setup-step-link:hover {
+  text-decoration: underline;
+}
+
+/* ===== ローディング ===== */
+.setup-step-loading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+  padding: var(--space-4) 0;
+}
+
+/* ===== 通知 ===== */
+.setup-step-notice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+}
+
+.setup-step-notice--success {
+  background: rgba(44, 187, 93, 0.08);
+  border: 1px solid rgba(44, 187, 93, 0.25);
+  color: var(--color-success);
+}
+
+.setup-step-notice--warn {
+  background: rgba(255, 192, 30, 0.06);
+  border: 1px solid rgba(255, 192, 30, 0.2);
+  color: var(--color-warning);
+}
+
+.setup-step-notice--warn code {
+  background: rgba(255, 192, 30, 0.1);
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+}
+
+.setup-step-notice-link {
+  color: var(--color-primary-400);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+  margin-left: var(--space-1);
+}
+
+.setup-step-notice-link:hover {
+  text-decoration: underline;
+}
+
+/* ===== 情報 ===== */
+.setup-step-info {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(255, 161, 22, 0.06);
+  border: 1px solid rgba(255, 161, 22, 0.15);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.setup-step-info svg {
+  flex-shrink: 0;
+  color: var(--color-primary-400);
+  margin-top: 2px;
+}
+
+/* ===== トークン発行フォーム (MEX Step) ===== */
+.setup-step-token-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-3);
+  align-items: end;
+}
+
+.setup-step-token-form input {
+  padding: 10px var(--space-3);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+}
+
+.setup-step-token-form input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.setup-step-token-form input:focus {
+  outline: none;
+  border-color: var(--color-primary-400);
+}
+
+/* ===== トークン結果 (MEX Step) ===== */
+.setup-step-token-result {
+  background: var(--bg-tertiary);
+  border: 1px dashed rgba(44, 187, 93, 0.35);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.setup-step-token-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.setup-step-token-value {
+  background: var(--color-gray-900);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  word-break: break-all;
+  color: var(--text-primary);
+}
+
+.setup-step-token-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.setup-step-token-note {
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+/* ===== ボタン ===== */
+.setup-step-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 10px 16px;
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  transition: border-color var(--transition-base),
+    color var(--transition-base),
+    background var(--transition-base),
+    box-shadow var(--transition-base),
+    filter var(--transition-base);
+}
+
+.setup-step-btn--primary {
+  background: var(--gradient-primary);
+  color: #1a1a1a;
+  box-shadow: var(--shadow-sm);
+}
+
+.setup-step-btn--primary:hover:not(:disabled) {
+  box-shadow: var(--shadow-colored);
+  filter: brightness(1.06);
+}
+
+.setup-step-btn--secondary {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.setup-step-btn--secondary:hover:not(:disabled) {
+  border-color: var(--text-tertiary);
+}
+
+.setup-step-btn--ghost {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-tertiary);
+}
+
+.setup-step-btn--ghost:hover:not(:disabled) {
+  border-color: var(--text-tertiary);
+  color: var(--text-secondary);
+}
+
+.setup-step-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ===== フッター ===== */
+.setup-step-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-color-light);
+}
+
+/* ===== レスポンシブ ===== */
+@media (max-width: 640px) {
+  .setup-step-token-form {
+    grid-template-columns: 1fr;
+  }
+
+  .setup-step-header {
+    flex-wrap: wrap;
+  }
+
+  .setup-step-badge {
+    margin-left: 0;
+  }
+}

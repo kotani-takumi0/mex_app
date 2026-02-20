@@ -78,6 +78,59 @@
   background: var(--dashboard-card-bg);
 }
 
+/* MCP接続カード — シアン系で他カードと差別化 */
+.stat-card--mcp {
+  cursor: pointer;
+  text-align: left;
+  transition: border-color var(--transition-base), background-color var(--transition-base);
+}
+
+.stat-card--mcp .stat-icon {
+  background: rgba(0, 184, 212, 0.1);
+  border-color: rgba(0, 184, 212, 0.15);
+  color: #00b8d4;
+}
+
+.stat-card--mcp:hover {
+  border-color: rgba(0, 184, 212, 0.35);
+  background: #2e2e2e;
+}
+
+/* 未設定時: パルスドットで注意を引く */
+.stat-card--mcp.stat-card--unconfigured {
+  border-color: rgba(0, 184, 212, 0.2);
+}
+
+.stat-value--status {
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-base);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+.stat-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.stat-status-dot--active {
+  background: #2cbb5d;
+  box-shadow: 0 0 6px rgba(44, 187, 93, 0.4);
+}
+
+.stat-status-dot--inactive {
+  background: rgba(239, 241, 246, 0.3);
+  animation: pulse-dot 2.4s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
 .stat-icon {
   width: 32px;
   height: 32px;

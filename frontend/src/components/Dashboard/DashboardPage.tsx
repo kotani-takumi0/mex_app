@@ -94,6 +94,22 @@ export const DashboardPage: React.FC = () => {
               <div className="stat-label">ノートブック</div>
               <div className="stat-value">{data.stats.total_notebooks}</div>
             </div>
+            <button
+              type="button"
+              className={`stat-card stat-card--mcp ${data.stats.has_mcp_tokens ? '' : 'stat-card--unconfigured'}`}
+              onClick={() => navigate('/setup')}
+            >
+              <div className="stat-icon">
+                <LuCable size={20} />
+              </div>
+              <div className="stat-label">MCP接続</div>
+              <div className="stat-value stat-value--status">
+                <span
+                  className={`stat-status-dot ${data.stats.has_mcp_tokens ? 'stat-status-dot--active' : 'stat-status-dot--inactive'}`}
+                />
+                {data.stats.has_mcp_tokens ? '接続済み' : '未設定'}
+              </div>
+            </button>
           </section>
 
           {!mcpBannerDismissed && !data.stats.has_mcp_tokens && (
@@ -114,7 +130,7 @@ export const DashboardPage: React.FC = () => {
                   <strong>MCPを接続して開発ログを自動記録</strong>
                   <p>Claude Code と連携すると、開発中の活動がポートフォリオに自動で記録されます。</p>
                 </div>
-                <Link to="/settings#mcp-setup" className="mcp-cta-banner-action">
+                <Link to="/setup" className="mcp-cta-banner-action">
                   セットアップする
                 </Link>
               </div>

@@ -3,7 +3,7 @@
  * プロフィール編集とMCPトークン管理を提供
  */
 import React, { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {
   LuUser,
@@ -18,6 +18,7 @@ import {
   LuCable,
   LuCircleCheck,
   LuTerminal,
+  LuInfo,
 } from 'react-icons/lu';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -29,6 +30,7 @@ import {
 import { getPlanInfo, createCheckout, createPortal, type PlanInfo } from '../../api/billing';
 import { MCPTokenInfo } from '../../types';
 import { PageHeader } from '../common/PageHeader';
+import { CommandBlock, copyToClipboard } from '../common/CommandBlock';
 import './SettingsPage.css';
 
 const USERNAME_REGEX = /^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/;
@@ -38,50 +40,6 @@ const formatDateTime = (value: string | null) => {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '-';
   return date.toLocaleString('ja-JP');
-};
-
-const copyToClipboard = async (text: string) => {
-  if (navigator.clipboard && window.isSecureContext) {
-    await navigator.clipboard.writeText(text);
-    return;
-  }
-  const textarea = document.createElement('textarea');
-  textarea.value = text;
-  textarea.style.position = 'fixed';
-  textarea.style.left = '-9999px';
-  textarea.style.top = '0';
-  document.body.appendChild(textarea);
-  textarea.focus();
-  textarea.select();
-  const success = document.execCommand('copy');
-  document.body.removeChild(textarea);
-  if (!success) {
-    throw new Error('copy failed');
-  }
-};
-
-const CommandBlock: React.FC<{ command: string }> = ({ command }) => {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    try {
-      await copyToClipboard(command);
-      setCopied(true);
-      toast.success('コマンドをコピーしました');
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      toast.error('コピーに失敗しました');
-    }
-  };
-
-  return (
-    <div className="command-block">
-      <code className="command-block-text">{command}</code>
-      <button type="button" className="command-block-copy" onClick={handleCopy}>
-        {copied ? <LuCheck size={14} /> : <LuCopy size={14} />}
-      </button>
-    </div>
-  );
 };
 
 export const SettingsPage: React.FC = () => {
@@ -524,6 +482,26 @@ export const SettingsPage: React.FC = () => {
               <CommandBlock command="claude mcp add mex -- npx mex-mcp-server" />
             </div>
           </div>
+        </div>
+
+        <div className="mcp-setup-note">
+          <div className="mcp-setup-note-icon">
+            <LuInfo size={16} />
+          </div>
+          <div className="mcp-setup-note-content">
+            <strong>トークンの設定は1アカウントにつき1回でOK</strong>
+            <p>
+              発行したトークンは明示的に無効化しない限り有効です。
+              ただしトークンはデバイスごとにローカル保存されるため、別のPCや環境では再セットアップが必要です。
+            </p>
+          </div>
+        </div>
+
+        <div className="mcp-setup-wizard-link">
+          <Link to="/setup" className="mcp-setup-step-link">
+            <LuCable size={14} />
+            Notion・NotebookLM も含むフルセットアップウィザードを開く →
+          </Link>
         </div>
       </section>
 

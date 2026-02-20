@@ -57,7 +57,8 @@
       "mcp__notion__notion-fetch",
       "mcp__notion__notion-search",
       "mcp__notebooklm-mcp__source_add",
-      "Bash(npx vite build:*)"
+      "Bash(npx vite build:*)",
+      "WebFetch(domain:www.svgrepo.com)"
     ]
   },
   "enableAllProjectMcpServers": true,
