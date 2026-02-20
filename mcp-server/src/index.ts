@@ -9,6 +9,7 @@ import { saveDocumentTool, handleSaveDocument } from './tools/record-activity.js
 import { listProjectsTool, handleListProjects } from './tools/list-projects.js';
 import { getProjectContextTool, handleGetProjectContext } from './tools/get-context.js';
 import { saveNotebookTool, handleSaveNotebook } from './tools/save-notebook.js';
+import { createProjectTool, handleCreateProject } from './tools/create-project.js';
 
 async function main() {
   const config = loadConfig();
@@ -29,7 +30,7 @@ async function main() {
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-      tools: [saveDocumentTool, listProjectsTool, getProjectContextTool, saveNotebookTool],
+      tools: [createProjectTool, saveDocumentTool, listProjectsTool, getProjectContextTool, saveNotebookTool],
     };
   });
 
@@ -38,6 +39,17 @@ async function main() {
 
     try {
       switch (name) {
+        case 'create_project': {
+          const result = await handleCreateProject(client, args as any);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(result, null, 2),
+              },
+            ],
+          };
+        }
         case 'save_document': {
           const result = await handleSaveDocument(client, config, args as any, localConfig);
           return {

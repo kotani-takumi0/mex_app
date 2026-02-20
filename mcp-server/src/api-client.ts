@@ -43,6 +43,10 @@ export class MexApiClient {
     return result.entries;
   }
 
+  async createProject(payload: Record<string, unknown>): Promise<Record<string, unknown>> {
+    return this.request('/projects', 'POST', payload);
+  }
+
   async saveDocument(projectId: string, payload: Record<string, unknown>): Promise<DevLogEntryResponse> {
     return this.request(`/devlogs/${projectId}/entries`, 'POST', payload);
   }
