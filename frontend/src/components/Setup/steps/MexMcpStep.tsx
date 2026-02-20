@@ -173,6 +173,9 @@ export const MexMcpStep: React.FC<StepProps> = ({
             </h3>
             <p>ターミナルで以下を実行し、ガイドに従ってトークンを設定します。</p>
             <CommandBlock command="npx -p mex-mcp-server mex-setup" />
+            <p className="setup-step-hint">
+              API URL を聞かれたら <code>https://mex-app-backend.onrender.com/api</code> と入力してください。
+            </p>
           </div>
 
           <div className="setup-step-section">
